@@ -1,0 +1,31 @@
+---
+layout: page
+title: Blog
+description: Research diary and engineering notes.
+---
+
+<div class="blog-intro">
+  <p>
+    The original Sol's Diary posts are preserved here as a separate blog tab.
+    New research notes can be added without crowding the academic homepage.
+  </p>
+</div>
+
+<div class="blog-list">
+  {% for post in site.posts %}
+    <article class="blog-row">
+      <time datetime="{{ post.date | date_to_xmlschema }}">{{ post.date | date: "%Y.%m.%d" }}</time>
+      <div>
+        <h2><a href="{{ post.url | relative_url }}">{{ post.title }}</a></h2>
+        {% if post.categories %}
+          <div class="tag-row small-tags">
+            {% for category in post.categories %}
+              <span>{{ category }}</span>
+            {% endfor %}
+          </div>
+        {% endif %}
+        <p>{{ post.excerpt | strip_html | normalize_whitespace | truncate: 220 }}</p>
+      </div>
+    </article>
+  {% endfor %}
+</div>

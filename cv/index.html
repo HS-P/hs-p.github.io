@@ -1,0 +1,75 @@
+---
+layout: page
+title: CV
+description: Academic profile summary.
+---
+
+{% assign profile = site.data.profile %}
+
+<section class="cv-block">
+  <h2>Profile</h2>
+  <p>
+    <strong>{{ profile.name }} ({{ profile.korean_name }})</strong> is an M.S. student at
+    {{ profile.affiliation }}, advised by {{ profile.advisor }}. His research focuses on
+    AI for robotics, dexterous manipulation, robot learning, and physical AI systems.
+  </p>
+  <div class="link-row inline">
+    <a href="mailto:{{ profile.email }}"><i class="fa-solid fa-envelope"></i>{{ profile.email }}</a>
+    <a href="{{ profile.github }}" target="_blank" rel="noopener"><i class="fa-brands fa-github"></i>GitHub</a>
+    <a href="{{ profile.linkedin }}" target="_blank" rel="noopener"><i class="fa-brands fa-linkedin"></i>LinkedIn</a>
+  </div>
+</section>
+
+<section class="cv-block">
+  <h2>Research Interests</h2>
+  <div class="keyword-row">
+    {% for keyword in profile.keywords %}
+      <span>{{ keyword }}</span>
+    {% endfor %}
+  </div>
+</section>
+
+<section class="cv-block">
+  <h2>Papers & Manuscripts</h2>
+  <div class="paper-list slim">
+    {% for paper in site.data.papers %}
+      <article class="paper-item">
+        <div class="paper-year">{{ paper.year }}</div>
+        <div class="paper-body">
+          <h3>{{ paper.title }}</h3>
+          <p class="authors">{{ paper.authors }}</p>
+          <p class="venue">{{ paper.venue }}</p>
+        </div>
+      </article>
+    {% endfor %}
+  </div>
+</section>
+
+<section class="cv-block">
+  <h2>Experience</h2>
+  <div class="timeline compact-timeline">
+    {% for item in site.data.experience %}
+      <article class="timeline-item">
+        <div class="timeline-date">{{ item.period }}</div>
+        <div class="timeline-body">
+          <h3>{{ item.role }}</h3>
+          <p class="venue">{{ item.organization }} · {{ item.location }}</p>
+          <p>{{ item.summary }}</p>
+        </div>
+      </article>
+    {% endfor %}
+  </div>
+</section>
+
+<section class="cv-block">
+  <h2>Awards & Recognition</h2>
+  <div class="award-grid">
+    {% for award in site.data.awards %}
+      <article class="award-card">
+        <span>{{ award.year }}</span>
+        <h3>{{ award.title }}</h3>
+        <p class="venue">{{ award.organization }}</p>
+      </article>
+    {% endfor %}
+  </div>
+</section>

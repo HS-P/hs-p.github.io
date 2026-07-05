@@ -1,4 +1,164 @@
 ---
-layout: home
-# Index page
+layout: default
+title: Home
+description: Personal academic homepage of Hansol Park.
 ---
+
+{% assign profile = site.data.profile %}
+{% assign papers = site.data.papers %}
+{% assign projects = site.data.projects | sort: "importance" %}
+{% assign experience = site.data.experience %}
+{% assign awards = site.data.awards %}
+
+<section class="hero" id="about">
+  <div class="hero-photo">
+    <img src="{{ profile.image | relative_url }}" alt="Profile photo of {{ profile.name }}">
+  </div>
+  <div class="hero-copy">
+    <p class="eyebrow">{{ profile.role }}</p>
+    <h1>{{ profile.name }} <span>{{ profile.korean_name }}</span></h1>
+    <p class="affiliation">{{ profile.affiliation }}</p>
+    <p class="advisor">Advised by {{ profile.advisor }}</p>
+    <p class="intro">{{ profile.intro }}</p>
+    <div class="keyword-row">
+      {% for keyword in profile.keywords %}
+        <span>{{ keyword }}</span>
+      {% endfor %}
+    </div>
+    <div class="link-row">
+      <a href="mailto:{{ profile.email }}"><i class="fa-solid fa-envelope"></i>Email</a>
+      <a href="{{ profile.github }}" target="_blank" rel="noopener"><i class="fa-brands fa-github"></i>GitHub</a>
+      <a href="{{ profile.linkedin }}" target="_blank" rel="noopener"><i class="fa-brands fa-linkedin"></i>LinkedIn</a>
+      <a href="{{ '/blog/' | relative_url }}"><i class="fa-solid fa-pen"></i>Blog</a>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="papers">
+  <div class="section-heading">
+    <p>Papers</p>
+    <h2>Selected Papers & Manuscripts</h2>
+  </div>
+  <div class="paper-list">
+    {% for paper in papers %}
+      <article class="paper-item">
+        <div class="paper-year">{{ paper.year }}</div>
+        <div class="paper-body">
+          <div class="paper-topline">
+            <h3>{{ paper.title }}</h3>
+            <span class="status-badge">{{ paper.status }}</span>
+          </div>
+          <p class="authors">{{ paper.authors }}</p>
+          <p class="venue">{{ paper.venue }}</p>
+          <p>{{ paper.summary }}</p>
+          {% if paper.links %}
+            <div class="mini-links">
+              {% for link in paper.links %}
+                <a href="{{ link.url }}">{{ link.label }}</a>
+              {% endfor %}
+            </div>
+          {% endif %}
+        </div>
+      </article>
+    {% endfor %}
+  </div>
+  <p class="section-note">
+    Peer-reviewed publication details will be updated as manuscripts are submitted or accepted.
+  </p>
+</section>
+
+<section class="section" id="awards">
+  <div class="section-heading">
+    <p>Awards</p>
+    <h2>Awards & Recognition</h2>
+  </div>
+  <div class="award-grid">
+    {% for award in awards %}
+      <article class="award-card">
+        <span>{{ award.year }}</span>
+        <h3>{{ award.title }}</h3>
+        <p class="venue">{{ award.organization }}</p>
+        <p>{{ award.summary }}</p>
+      </article>
+    {% endfor %}
+  </div>
+</section>
+
+<section class="section" id="projects">
+  <div class="section-heading split-heading">
+    <div>
+      <p>Projects</p>
+      <h2>Research & Engineering Projects</h2>
+    </div>
+    <a class="text-link" href="{{ '/projects/' | relative_url }}">View all projects</a>
+  </div>
+  <div class="project-grid compact">
+    {% for project in projects limit:4 %}
+      <article class="project-card" id="{{ project.id }}">
+        <a href="{{ '/projects/#' | append: project.id | relative_url }}">
+          {% if project.image %}
+            <img src="{{ project.image | relative_url }}" alt="{{ project.title }} project image">
+          {% else %}
+            <div class="project-placeholder" aria-hidden="true">
+              <span>{{ project.status }}</span>
+              <strong>{{ project.title }}</strong>
+            </div>
+          {% endif %}
+          <div class="project-card-body">
+            <p class="project-status">{{ project.status }}</p>
+            <h3>{{ project.title }}</h3>
+            <p>{{ project.summary }}</p>
+            <div class="tag-row">
+              {% for tag in project.tags limit:3 %}
+                <span>{{ tag }}</span>
+              {% endfor %}
+            </div>
+          </div>
+        </a>
+      </article>
+    {% endfor %}
+  </div>
+</section>
+
+<section class="section" id="experience">
+  <div class="section-heading">
+    <p>Experience</p>
+    <h2>Research Experience</h2>
+  </div>
+  <div class="timeline">
+    {% for item in experience %}
+      <article class="timeline-item">
+        <div class="timeline-date">{{ item.period }}</div>
+        <div class="timeline-body">
+          <h3>{{ item.role }}</h3>
+          <p class="venue">{{ item.organization }} · {{ item.location }}</p>
+          <p>{{ item.summary }}</p>
+          <ul>
+            {% for highlight in item.highlights %}
+              <li>{{ highlight }}</li>
+            {% endfor %}
+          </ul>
+        </div>
+      </article>
+    {% endfor %}
+  </div>
+</section>
+
+<section class="section">
+  <div class="section-heading split-heading">
+    <div>
+      <p>Blog</p>
+      <h2>Recent Notes</h2>
+    </div>
+    <a class="text-link" href="{{ '/blog/' | relative_url }}">Open blog</a>
+  </div>
+  <div class="recent-posts">
+    {% for post in site.posts limit:3 %}
+      <article>
+        <a href="{{ post.url | relative_url }}">{{ post.title }}</a>
+        <time datetime="{{ post.date | date_to_xmlschema }}">{{ post.date | date: "%Y.%m.%d" }}</time>
+        <p>{{ post.excerpt | strip_html | normalize_whitespace | truncate: 150 }}</p>
+      </article>
+    {% endfor %}
+  </div>
+</section>

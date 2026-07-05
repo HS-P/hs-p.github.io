@@ -1,0 +1,33 @@
+- id: aws-physical-ai
+  title: "AWS / NVIDIA Physical AI Collaboration"
+  subtitle: "Public collaboration track for robot learning research"
+  importance: 1
+  status: "Current"
+  tags: [Physical AI, Robot Learning, VLA]
+  summary: "A public-facing research collaboration around physical AI, robot learning workflows, and manipulation-policy research."
+  details:
+    - "Explores learning workflows and evaluation paths for physical AI research."
+    - "Connects public research themes in VLA-style policies, manipulation, and robot learning."
+    - "Project details will be updated as collaboration outputs are cleared for public release."
+
+- id: defense-robot
+  title: "Defense Robot Competition Platform"
+  subtitle: "Undergraduate robotics project"
+  image: /assets/img/projects/defense-robot.jpg
+  importance: 5
+  status: "Past"
+  tags: [ROS 2, Embedded, Robotics]
+  summary: "A team robotics project covering mechanical design, embedded control, ROS 2 integration, camera setup, and field-oriented debugging."
+  details:
+    - "Documented development notes and system bring-up in the original Sol's Diary blog."
+
+- id: battle-robot
+  title: "Battle Robot"
+  subtitle: "Mechanical and embedded robotics build"
+  image: /assets/img/projects/battle-robot.jpg
+  importance: 6
+  status: "Past"
+  tags: [Mechatronics, Embedded, Fabrication]
+  summary: "An early hands-on robotics project involving mechanical fabrication, actuator selection, wiring, testing, and competition preparation."
+  details:
+    - "Served as a foundation for later ROS and robot software work."

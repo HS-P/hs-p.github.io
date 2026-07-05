@@ -1,0 +1,25 @@
+- role: "M.S. Student / AI Robotics Researcher"
+  organization: "WIRobotics IRIM Laboratory, KOREATECH"
+  period: "Current"
+  location: "Cheonan, South Korea"
+  summary: "Researching AI for robotics with an emphasis on physical AI, robot learning, and deployable manipulation-policy workflows."
+  highlights:
+    - "Participates in public-facing AWS / NVIDIA Physical AI collaboration work."
+    - "Prepares research summaries and engineering notes for cleared public outputs."
+
+- role: "Robot Learning Researcher"
+  organization: "WIRobotics AI Team"
+  period: "Current"
+  location: "South Korea"
+  summary: "Works on robot learning research directions and engineering workflows that support physical AI projects."
+  highlights:
+    - "Focuses public descriptions on research themes, collaboration context, and engineering scope."
+    - "Maintains a publication-ready portfolio while respecting unreleased project boundaries."
+
+- role: "Undergraduate Robotics Projects"
+  organization: "KOREATECH Mechatronics Engineering"
+  period: "2023 - 2024"
+  location: "Cheonan, South Korea"
+  summary: "Worked on ROS 2 education projects, TurtleBot bring-up, defense robot development, and battle robot hardware/software integration."
+  highlights:
+    - "Built practical experience across mechanical design, embedded systems, Linux, ROS 2, sensors, and camera integration."
