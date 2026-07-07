@@ -1,6 +1,7 @@
 name: Hansol Park
 korean_name: 박한솔
 role: M.S. Student · WIRobotics IRIM Laboratory
+headline: Physical AI & Dexterous Manipulation
 affiliation: Korea University of Technology and Education (KOREATECH)
 advisor: Prof. Yong-Jae Kim
 location: Cheonan, South Korea
@@ -9,12 +10,21 @@ github: https://github.com/HS-P
 linkedin: https://www.linkedin.com/in/hansol-park-77022b410/
 blog: /blog/
 image: /assets/img/profile/hansol-park.jpg
+hero_image: /assets/img/allex/hero-allex.png
 keywords:
-  - AI for Robotics
   - Dexterous Manipulation
   - Robot Learning
   - Physical AI
-  - Physical AI Systems
+  - Sim-to-Real
+  - Robot Software Systems
 intro: >-
-  I work on robot software systems for dexterous manipulation, with a focus on
-  physical AI, robot learning, and deployable manipulation-policy workflows.
+  I build robot software systems for dexterous manipulation, with a focus on
+  physical AI, robot learning, sim-to-real workflows, and deployable
+  manipulation-policy infrastructure.
+focus:
+  - title: ALLEX Platform Integration
+    summary: Hand-arm control, ROS 2 interfaces, calibration, and policy-facing robot software.
+  - title: Teleoperation & Data
+    summary: Demonstration collection, video/tracking links, dataset logging, and operator feedback loops.
+  - title: Policy Deployment
+    summary: Sim-to-real, evaluation, and deployment workflows for dexterous manipulation policies.

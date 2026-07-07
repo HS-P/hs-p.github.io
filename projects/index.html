@@ -1,38 +1,72 @@
 ---
-layout: page
+layout: default
 title: Projects
 description: Selected research and engineering projects.
 ---
 
 {% assign projects = site.data.projects | sort: "importance" %}
+{% assign graduate_projects = projects | where: "stage", "Graduate" %}
+{% assign undergraduate_projects = projects | where: "stage", "Undergraduate" %}
+{% assign featured_projects = projects | where: "featured", true %}
 
-<div class="project-grid wide">
-  {% for project in projects %}
-    <article class="project-card detailed" id="{{ project.id }}">
-      {% if project.image %}
-        <img src="{{ project.image | relative_url }}" alt="{{ project.title }} project image">
-      {% else %}
-        <div class="project-placeholder" aria-hidden="true">
-          <span>{{ project.status }}</span>
-          <strong>{{ project.title }}</strong>
+<header class="page-title project-title">
+  <div>
+    <p class="eyebrow">Project index</p>
+    <h1>Systems I am building, not just things I have done.</h1>
+    <p>
+      Current work comes first: ALLEX software, teleoperation/data loops, and robot-learning deployment. Earlier undergraduate projects stay visible as the engineering foundation behind that trajectory.
+    </p>
+  </div>
+</header>
+
+<section class="project-group" id="graduate">
+  <div class="section-heading">
+    <p>Graduate</p>
+    <h2>Current Work Index</h2>
+  </div>
+  <div class="work-index detailed-work-index">
+    {% for project in featured_projects %}
+      <article class="work-index-row" id="{{ project.id }}">
+        <span class="work-index-no">0{{ forloop.index }}</span>
+        <div>
+          <p>{{ project.track }}</p>
+          <h3>{{ project.title }}</h3>
         </div>
-      {% endif %}
-      <div class="project-card-body">
-        <p class="project-status">{{ project.status }}</p>
-        <h2>{{ project.title }}</h2>
-        <p class="project-subtitle">{{ project.subtitle }}</p>
-        <p>{{ project.summary }}</p>
-        <ul>
-          {% for detail in project.details %}
-            <li>{{ detail }}</li>
-          {% endfor %}
-        </ul>
+        <em>{{ project.summary }}</em>
         <div class="tag-row">
-          {% for tag in project.tags %}
+          {% for tag in project.tags limit:4 %}
             <span>{{ tag }}</span>
           {% endfor %}
         </div>
-      </div>
-    </article>
-  {% endfor %}
-</div>
+        {% if project.details %}
+          <ul>
+            {% for detail in project.details %}
+              <li>{{ detail }}</li>
+            {% endfor %}
+          </ul>
+        {% endif %}
+      </article>
+    {% endfor %}
+  </div>
+</section>
+
+<section class="project-group" id="undergraduate">
+  <div class="section-heading">
+    <p>Undergraduate</p>
+    <h2>Earlier Robotics Foundation</h2>
+  </div>
+  <div class="compact-work-list">
+    {% for project in undergraduate_projects %}
+      <article class="compact-work-row" id="{{ project.id }}">
+        <span>{{ project.track }}</span>
+        <strong>{{ project.title }}</strong>
+        <em>{{ project.summary }}</em>
+        <div class="tag-row">
+          {% for tag in project.tags limit:4 %}
+            <span>{{ tag }}</span>
+          {% endfor %}
+        </div>
+      </article>
+    {% endfor %}
+  </div>
+</section>

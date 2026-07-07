@@ -18,18 +18,15 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.1/css/all.min.css">
     <link rel="stylesheet" href="{{ '/assets/css/site.css' | relative_url }}">
   </head>
-  <body>
+  <body class="{% if page.url == '/' %}home-page{% else %}sub-page{% endif %}">
     {% include site-header.html %}
     <main class="page-shell">
       {{ content }}
     </main>
+    {% if page.url == '/' %}
+      {% include orb-nav.html %}
+    {% endif %}
     {% include site-footer.html %}
-    <script>
-      const toggle = document.querySelector("[data-nav-toggle]");
-      const links = document.querySelector("[data-nav-links]");
-      if (toggle && links) {
-        toggle.addEventListener("click", () => links.classList.toggle("is-open"));
-      }
-    </script>
+    <script src="{{ '/assets/js/site.js' | relative_url }}"></script>
   </body>
 </html>

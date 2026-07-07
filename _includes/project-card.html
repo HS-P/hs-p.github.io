@@ -1,0 +1,41 @@
+{% assign project = include.project %}
+{% assign tag_limit = include.tag_limit | default: 8 %}
+<article class="project-card {% unless project.image %}project-card--text{% endunless %}" id="{{ project.id }}">
+  {% if include.href %}
+    <a class="project-card-link" href="{{ include.href }}">
+  {% endif %}
+  {% if project.image %}
+    <div class="project-media">
+      <img src="{{ project.image | relative_url }}" alt="{{ project.title }} project image">
+    </div>
+  {% endif %}
+  <div class="project-card-body">
+    <div class="project-meta-line">
+      <p class="project-status">{{ project.status }}</p>
+      {% if project.track %}
+        <span>{{ project.track }}</span>
+      {% endif %}
+    </div>
+    <h3>{{ project.title }}</h3>
+    <p class="project-subtitle">{{ project.subtitle }}</p>
+    <p>{{ project.summary }}</p>
+    {% if include.details and project.details %}
+      <ul>
+        {% for detail in project.details %}
+          <li>{{ detail }}</li>
+        {% endfor %}
+      </ul>
+    {% endif %}
+    {% if include.details and project.public_note %}
+      <p class="project-note">{{ project.public_note }}</p>
+    {% endif %}
+    <div class="tag-row">
+      {% for tag in project.tags limit: tag_limit %}
+        <span>{{ tag }}</span>
+      {% endfor %}
+    </div>
+  </div>
+  {% if include.href %}
+    </a>
+  {% endif %}
+</article>

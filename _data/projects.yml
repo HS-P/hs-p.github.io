@@ -1,31 +1,100 @@
 - id: aws-physical-ai
+  stage: "Graduate"
+  track: "Research Collaboration"
   title: "AWS / NVIDIA Physical AI Collaboration"
   subtitle: "Public collaboration track for robot learning research"
+  importance: 3
+  status: "Current"
+  featured: true
+  tags: [Physical AI, Robot Learning, VLA, Dexterous Manipulation]
+  summary: "A public-facing research collaboration around physical AI, robot learning workflows, and manipulation-policy research."
+  public_note: "Detailed methods will be added after public release or clearance."
+  details:
+    - "Frames robot learning work around deployable physical AI systems."
+    - "Connects VLA-style policy research, manipulation workflows, and public research communication."
+    - "Keeps unreleased collaboration details separated from public portfolio content."
+
+- id: allex-dexterous-platform
+  stage: "Graduate"
+  track: "Robot Platform"
+  title: "ALLEX Dexterous Manipulation Platform"
+  subtitle: "Dexterous hand software and robot learning infrastructure"
   importance: 1
   status: "Current"
-  tags: [Physical AI, Robot Learning, VLA]
-  summary: "A public-facing research collaboration around physical AI, robot learning workflows, and manipulation-policy research."
+  featured: true
+  image: /assets/img/allex/hero-allex.png
+  tags: [ALLEX, Dexterous Hand, ROS 2, Robot Learning]
+  summary: "The main project track for ALLEX hand-arm software, control interfaces, data collection, and manipulation-policy deployment."
+  public_note: "Public demo material will be added after approved media is selected."
   details:
-    - "Explores learning workflows and evaluation paths for physical AI research."
-    - "Connects public research themes in VLA-style policies, manipulation, and robot learning."
-    - "Project details will be updated as collaboration outputs are cleared for public release."
+    - "Organizes hand control, ROS 2 interfaces, retargeting, and policy-facing robot software into a portfolio-ready project track."
+    - "Will collect public demos, diagrams, and technical notes as the platform material becomes shareable."
+
+- id: teleoperation-data-pipeline
+  stage: "Graduate"
+  track: "Data & Deployment"
+  title: "Teleoperation and Robot Learning Data Pipeline"
+  subtitle: "Quest/vision-based teleoperation, dataset logging, and policy workflow support"
+  importance: 2
+  status: "Current"
+  featured: true
+  tags: [Teleoperation, Dataset Logging, ROS 2, Policy Deployment]
+  summary: "A systems track for collecting demonstrations, monitoring robot state, and preparing data for learning-based manipulation workflows."
+  public_note: "Representative media will be added after the final public setup is selected."
+  details:
+    - "Connects teleoperation, camera/video streams, robot state topics, and dataset logging workflows."
+    - "Supports future public writeups around demonstration collection and policy deployment."
+
+- id: redshow-sysid-rma
+  stage: "Undergraduate"
+  track: "Research Prototype"
+  title: "RedShow SYSID-A-RMA Sim-to-Real Project"
+  subtitle: "Reinforcement learning method for robust sim-to-real deployment"
+  importance: 4
+  status: "Past"
+  tags: [Reinforcement Learning, Sim-to-Real, System Identification, IsaacLab]
+  summary: "An undergraduate research prototype on improving sim-to-real performance by combining system identification with an A-RMA-style reinforcement learning pipeline."
+  public_note: "Poster/PDF material exists locally; representative web media is pending."
+  details:
+    - "Focused on reducing domain gap while avoiding overly conservative domain randomization."
+    - "Used encoder and IMU feedback, policy-rate control, and adaptation concepts for robust deployment."
+    - "Presented as a team prototype with Hansol Park, Hyeokjo Kwon, and Seongwoo Bae."
 
 - id: defense-robot
-  title: "Defense Robot Competition Platform"
-  subtitle: "Undergraduate robotics project"
+  stage: "Undergraduate"
+  track: "Competition Platform"
+  title: "Defense Robotics Competition Platform"
+  subtitle: "Competition robot system integration"
   image: /assets/img/projects/defense-robot.jpg
   importance: 5
   status: "Past"
-  tags: [ROS 2, Embedded, Robotics]
+  tags: [ROS 2, Embedded, Camera, Robotics]
   summary: "A team robotics project covering mechanical design, embedded control, ROS 2 integration, camera setup, and field-oriented debugging."
   details:
-    - "Documented development notes and system bring-up in the original Sol's Diary blog."
+    - "Built practical experience across Linux, ROS 2, embedded control, sensors, and camera integration."
+    - "Documented development notes and system bring-up in the original Sol's Diary archive."
+
+- id: turtlebot-ros2-learning
+  stage: "Undergraduate"
+  track: "Learning Program"
+  title: "TurtleBot and ROS 2 Bring-up"
+  subtitle: "K-Community robotics learning program"
+  importance: 6
+  status: "Past"
+  tags: [ROS 2, TurtleBot, OpenCR, Robotics Education]
+  summary: "A structured robotics learning project covering Python, Arduino, ROS, OpenCR, TurtleBot bring-up, and team-based debugging."
+  public_note: "Representative media is pending."
+  details:
+    - "Recognized as an excellent team in the K-Community Learning Program."
+    - "Helped build the robotics software foundation used in later competition and research projects."
 
 - id: battle-robot
+  stage: "Undergraduate"
+  track: "Mechanical Build"
   title: "Battle Robot"
   subtitle: "Mechanical and embedded robotics build"
   image: /assets/img/projects/battle-robot.jpg
-  importance: 6
+  importance: 7
   status: "Past"
   tags: [Mechatronics, Embedded, Fabrication]
   summary: "An early hands-on robotics project involving mechanical fabrication, actuator selection, wiring, testing, and competition preparation."

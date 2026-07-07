@@ -5,13 +5,16 @@ description: Academic profile summary.
 ---
 
 {% assign profile = site.data.profile %}
+{% assign projects = site.data.projects | sort: "importance" %}
+{% assign graduate_projects = projects | where: "stage", "Graduate" %}
+{% assign undergraduate_projects = projects | where: "stage", "Undergraduate" %}
 
-<section class="cv-block">
+<section class="cv-block" id="cv-profile">
   <h2>Profile</h2>
   <p>
     <strong>{{ profile.name }} ({{ profile.korean_name }})</strong> is an M.S. student at
     {{ profile.affiliation }}, advised by {{ profile.advisor }}. His research focuses on
-    AI for robotics, dexterous manipulation, robot learning, and physical AI systems.
+    dexterous manipulation, robot learning, physical AI systems, and sim-to-real robot software.
   </p>
   <div class="link-row inline">
     <a href="mailto:{{ profile.email }}"><i class="fa-solid fa-envelope"></i>{{ profile.email }}</a>
@@ -20,7 +23,7 @@ description: Academic profile summary.
   </div>
 </section>
 
-<section class="cv-block">
+<section class="cv-block" id="cv-research">
   <h2>Research Interests</h2>
   <div class="keyword-row">
     {% for keyword in profile.keywords %}
@@ -29,7 +32,29 @@ description: Academic profile summary.
   </div>
 </section>
 
-<section class="cv-block">
+<section class="cv-block" id="cv-projects">
+  <h2>Project Tracks</h2>
+  <div class="cv-project-columns">
+    <div>
+      <h3>Graduate</h3>
+      <ul>
+        {% for project in graduate_projects %}
+          <li><a href="{{ '/projects/#' | append: project.id | relative_url }}">{{ project.title }}</a></li>
+        {% endfor %}
+      </ul>
+    </div>
+    <div>
+      <h3>Undergraduate</h3>
+      <ul>
+        {% for project in undergraduate_projects %}
+          <li><a href="{{ '/projects/#' | append: project.id | relative_url }}">{{ project.title }}</a></li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section class="cv-block" id="cv-outputs">
   <h2>Papers & Manuscripts</h2>
   <div class="paper-list slim">
     {% for paper in site.data.papers %}
@@ -45,7 +70,7 @@ description: Academic profile summary.
   </div>
 </section>
 
-<section class="cv-block">
+<section class="cv-block" id="cv-experience">
   <h2>Experience</h2>
   <div class="timeline compact-timeline">
     {% for item in site.data.experience %}
@@ -61,7 +86,7 @@ description: Academic profile summary.
   </div>
 </section>
 
-<section class="cv-block">
+<section class="cv-block" id="cv-awards">
   <h2>Awards & Recognition</h2>
   <div class="award-grid">
     {% for award in site.data.awards %}
