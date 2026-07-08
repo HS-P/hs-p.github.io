@@ -7358,3 +7358,185 @@ img {
     min-height: 132px;
   }
 }
+
+/* Large generated topic scenes. */
+.project-axis-stage .project-topic-panel {
+  width: min(1360px, calc(100vw - 72px)) !important;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  gap: 34px !important;
+  top: 58% !important;
+  left: 50% !important;
+}
+
+.project-timeline-page.is-topic-mode .project-axis-stage .project-topic-panel {
+  transform: translateX(-50%) translate3d(0, -22%, 0) scale(1) !important;
+}
+
+.project-axis-stage .project-topic-panel button {
+  --topic-image: url("/assets/img/topics/topic-vla.png");
+  --topic-position: center;
+  height: clamp(310px, 38vh, 390px) !important;
+  min-height: clamp(310px, 38vh, 390px) !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  padding: 0 28px !important;
+  overflow: visible !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  color: rgba(12, 19, 28, 0.95) !important;
+  font-size: clamp(2.35rem, 4vw, 4.6rem) !important;
+  font-weight: 950 !important;
+  letter-spacing: 0.02em !important;
+  text-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.82),
+    0 12px 40px rgba(255, 255, 255, 0.95),
+    0 22px 80px rgba(255, 255, 255, 0.74) !important;
+}
+
+.project-axis-stage .project-topic-panel button[data-project-topic="allex"] {
+  --topic-image: url("/assets/img/topics/topic-allex.png");
+  --topic-position: 58% center;
+}
+
+.project-axis-stage .project-topic-panel button[data-project-topic="teleoperation"] {
+  --topic-image: url("/assets/img/topics/topic-teleoperation.png");
+  --topic-position: 44% center;
+}
+
+.project-axis-stage .project-topic-panel button[data-project-topic="vla"] {
+  --topic-image: url("/assets/img/topics/topic-vla.png");
+  --topic-position: center;
+}
+
+.project-axis-stage .project-topic-panel button span {
+  position: relative;
+  z-index: 5;
+  display: inline-block;
+  transform: translateY(10px);
+}
+
+.project-axis-stage .project-topic-panel button[data-project-topic="teleoperation"] span {
+  font-size: 0.66em;
+}
+
+.project-axis-stage .project-topic-panel button::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background:
+    linear-gradient(120deg, rgba(255, 255, 255, 0.82), rgba(255, 255, 255, 0.22) 44%, rgba(67, 201, 71, 0.12)),
+    var(--topic-image) var(--topic-position) / cover no-repeat !important;
+  clip-path: polygon(4% 0, 100% 8%, 95% 100%, 0 91%);
+  opacity: 0.78 !important;
+  filter: saturate(0.92) contrast(1.04);
+  transform: translate3d(0, 0, 0) scale(1);
+  box-shadow: 0 34px 86px rgba(17, 23, 34, 0.11);
+  transition:
+    opacity 520ms ease,
+    filter 540ms ease,
+    transform 760ms cubic-bezier(0.16, 0.98, 0.2, 1),
+    clip-path 760ms cubic-bezier(0.16, 0.98, 0.2, 1);
+}
+
+.project-axis-stage .project-topic-panel button::after {
+  content: "";
+  position: absolute;
+  left: 14%;
+  right: 14%;
+  bottom: 40px;
+  z-index: 4;
+  height: 4px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, transparent, var(--accent-green), transparent);
+  opacity: 0.48;
+  transform: scaleX(0.42);
+  transform-origin: center;
+  transition:
+    opacity 440ms ease,
+    transform 640ms cubic-bezier(0.16, 0.98, 0.2, 1);
+}
+
+.project-axis-stage .project-topic-panel button:nth-child(1) {
+  --topic-rise-delay: 0ms;
+}
+
+.project-axis-stage .project-topic-panel button:nth-child(2) {
+  --topic-rise-delay: 260ms;
+}
+
+.project-axis-stage .project-topic-panel button:nth-child(3) {
+  --topic-rise-delay: 520ms;
+}
+
+.project-timeline-page.is-topic-mode .project-axis-stage .project-topic-panel button {
+  animation: topic-scene-rise 1180ms cubic-bezier(0.16, 0.86, 0.2, 1) var(--topic-rise-delay) both !important;
+}
+
+.project-timeline-page.is-topic-mode .project-axis-stage .project-topic-panel:hover button {
+  opacity: 0.28;
+  filter: grayscale(1) saturate(0.5);
+  transform: translate3d(0, 0, 0) scale(0.94);
+}
+
+.project-timeline-page.is-topic-mode .project-axis-stage .project-topic-panel button:hover,
+.project-timeline-page.is-topic-mode .project-axis-stage .project-topic-panel button:focus-visible,
+.project-timeline-page.is-topic-mode .project-axis-stage .project-topic-panel button.is-active {
+  opacity: 1;
+  filter: none;
+  color: #169523 !important;
+  transform: translateY(-18px) scale(1.05);
+}
+
+.project-axis-stage .project-topic-panel button:hover::before,
+.project-axis-stage .project-topic-panel button:focus-visible::before,
+.project-axis-stage .project-topic-panel button.is-active::before {
+  opacity: 0.92 !important;
+  filter: saturate(1.08) contrast(1.12);
+  clip-path: polygon(0 6%, 96% 0, 100% 92%, 5% 100%);
+  transform: scale(1.04);
+}
+
+.project-axis-stage .project-topic-panel button:hover::after,
+.project-axis-stage .project-topic-panel button:focus-visible::after,
+.project-axis-stage .project-topic-panel button.is-active::after {
+  opacity: 1;
+  transform: scaleX(1);
+}
+
+@keyframes topic-scene-rise {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 120px, 0) scale(0.92);
+    filter: blur(18px) saturate(0.6);
+  }
+
+  62% {
+    opacity: 1;
+  }
+
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
+    filter: blur(0) saturate(1);
+  }
+}
+
+@media (max-width: 980px) {
+  .project-axis-stage .project-topic-panel {
+    width: min(100%, 720px) !important;
+    grid-template-columns: 1fr !important;
+    gap: 22px !important;
+    top: 54% !important;
+  }
+
+  .project-axis-stage .project-topic-panel button {
+    height: 210px !important;
+    min-height: 210px !important;
+    font-size: clamp(2rem, 12vw, 3.3rem) !important;
+  }
+
+  .project-axis-stage .project-topic-panel button[data-project-topic="teleoperation"] span {
+    font-size: 0.58em;
+  }
+}
