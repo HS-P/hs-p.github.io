@@ -7364,7 +7364,7 @@ img {
   width: min(1360px, calc(100vw - 72px)) !important;
   grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
   gap: 34px !important;
-  top: 58% !important;
+  top: 10% !important;
   left: 50% !important;
 }
 
