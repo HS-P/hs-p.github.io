@@ -93,6 +93,7 @@
   if (githubActivity) {
     const user = githubActivity.dataset.githubUser || "HS-P";
     const rangeYear = Number(githubActivity.dataset.githubRange) || new Date().getFullYear();
+    const fallbackTotal = githubActivity.dataset.githubTotal || "";
     const status = githubActivity.querySelector("[data-github-activity-status]");
     const chart = githubActivity.querySelector("[data-github-activity-chart]");
 
@@ -109,15 +110,40 @@
       return next;
     }
 
-    function renderGithubActivity(payload) {
-      if (!chart) return;
-
+    function getGithubActivityRange() {
       const today = new Date();
       today.setHours(0, 0, 0, 0);
       const start = new Date(rangeYear, 0, 1);
       const end = today.getFullYear() === rangeYear ? today : new Date(rangeYear, 11, 31);
-      const gridStart = addDays(start, -start.getDay());
-      const gridEnd = addDays(end, 6 - end.getDay());
+      return {
+        start,
+        end,
+        gridStart: addDays(start, -start.getDay()),
+        gridEnd: addDays(end, 6 - end.getDay()),
+      };
+    }
+
+    function renderGithubSkeleton() {
+      if (!chart || chart.children.length) return;
+      const { start, end, gridStart, gridEnd } = getGithubActivityRange();
+      const fragment = document.createDocumentFragment();
+      for (let cursor = new Date(gridStart); cursor <= gridEnd; cursor = addDays(cursor, 1)) {
+        const key = dateKey(cursor);
+        const inRange = cursor >= start && cursor <= end;
+        const cell = document.createElement("span");
+        cell.className = "github-day github-day--level-0 github-day--loading";
+        if (!inRange) cell.classList.add("github-day--outside");
+        cell.title = `${key}: loading public contributions`;
+        cell.setAttribute("aria-label", cell.title);
+        fragment.appendChild(cell);
+      }
+      chart.replaceChildren(fragment);
+    }
+
+    function renderGithubActivity(payload) {
+      if (!chart) return;
+
+      const { start, end, gridStart, gridEnd } = getGithubActivityRange();
       const byDate = new Map(
         (payload.contributions || []).map((day) => [day.date, day])
       );
@@ -145,6 +171,8 @@
       }
     }
 
+    renderGithubSkeleton();
+
     fetch(`https://github-contributions-api.jogruber.de/v4/${encodeURIComponent(user)}`)
       .then((response) => {
         if (!response.ok) throw new Error("GitHub activity unavailable");
@@ -153,7 +181,11 @@
       .then(renderGithubActivity)
       .catch(() => {
         githubActivity.classList.add("is-unavailable");
-        if (status) status.textContent = "Public GitHub activity unavailable";
+        if (status) {
+          status.textContent = fallbackTotal
+            ? `${fallbackTotal} public contributions in ${rangeYear}`
+            : "Public GitHub activity unavailable";
+        }
       });
   }
 

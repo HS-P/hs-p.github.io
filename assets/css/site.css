@@ -5780,6 +5780,10 @@ img {
   opacity: 0.28;
 }
 
+.github-day--loading {
+  opacity: 0.46;
+}
+
 .github-activity-footline {
   display: flex;
   align-items: center;
