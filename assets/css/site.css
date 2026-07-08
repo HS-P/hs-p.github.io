@@ -7106,3 +7106,28 @@ img {
     width: min(100% - 28px, 760px);
   }
 }
+
+/* Keep hamburger hover responsive, but let the color/dim animation breathe. */
+.bubble-nav.is-open .bubble-links:hover .bubble-link,
+.bubble-nav.is-open .bubble-links:hover .bubble-link:nth-child(2),
+.bubble-nav.is-open .bubble-links:hover .bubble-link:nth-child(3),
+.bubble-nav.is-open .bubble-links:hover .bubble-link:nth-child(4),
+.bubble-nav.is-open .bubble-links .bubble-link:hover,
+.bubble-nav.is-open .bubble-links .bubble-link:nth-child(2):hover,
+.bubble-nav.is-open .bubble-links .bubble-link:nth-child(3):hover,
+.bubble-nav.is-open .bubble-links .bubble-link:nth-child(4):hover,
+.bubble-nav.is-open .bubble-links .bubble-link:focus-visible,
+.bubble-nav.is-open .bubble-links .bubble-link:nth-child(2):focus-visible,
+.bubble-nav.is-open .bubble-links .bubble-link:nth-child(3):focus-visible,
+.bubble-nav.is-open .bubble-links .bubble-link:nth-child(4):focus-visible {
+  transition:
+    color 340ms ease,
+    filter 360ms ease,
+    opacity 340ms ease,
+    transform 380ms cubic-bezier(0.16, 0.98, 0.2, 1);
+}
+
+.top-tabs a {
+  margin: -10px -12px;
+  padding: 24px 36px;
+}
