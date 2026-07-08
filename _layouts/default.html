@@ -19,7 +19,7 @@
   </head>
   <body class="{% if page.url == '/' %}home-page{% else %}sub-page{% endif %}">
     {% include site-header.html %}
-    <main class="page-shell{% if page.url == '/projects/' %} page-shell--wide{% endif %}">
+    <main class="page-shell{% if page.url == '/projects/' or page.layout == 'project-detail' %} page-shell--wide{% endif %}">
       {{ content }}
     </main>
     {% include orb-nav.html %}

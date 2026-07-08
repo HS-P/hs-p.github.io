@@ -14,35 +14,37 @@ description: Selected research and engineering projects.
       Choose a year or switch to topics; matching projects open as a focused list.
     </p>
 
-    <button class="project-mode-toggle" type="button" data-project-toggle aria-pressed="true">
+    <button class="project-mode-toggle" type="button" data-project-toggle aria-pressed="false">
       <span>Timeline</span>
       <i aria-hidden="true"></i>
       <span>Topic</span>
     </button>
 
-    <nav class="year-timeline" aria-label="Project timeline">
-      <span class="year-timeline-line" aria-hidden="true"></span>
-      <button type="button" data-project-year="2026" data-project-year-label="2026">
-        <span>2026</span>
-      </button>
-      <button type="button" data-project-year="2025" data-project-year-label="2025">
-        <span>2025</span>
-      </button>
-      <button type="button" data-project-year="2024" data-project-year-label="2024">
-        <span>2024</span>
-      </button>
-      <button type="button" data-project-year="before" data-project-year-label="Before">
-        <span>Before</span>
-      </button>
-    </nav>
+    <div class="project-axis-stage">
+      <nav class="year-timeline" aria-label="Project timeline">
+        <span class="year-timeline-line" aria-hidden="true"></span>
+        <button type="button" data-project-year="2026" data-project-year-label="2026">
+          <span>2026</span>
+        </button>
+        <button type="button" data-project-year="2025" data-project-year-label="2025">
+          <span>2025</span>
+        </button>
+        <button type="button" data-project-year="2024" data-project-year-label="2024">
+          <span>2024</span>
+        </button>
+        <button type="button" data-project-year="before" data-project-year-label="Before">
+          <span>Before</span>
+        </button>
+      </nav>
 
-    <div class="project-topic-panel" aria-label="Project topics" data-project-topics>
-      <button type="button" data-project-topic="physical ai">Physical AI</button>
-      <button type="button" data-project-topic="allex">ALLEX</button>
-      <button type="button" data-project-topic="teleoperation">Teleoperation</button>
-      <button type="button" data-project-topic="robot learning">Robot Learning</button>
-      <button type="button" data-project-topic="sim-to-real">Sim-to-Real</button>
-      <button type="button" data-project-topic="robotics">Robotics</button>
+      <div class="project-topic-panel" aria-label="Project topics" data-project-topics>
+        <button type="button" data-project-topic="physical ai">Physical AI</button>
+        <button type="button" data-project-topic="allex">ALLEX</button>
+        <button type="button" data-project-topic="teleoperation">Teleoperation</button>
+        <button type="button" data-project-topic="robot learning">Robot Learning</button>
+        <button type="button" data-project-topic="sim-to-real">Sim-to-Real</button>
+        <button type="button" data-project-topic="robotics">Robotics</button>
+      </div>
     </div>
   </div>
 
@@ -63,6 +65,7 @@ description: Selected research and engineering projects.
           {% assign undergraduate_anchor_done = true %}
         {% endif %}
         {% assign project_topics = project.tags | join: ',' | downcase %}
+        {% capture project_url %}/projects/{{ project.id }}/{% endcapture %}
         <article class="project-node is-selected"
           id="{{ project.id }}"
           data-project-card
@@ -85,16 +88,10 @@ description: Selected research and engineering projects.
               <span>{{ tag }}</span>
             {% endfor %}
           </div>
-          {% if project.details %}
-            <details class="project-node-details">
-              <summary>Details</summary>
-              <ul>
-                {% for detail in project.details %}
-                  <li>{{ detail }}</li>
-                {% endfor %}
-              </ul>
-            </details>
-          {% endif %}
+          <a class="project-node-link" href="{{ project_url | relative_url }}">
+            Open Project
+            <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
+          </a>
         </article>
       {% endfor %}
       </div>

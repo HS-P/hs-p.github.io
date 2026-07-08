@@ -252,6 +252,22 @@
       card.addEventListener("animationend", () => {
         card.classList.remove("is-landing");
       });
+      card.addEventListener("mouseenter", () => {
+        projectBoard.classList.add("is-card-hover");
+        card.classList.add("is-hovered");
+      });
+      card.addEventListener("mouseleave", () => {
+        projectBoard.classList.remove("is-card-hover");
+        card.classList.remove("is-hovered");
+      });
+      card.addEventListener("focusin", () => {
+        projectBoard.classList.add("is-card-hover");
+        card.classList.add("is-hovered");
+      });
+      card.addEventListener("focusout", () => {
+        projectBoard.classList.remove("is-card-hover");
+        card.classList.remove("is-hovered");
+      });
     });
 
     sortCards();

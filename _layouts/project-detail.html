@@ -1,0 +1,79 @@
+---
+layout: default
+---
+
+{% assign project = site.data.projects | where: "id", page.project_id | first %}
+
+{% if project %}
+<article class="project-detail-page">
+  <a class="project-back-button project-detail-back" href="{{ '/projects/' | relative_url }}">
+    <i class="fa-solid fa-arrow-left" aria-hidden="true"></i>
+    Projects
+  </a>
+
+  <header class="project-detail-hero{% unless project.image %} project-detail-hero--text{% endunless %}">
+    <div class="project-detail-copy">
+      <p class="eyebrow">{{ project.stage }} / {{ project.status }} / {{ project.year_group }}</p>
+      <h1>{{ project.short_title | default: project.title }}</h1>
+      <p class="project-detail-fulltitle">{{ project.title }}</p>
+      <p class="project-detail-summary">{{ project.summary }}</p>
+      <div class="tag-row">
+        {% for tag in project.tags %}
+          <span>{{ tag }}</span>
+        {% endfor %}
+      </div>
+    </div>
+
+    {% if project.image %}
+      <figure class="project-detail-media">
+        <img src="{{ project.image | relative_url }}" alt="{{ project.title }} project image">
+      </figure>
+    {% endif %}
+  </header>
+
+  <div class="project-detail-grid">
+    <section class="project-detail-section">
+      <h2>Project Notes</h2>
+      {% if project.details %}
+        <ul class="project-detail-list">
+          {% for detail in project.details %}
+            <li>{{ detail }}</li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+      {% if project.public_note %}
+        <p class="project-detail-note">{{ project.public_note }}</p>
+      {% endif %}
+      {{ content }}
+    </section>
+
+    <aside class="project-detail-meta">
+      <dl>
+        <div>
+          <dt>Track</dt>
+          <dd>{{ project.track }}</dd>
+        </div>
+        <div>
+          <dt>Stage</dt>
+          <dd>{{ project.stage }}</dd>
+        </div>
+        <div>
+          <dt>Year</dt>
+          <dd>{{ project.year_group }}</dd>
+        </div>
+        <div>
+          <dt>Status</dt>
+          <dd>{{ project.status }}</dd>
+        </div>
+      </dl>
+    </aside>
+  </div>
+</article>
+{% else %}
+<article class="prose-page">
+  <header class="page-title">
+    <h1>Project Not Found</h1>
+    <p>The project id for this page does not match an entry in <code>_data/projects.yml</code>.</p>
+  </header>
+</article>
+{% endif %}
