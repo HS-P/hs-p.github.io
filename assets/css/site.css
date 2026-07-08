@@ -4291,6 +4291,9 @@ img {
 .project-node-link {
   display: inline-flex;
   justify-self: start;
+  align-self: flex-start;
+  width: fit-content;
+  max-width: 100%;
   align-items: center;
   gap: 8px;
   min-height: 36px;
