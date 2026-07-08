@@ -36,12 +36,21 @@ description: Personal academic homepage of Hansol Park.
         <a href="{{ '/cv/' | relative_url }}"><i class="fa-solid fa-file-lines"></i>CV</a>
       </div>
     </div>
-    <div class="github-activity-panel">
+    <div class="github-activity-panel" data-github-activity data-github-user="HS-P">
       <div class="github-activity-topline">
-        <span>GitHub Activity</span>
+        <span data-github-activity-status>Public GitHub Activity</span>
         <a href="{{ profile.github }}" target="_blank" rel="noopener">@HS-P</a>
       </div>
-      <img src="https://ghchart.rshah.org/33c442/HS-P" alt="Hansol Park GitHub contribution chart">
+      <div class="github-activity-chart" data-github-activity-chart aria-label="Public GitHub contribution chart"></div>
+      <div class="github-activity-footline">
+        <span>Synced from public GitHub contribution data</span>
+        <span class="github-activity-scale" aria-hidden="true">
+          <i></i><i></i><i></i><i></i><i></i>
+        </span>
+      </div>
+      <noscript>
+        <img src="https://ghchart.rshah.org/33c442/HS-P" alt="Hansol Park GitHub contribution chart">
+      </noscript>
     </div>
   </div>
 </section>

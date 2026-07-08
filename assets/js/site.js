@@ -89,6 +89,72 @@
     });
   }
 
+  const githubActivity = document.querySelector("[data-github-activity]");
+  if (githubActivity) {
+    const user = githubActivity.dataset.githubUser || "HS-P";
+    const status = githubActivity.querySelector("[data-github-activity-status]");
+    const chart = githubActivity.querySelector("[data-github-activity-chart]");
+
+    function dateKey(date) {
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, "0");
+      const day = String(date.getDate()).padStart(2, "0");
+      return `${year}-${month}-${day}`;
+    }
+
+    function addDays(date, count) {
+      const next = new Date(date);
+      next.setDate(next.getDate() + count);
+      return next;
+    }
+
+    function renderGithubActivity(payload) {
+      if (!chart) return;
+
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      const start = addDays(today, -364);
+      const gridStart = addDays(start, -start.getDay());
+      const gridEnd = addDays(today, 6 - today.getDay());
+      const byDate = new Map(
+        (payload.contributions || []).map((day) => [day.date, day])
+      );
+
+      let total = 0;
+      const fragment = document.createDocumentFragment();
+      for (let cursor = new Date(gridStart); cursor <= gridEnd; cursor = addDays(cursor, 1)) {
+        const key = dateKey(cursor);
+        const item = byDate.get(key) || { count: 0, level: 0 };
+        const inRange = cursor >= start && cursor <= today;
+        if (inRange) total += Number(item.count || 0);
+
+        const cell = document.createElement("span");
+        cell.className = `github-day github-day--level-${item.level || 0}`;
+        if (!inRange) cell.classList.add("github-day--outside");
+        cell.title = `${key}: ${inRange ? item.count || 0 : 0} public contributions`;
+        cell.setAttribute("aria-label", cell.title);
+        fragment.appendChild(cell);
+      }
+
+      chart.replaceChildren(fragment);
+      githubActivity.classList.add("is-loaded");
+      if (status) {
+        status.textContent = `${total} public contributions in the last year`;
+      }
+    }
+
+    fetch(`https://github-contributions-api.jogruber.de/v4/${encodeURIComponent(user)}`)
+      .then((response) => {
+        if (!response.ok) throw new Error("GitHub activity unavailable");
+        return response.json();
+      })
+      .then(renderGithubActivity)
+      .catch(() => {
+        githubActivity.classList.add("is-unavailable");
+        if (status) status.textContent = "Public GitHub activity unavailable";
+      });
+  }
+
   const projectBoard = document.querySelector("[data-project-board]");
   const projectCards = Array.from(document.querySelectorAll("[data-project-card]"));
   const yearButtons = Array.from(document.querySelectorAll("[data-project-year]"));
@@ -102,6 +168,7 @@
 
   if (projectBoard && projectCards.length && yearButtons.length && projectIntro && projectYearView && projectYearTitle) {
     let closeTimer;
+    let hoverUnlockTimer;
     const state = {
       mode: "timeline",
       kind: "",
@@ -162,6 +229,11 @@
       return visibleCount;
     }
 
+    function clearCardHover() {
+      projectBoard.classList.remove("is-card-hover");
+      projectCards.forEach((card) => card.classList.remove("is-hovered"));
+    }
+
     function setActive(kind, value) {
       yearButtons.forEach((button) => {
         const active = kind === "year" && button.dataset.projectYear === value;
@@ -195,19 +267,24 @@
 
     function openFocus(kind, value, label, sourceButton) {
       window.clearTimeout(closeTimer);
-      setCards(kind, value);
+      window.clearTimeout(hoverUnlockTimer);
+      clearCardHover();
+      const visibleCount = setCards(kind, value);
       projectYearTitle.textContent = label;
       projectYearView.hidden = false;
       state.kind = kind;
       state.value = value;
       projectBoard.dataset.projectFocus = value;
       projectBoard.dataset.projectKind = kind;
-      projectBoard.classList.add("is-year-open");
+      projectBoard.classList.add("is-year-open", "is-hover-locked");
       setActive(kind, value);
       pulseButton(sourceButton);
       window.requestAnimationFrame(() => {
         projectBoard.classList.add("is-year-settled");
       });
+      hoverUnlockTimer = window.setTimeout(() => {
+        projectBoard.classList.remove("is-hover-locked");
+      }, Math.min(2200, 980 + visibleCount * 220));
     }
 
     function openTopic(topic, label, sourceButton) {
@@ -217,7 +294,10 @@
     }
 
     function closeYear() {
+      window.clearTimeout(hoverUnlockTimer);
+      clearCardHover();
       projectBoard.classList.remove("is-year-settled", "is-year-open");
+      projectBoard.classList.remove("is-hover-locked");
       projectBoard.removeAttribute("data-project-focus");
       projectBoard.removeAttribute("data-project-kind");
       state.kind = "";
@@ -288,6 +368,7 @@
         if (projectUrl) window.location.href = projectUrl;
       });
       card.addEventListener("mouseenter", () => {
+        if (projectBoard.classList.contains("is-hover-locked")) return;
         projectBoard.classList.add("is-card-hover");
         card.classList.add("is-hovered");
       });
@@ -296,6 +377,7 @@
         card.classList.remove("is-hovered");
       });
       card.addEventListener("focusin", () => {
+        if (projectBoard.classList.contains("is-hover-locked")) return;
         projectBoard.classList.add("is-card-hover");
         card.classList.add("is-hovered");
       });
