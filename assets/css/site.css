@@ -7054,3 +7054,55 @@ img {
     padding-top: 72px;
   }
 }
+
+/* Final small layout polish: unframed profile, larger scroll cue, roomier activity grid. */
+.home-page .page-shell {
+  width: min(1320px, calc(100% - 54px));
+}
+
+.home-page .hero-profile-panel {
+  border-color: transparent;
+  background: transparent;
+  box-shadow: none;
+  backdrop-filter: none;
+}
+
+.github-activity-panel {
+  background: rgba(255, 255, 255, 0.085);
+}
+
+.scroll-cue {
+  width: 92px;
+  height: 114px;
+}
+
+.scroll-cue span {
+  width: 48px;
+  height: 48px;
+  border-right-width: 4px;
+  border-bottom-width: 4px;
+}
+
+.video-board {
+  width: min(1040px, 100%);
+  gap: 20px;
+}
+
+.video-copy {
+  padding: 13px 14px 15px;
+}
+
+.video-copy h3 {
+  font-size: 1rem;
+}
+
+.video-copy p {
+  font-size: 0.83rem;
+  line-height: 1.34;
+}
+
+@media (max-width: 980px) {
+  .home-page .page-shell {
+    width: min(100% - 28px, 760px);
+  }
+}
