@@ -157,17 +157,51 @@
       });
   }
 
+  const homeHero = document.querySelector(".home-page .hero");
   const homeActivities = document.querySelector("[data-home-activities]");
+  const scrollCue = document.querySelector(".scroll-cue");
   if (homeActivities) {
     let isSnapping = false;
+    function atActivities() {
+      return window.scrollY > window.innerHeight * 0.45;
+    }
+    function syncScrollCue() {
+      if (!scrollCue) return;
+      const up = atActivities();
+      scrollCue.classList.toggle("is-up", up);
+      scrollCue.setAttribute("href", up ? "#about" : "#activities");
+      scrollCue.setAttribute("aria-label", up ? "Scroll to top" : "Scroll to activities");
+    }
+
+    syncScrollCue();
+    window.addEventListener("scroll", syncScrollCue, { passive: true });
+    if (scrollCue) {
+      scrollCue.addEventListener("click", (event) => {
+        event.preventDefault();
+        const target = atActivities() ? homeHero : homeActivities;
+        if (target) target.scrollIntoView({ behavior: "smooth", block: "start" });
+      });
+    }
+
     window.addEventListener("wheel", (event) => {
-      if (isSnapping || event.deltaY <= 8 || window.scrollY > 90) return;
-      event.preventDefault();
-      isSnapping = true;
-      homeActivities.scrollIntoView({ behavior: "smooth", block: "start" });
-      window.setTimeout(() => {
-        isSnapping = false;
-      }, 1400);
+      if (isSnapping) return;
+      if (event.deltaY > 8 && window.scrollY <= 90) {
+        event.preventDefault();
+        isSnapping = true;
+        homeActivities.scrollIntoView({ behavior: "smooth", block: "start" });
+        window.setTimeout(() => {
+          isSnapping = false;
+        }, 1400);
+        return;
+      }
+      if (event.deltaY < -8 && atActivities() && homeHero) {
+        event.preventDefault();
+        isSnapping = true;
+        homeHero.scrollIntoView({ behavior: "smooth", block: "start" });
+        window.setTimeout(() => {
+          isSnapping = false;
+        }, 1400);
+      }
     }, { passive: false });
   }
 
