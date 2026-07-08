@@ -93,75 +93,119 @@
   const projectCards = Array.from(document.querySelectorAll("[data-project-card]"));
   const topicButtons = Array.from(document.querySelectorAll("[data-project-topic]"));
   const yearButtons = Array.from(document.querySelectorAll("[data-project-year]"));
+  const projectResults = document.querySelector("[data-project-results]");
+  const projectEmpty = document.querySelector("[data-project-empty]");
+  const projectFocusKind = document.querySelector("[data-project-focus-kind]");
+  const projectFocusTitle = document.querySelector("[data-project-focus-title]");
 
   if (projectBoard && projectCards.length && topicButtons.length && yearButtons.length) {
     const state = {
-      topic: "all",
-      year: "all",
+      kind: "idle",
+      value: "",
+      label: "Select",
     };
 
-    function topicMatches(card, topic) {
-      if (topic === "all") return true;
-      return (card.dataset.topics || "").includes(topic);
+    const topicLabels = new Map(
+      topicButtons.map((button) => [button.dataset.projectTopic, button.textContent.trim()])
+    );
+
+    function sortCards() {
+      if (!projectResults) return;
+      projectCards
+        .slice()
+        .sort((a, b) => {
+          const yearDiff = Number(b.dataset.year || 0) - Number(a.dataset.year || 0);
+          if (yearDiff) return yearDiff;
+          return Number(a.dataset.importance || 999) - Number(b.dataset.importance || 999);
+        })
+        .forEach((card) => projectResults.appendChild(card));
     }
 
-    function yearMatches(card, year) {
-      if (year === "all") return true;
-      if (year === "current") return card.dataset.status === "current";
-      return card.dataset.year === year;
+    function cardMatches(card) {
+      if (state.kind === "year") return card.dataset.year === state.value;
+      if (state.kind === "topic") return (card.dataset.topics || "").includes(state.value);
+      return false;
     }
 
-    function cardMatches(card, nextState = state) {
-      return topicMatches(card, nextState.topic) && yearMatches(card, nextState.year);
+    function hasMatch(kind, value) {
+      return projectCards.some((card) => {
+        if (kind === "year") return card.dataset.year === value;
+        return (card.dataset.topics || "").includes(value);
+      });
     }
 
-    function hasMatch(nextState) {
-      return projectCards.some((card) => cardMatches(card, nextState));
+    function setFocus(kind, value, label) {
+      state.kind = kind;
+      state.value = value;
+      state.label = label;
+      updateFilter();
     }
 
     function updateFilter() {
-      const isFiltered = state.topic !== "all" || state.year !== "all";
-      projectBoard.classList.toggle("is-filtered", isFiltered);
+      const isFocused = state.kind !== "idle";
+      projectBoard.classList.toggle("is-idle", !isFocused);
+      projectBoard.classList.toggle("is-filtered", isFocused);
+      projectBoard.classList.toggle("is-year-mode", state.kind === "year");
+      projectBoard.classList.toggle("is-topic-mode", state.kind === "topic");
+      projectBoard.dataset.projectMode = state.kind;
+
+      if (projectFocusKind) {
+        projectFocusKind.textContent = isFocused ? (state.kind === "year" ? "Year" : "Topic") : "Choose axis";
+      }
+      if (projectFocusTitle) {
+        projectFocusTitle.textContent = state.label;
+      }
+      if (projectEmpty) {
+        projectEmpty.hidden = isFocused;
+      }
 
       projectCards.forEach((card) => {
         const matches = cardMatches(card);
+        card.hidden = !matches;
         card.classList.toggle("is-selected", matches);
         card.classList.toggle("is-muted", !matches);
       });
 
       topicButtons.forEach((button) => {
         const topic = button.dataset.projectTopic;
-        const active = topic === state.topic;
-        const available = hasMatch({ topic, year: state.year });
+        const active = state.kind === "topic" && topic === state.value;
+        const available = hasMatch("topic", topic);
         button.classList.toggle("is-active", active);
-        button.classList.toggle("is-available", !active && available && state.year !== "all");
+        button.classList.toggle("is-available", !active && available && state.kind === "year");
         button.classList.toggle("is-unavailable", !active && !available);
       });
 
       yearButtons.forEach((button) => {
         const year = button.dataset.projectYear;
-        const active = year === state.year;
-        const available = hasMatch({ topic: state.topic, year });
+        const active = state.kind === "year" && year === state.value;
+        const available = hasMatch("year", year);
         button.classList.toggle("is-active", active);
-        button.classList.toggle("is-available", !active && available && state.topic !== "all");
+        button.classList.toggle("is-available", !active && available && state.kind === "topic");
         button.classList.toggle("is-unavailable", !active && !available);
       });
     }
 
     topicButtons.forEach((button) => {
       button.addEventListener("click", () => {
-        state.topic = button.dataset.projectTopic || "all";
-        updateFilter();
+        const topic = button.dataset.projectTopic || "";
+        setFocus("topic", topic, topicLabels.get(topic) || button.textContent.trim());
       });
     });
 
     yearButtons.forEach((button) => {
       button.addEventListener("click", () => {
-        state.year = button.dataset.projectYear || "all";
-        updateFilter();
+        const year = button.dataset.projectYear || "";
+        setFocus("year", year, year);
       });
     });
 
+    sortCards();
+    const hashCard = window.location.hash ? document.querySelector(window.location.hash) : null;
+    if (hashCard && hashCard.matches("[data-project-card]")) {
+      state.kind = "year";
+      state.value = hashCard.dataset.year || "";
+      state.label = state.value || "Projects";
+    }
     updateFilter();
   }
 })();

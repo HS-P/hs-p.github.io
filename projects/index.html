@@ -6,40 +6,48 @@ description: Selected research and engineering projects.
 
 {% assign projects = site.data.projects | sort: "importance" %}
 
-<section class="project-workspace" id="graduate" data-project-board>
-  <header class="project-control-panel">
-    <div class="project-control-copy">
+<section class="project-workspace project-explorer" id="graduate" data-project-board>
+  <header class="project-stage">
+    <div class="project-stage-title">
       <p class="eyebrow">Project index</p>
       <h1>Projects</h1>
-      <p>
-        Current work comes first: ALLEX software, teleoperation/data loops, and robot-learning deployment. Earlier undergraduate projects stay visible as the engineering foundation behind that trajectory.
-      </p>
     </div>
-    <div class="project-axis-panel">
-      <nav class="project-year-rail" aria-label="Project timeline shortcuts">
-        <button class="is-active" type="button" data-project-year="all"><i class="fa-solid fa-layer-group" aria-hidden="true"></i>All</button>
-        <button type="button" data-project-year="current"><i class="fa-solid fa-bolt" aria-hidden="true"></i>Current</button>
-        <button type="button" data-project-year="2026"><i class="fa-solid fa-clock" aria-hidden="true"></i>2026</button>
-        <button type="button" data-project-year="2025"><i class="fa-solid fa-clock-rotate-left" aria-hidden="true"></i>2025</button>
-        <button type="button" data-project-year="2024"><i class="fa-solid fa-history" aria-hidden="true"></i>2024</button>
-      </nav>
-      <div class="project-topic-strip" aria-label="Project topic filters">
-        <button class="is-active" type="button" data-project-topic="all">All</button>
-        <button type="button" data-project-topic="allex">ALLEX</button>
-        <button type="button" data-project-topic="teleoperation">Teleoperation</button>
-        <button type="button" data-project-topic="robot learning">Robot Learning</button>
-        <button type="button" data-project-topic="sim-to-real">Sim-to-Real</button>
-        <button type="button" data-project-topic="robotics">Robotics</button>
-      </div>
-    </div>
+    <p class="project-stage-copy">
+      Select a year or topic first. The selected axis expands on the left, then matching project blocks land on the right in newest-first order.
+    </p>
   </header>
 
-  <div class="project-projects">
-    <div class="section-heading project-board-heading">
-      <p>Filtered work map</p>
-      <h2>Topic and timeline aware project blocks</h2>
-    </div>
-    <div class="project-node-grid">
+  <div class="project-topic-deck" aria-label="Project topic filters">
+    <button type="button" data-project-topic="physical ai">Physical AI</button>
+    <button type="button" data-project-topic="allex">ALLEX</button>
+    <button type="button" data-project-topic="teleoperation">Teleoperation</button>
+    <button type="button" data-project-topic="robot learning">Robot Learning</button>
+    <button type="button" data-project-topic="sim-to-real">Sim-to-Real</button>
+    <button type="button" data-project-topic="robotics">Robotics</button>
+  </div>
+
+  <nav class="project-timeline" aria-label="Project timeline filters">
+    <span class="project-timeline-line" aria-hidden="true"></span>
+    <button type="button" data-project-year="2026"><span>2026</span></button>
+    <button type="button" data-project-year="2025"><span>2025</span></button>
+    <button type="button" data-project-year="2024"><span>2024</span></button>
+  </nav>
+
+  <div class="project-focus-layout">
+    <aside class="project-focus-panel" aria-live="polite">
+      <p data-project-focus-kind>Choose axis</p>
+      <h2 data-project-focus-title>Select</h2>
+      <p>
+        Years and topics stay as the map. Pick one, and only the related work opens into the project lane.
+      </p>
+    </aside>
+
+    <div class="project-projects">
+      <div class="project-empty-state" data-project-empty>
+        <span></span>
+        <p>Choose a year or topic to open the project lane.</p>
+      </div>
+      <div class="project-node-grid" data-project-results>
       {% assign undergraduate_anchor_done = false %}
       {% for project in projects %}
         {% if project.stage == "Undergraduate" and undergraduate_anchor_done == false %}
@@ -50,10 +58,12 @@ description: Selected research and engineering projects.
         <article class="project-node is-selected"
           id="{{ project.id }}"
           data-project-card
+          data-importance="{{ project.importance }}"
           data-stage="{{ project.stage | downcase }}"
           data-status="{{ project.status | downcase }}"
           data-year="{{ project.year_group }}"
-          data-topics="{{ project_topics }}">
+          data-topics="{{ project_topics }}"
+          hidden>
           <div class="project-node-topline">
             <span>0{{ forloop.index }}</span>
             <em>{{ project.year_group }}</em>
@@ -78,6 +88,7 @@ description: Selected research and engineering projects.
           {% endif %}
         </article>
       {% endfor %}
+      </div>
     </div>
   </div>
 </section>
