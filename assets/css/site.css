@@ -119,11 +119,11 @@ img {
 
 .bubble-nav {
   position: fixed;
-  top: 62px;
-  right: 300px;
+  top: 88px;
+  right: clamp(500px, 34vw, 720px);
   z-index: 18;
   display: grid;
-  gap: 4px;
+  gap: 0;
   pointer-events: none;
 }
 
@@ -172,6 +172,7 @@ img {
   width: 240px;
   height: 264px;
   border-radius: 46% 54% 45% 55% / 54% 42% 58% 46%;
+  margin-top: -34px;
   margin-left: 68px;
   animation-delay: 2260ms, 3260ms;
 }
@@ -186,6 +187,7 @@ img {
   width: 296px;
   height: 248px;
   border-radius: 58% 42% 50% 50% / 42% 54% 46% 58%;
+  margin-top: -46px;
   margin-left: -18px;
   animation-delay: 2420ms, 3420ms;
 }
@@ -200,6 +202,7 @@ img {
   width: 208px;
   height: 208px;
   border-radius: 50% 50% 45% 55% / 48% 55% 45% 52%;
+  margin-top: -44px;
   margin-left: 104px;
   animation-delay: 2580ms, 3580ms;
 }
@@ -374,11 +377,10 @@ img {
   height: 100%;
   object-fit: contain;
   object-position: left bottom;
-  opacity: 0.15;
-  filter: grayscale(0.2) contrast(1.02) drop-shadow(0 28px 56px rgba(16, 21, 34, 0.1));
-  mix-blend-mode: multiply;
+  opacity: 0.2;
+  filter: grayscale(0.14) contrast(1.06) drop-shadow(0 28px 56px rgba(16, 21, 34, 0.1));
   transform: scaleX(-1) scale(1.1);
-  transform-origin: left bottom;
+  transform-origin: center bottom;
 }
 
 .hero-visual {
