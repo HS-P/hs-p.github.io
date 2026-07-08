@@ -1,7 +1,7 @@
 name: Hansol Park
 korean_name: 박한솔
-role: M.S. Student · WIRobotics IRIM Laboratory
-headline: Physical AI & Dexterous Manipulation
+role: AI Robotics Engineer
+headline: TELEOPERATION / VLA / ACT
 affiliation: Korea University of Technology and Education (KOREATECH)
 advisor: Prof. Yong-Jae Kim
 location: Cheonan, South Korea
@@ -12,10 +12,10 @@ blog: /blog/
 image: /assets/img/profile/hansol-park.jpg
 hero_image: /assets/img/allex/hero-allex.png
 keywords:
-  - Dexterous Manipulation
-  - Robot Learning
-  - Sim-to-Real
-  - Robot Software Systems
+  - VLA
+  - ACT
+  - RL
+  - ALLEX
 intro: >-
   I build robot software systems for dexterous manipulation, with a focus on
   physical AI, robot learning, sim-to-real workflows, and deployable

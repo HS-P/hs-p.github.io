@@ -1,0 +1,40 @@
+---
+layout: page
+title: Experience
+description: Awards, milestones, and robotics research experience.
+---
+
+<section class="cv-block experience-awards">
+  <h2>Awards & Milestones</h2>
+  <div class="award-grid">
+    {% for award in site.data.awards %}
+      <article class="award-card">
+        <span>{{ award.year }}</span>
+        <h3>{{ award.title }}</h3>
+        <p class="venue">{{ award.organization }}</p>
+        <p>{{ award.summary }}</p>
+      </article>
+    {% endfor %}
+  </div>
+</section>
+
+<section class="cv-block">
+  <h2>Experience Timeline</h2>
+  <div class="timeline compact-timeline">
+    {% for item in site.data.experience %}
+      <article class="timeline-item">
+        <div class="timeline-date">{{ item.period }}</div>
+        <div class="timeline-body">
+          <h3>{{ item.role }}</h3>
+          <p class="venue">{{ item.organization }} · {{ item.location }}</p>
+          <p>{{ item.summary }}</p>
+          <ul>
+            {% for highlight in item.highlights %}
+              <li>{{ highlight }}</li>
+            {% endfor %}
+          </ul>
+        </div>
+      </article>
+    {% endfor %}
+  </div>
+</section>

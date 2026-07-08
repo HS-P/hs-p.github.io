@@ -1,0 +1,52 @@
+---
+layout: page
+title: Research
+description: ALLEX, teleoperation, VLA, ACT, and robot learning research directions.
+---
+
+{% assign profile = site.data.profile %}
+{% assign papers = site.data.papers %}
+
+<section class="cv-block research-page-block">
+  <h2>Research Direction</h2>
+  <div class="work-map">
+    {% for item in profile.focus %}
+      <article class="work-map-item">
+        <h3>{{ item.title }}</h3>
+        <p>{{ item.summary }}</p>
+      </article>
+    {% endfor %}
+  </div>
+</section>
+
+<section class="cv-block research-page-block">
+  <h2>Research Topics</h2>
+  <div class="keyword-row">
+    <span>VLA</span>
+    <span>ACT</span>
+    <span>RL</span>
+    <span>ALLEX</span>
+    <span>Teleoperation</span>
+    <span>Sim-to-Real</span>
+  </div>
+</section>
+
+<section class="cv-block research-page-block">
+  <h2>Papers & Manuscripts</h2>
+  <div class="paper-list">
+    {% for paper in papers %}
+      <article class="paper-item">
+        <div class="paper-year">{{ paper.year }}</div>
+        <div class="paper-body">
+          <div class="paper-topline">
+            <h3>{{ paper.title }}</h3>
+            <span class="status-badge">{{ paper.status }}</span>
+          </div>
+          <p class="authors">{{ paper.authors }}</p>
+          <p class="venue">{{ paper.venue }}</p>
+          <p>{{ paper.summary }}</p>
+        </div>
+      </article>
+    {% endfor %}
+  </div>
+</section>

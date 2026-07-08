@@ -92,6 +92,7 @@
   const githubActivity = document.querySelector("[data-github-activity]");
   if (githubActivity) {
     const user = githubActivity.dataset.githubUser || "HS-P";
+    const rangeYear = Number(githubActivity.dataset.githubRange) || new Date().getFullYear();
     const status = githubActivity.querySelector("[data-github-activity-status]");
     const chart = githubActivity.querySelector("[data-github-activity-chart]");
 
@@ -113,9 +114,10 @@
 
       const today = new Date();
       today.setHours(0, 0, 0, 0);
-      const start = addDays(today, -364);
+      const start = new Date(rangeYear, 0, 1);
+      const end = today.getFullYear() === rangeYear ? today : new Date(rangeYear, 11, 31);
       const gridStart = addDays(start, -start.getDay());
-      const gridEnd = addDays(today, 6 - today.getDay());
+      const gridEnd = addDays(end, 6 - end.getDay());
       const byDate = new Map(
         (payload.contributions || []).map((day) => [day.date, day])
       );
@@ -125,7 +127,7 @@
       for (let cursor = new Date(gridStart); cursor <= gridEnd; cursor = addDays(cursor, 1)) {
         const key = dateKey(cursor);
         const item = byDate.get(key) || { count: 0, level: 0 };
-        const inRange = cursor >= start && cursor <= today;
+        const inRange = cursor >= start && cursor <= end;
         if (inRange) total += Number(item.count || 0);
 
         const cell = document.createElement("span");
@@ -139,7 +141,7 @@
       chart.replaceChildren(fragment);
       githubActivity.classList.add("is-loaded");
       if (status) {
-        status.textContent = `${total} public contributions in the last year`;
+        status.textContent = `${total} public contributions in ${rangeYear}`;
       }
     }
 
@@ -153,6 +155,20 @@
         githubActivity.classList.add("is-unavailable");
         if (status) status.textContent = "Public GitHub activity unavailable";
       });
+  }
+
+  const homeActivities = document.querySelector("[data-home-activities]");
+  if (homeActivities) {
+    let isSnapping = false;
+    window.addEventListener("wheel", (event) => {
+      if (isSnapping || event.deltaY <= 8 || window.scrollY > 90) return;
+      event.preventDefault();
+      isSnapping = true;
+      homeActivities.scrollIntoView({ behavior: "smooth", block: "start" });
+      window.setTimeout(() => {
+        isSnapping = false;
+      }, 1400);
+    }, { passive: false });
   }
 
   const projectBoard = document.querySelector("[data-project-board]");

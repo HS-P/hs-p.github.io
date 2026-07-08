@@ -5,13 +5,7 @@ description: Personal academic homepage of Hansol Park.
 ---
 
 {% assign profile = site.data.profile %}
-{% assign papers = site.data.papers %}
-{% assign projects = site.data.projects | sort: "importance" %}
-{% assign graduate_projects = projects | where: "stage", "Graduate" %}
-{% assign undergraduate_projects = projects | where: "stage", "Undergraduate" %}
-{% assign featured_projects = projects | where: "featured", true %}
-{% assign experience = site.data.experience %}
-{% assign awards = site.data.awards %}
+{% assign videos = site.data.videos %}
 
 <section class="hero" id="about">
   <div class="hero-ghost-allex" aria-hidden="true">
@@ -20,8 +14,11 @@ description: Personal academic homepage of Hansol Park.
   <div class="hero-copy hero-copy--lab hero-profile-panel">
     <img class="hero-avatar" src="{{ profile.image | relative_url }}" alt="{{ profile.name }} profile photo">
     <div class="hero-identity">
-      <h1>{{ profile.name }} <span>{{ profile.korean_name }}</span></h1>
-      <p class="hero-headline">Software for dexterous robot learning.</p>
+      <h1>
+        <span class="hero-name-main">{{ profile.name }}</span>
+        <span class="hero-name-sub">{{ profile.korean_name }}</span>
+      </h1>
+      <p class="hero-role">{{ profile.role }}</p>
       <p class="affiliation">{{ profile.affiliation }}</p>
       <p class="advisor">Advised by {{ profile.advisor }}</p>
       <div class="keyword-row">
@@ -36,162 +33,52 @@ description: Personal academic homepage of Hansol Park.
         <a href="{{ '/cv/' | relative_url }}"><i class="fa-solid fa-file-lines"></i>CV</a>
       </div>
     </div>
-    <div class="github-activity-panel" data-github-activity data-github-user="HS-P">
+    <div class="github-activity-panel" data-github-activity data-github-user="HS-P" data-github-range="2026">
       <div class="github-activity-topline">
-        <span data-github-activity-status>Public GitHub Activity</span>
+        <span data-github-activity-status>2026 Public GitHub Activity</span>
         <a href="{{ profile.github }}" target="_blank" rel="noopener">@HS-P</a>
       </div>
-      <div class="github-activity-chart" data-github-activity-chart aria-label="Public GitHub contribution chart"></div>
+      <div class="github-activity-chart" data-github-activity-chart aria-label="2026 public GitHub contribution chart"></div>
       <div class="github-activity-footline">
-        <span>Synced from public GitHub contribution data</span>
+        <span>Public contributions only; private GitHub activity is not exposed to this site.</span>
         <span class="github-activity-scale" aria-hidden="true">
           <i></i><i></i><i></i><i></i><i></i>
         </span>
       </div>
-      <noscript>
-        <img src="https://ghchart.rshah.org/33c442/HS-P" alt="Hansol Park GitHub contribution chart">
-      </noscript>
     </div>
   </div>
+  <a class="scroll-cue" href="#activities" aria-label="Scroll to activities">
+    <span></span>
+    <span></span>
+    <span></span>
+  </a>
 </section>
 
-<section class="section" id="research">
-  <div class="section-heading wide-heading">
-    <p>Research</p>
-    <h2>Physical AI, robot learning, and dexterous manipulation systems</h2>
-    <p class="section-lead">
-      My current work focuses on robot learning systems that connect perception, teleoperation, control, data, and real-hardware deployment for dexterous manipulation.
-    </p>
+<section class="activities-section" id="activities" data-home-activities>
+  <div class="activities-heading">
+    <p>Activities</p>
+    <h2>Robot learning logs, prototypes, and public demos.</h2>
+    <a href="https://www.youtube.com/@Hansol_Youtube" target="_blank" rel="noopener">
+      YouTube Channel
+      <i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i>
+    </a>
   </div>
-  <div class="work-map">
-    {% for item in profile.focus %}
-      <article class="work-map-item">
-        <h3>{{ item.title }}</h3>
-        <p>{{ item.summary }}</p>
-      </article>
-    {% endfor %}
-  </div>
-</section>
-
-<section class="section" id="graduate-work">
-  <div class="section-heading split-heading">
-    <div>
-      <p>Work</p>
-      <h2>Current Work Index</h2>
-    </div>
-    <a class="text-link" href="{{ '/projects/#graduate' | relative_url }}">View graduate projects</a>
-  </div>
-  <div class="work-index">
-    {% for project in featured_projects limit:3 %}
-      {% capture project_href %}/projects/{{ project.id }}/{% endcapture %}
-      <a class="work-index-row" href="{{ project_href }}">
-        <span class="work-index-no">0{{ forloop.index }}</span>
-        <div>
-          <p>{{ project.track }}</p>
-          <h3>{{ project.title }}</h3>
+  <div class="video-board">
+    {% for video in videos limit:6 %}
+      <article class="video-card">
+        <div class="video-frame">
+          <iframe
+            src="https://www.youtube-nocookie.com/embed/{{ video.video_id }}"
+            title="{{ video.title }}"
+            loading="lazy"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            allowfullscreen></iframe>
         </div>
-        <em>{{ project.summary }}</em>
-        <div class="tag-row">
-          {% for tag in project.tags limit:3 %}
-            <span>{{ tag }}</span>
-          {% endfor %}
+        <div class="video-copy">
+          <span>{{ video.topic }}</span>
+          <h3>{{ video.title }}</h3>
+          <p>{{ video.summary }}</p>
         </div>
-      </a>
-    {% endfor %}
-  </div>
-</section>
-
-<section class="section" id="outputs">
-  <div class="section-heading">
-    <p>Research Outputs</p>
-    <h2>Selected Papers & Manuscripts</h2>
-  </div>
-  <div class="paper-list">
-    {% for paper in papers %}
-      <article class="paper-item">
-        <div class="paper-year">{{ paper.year }}</div>
-        <div class="paper-body">
-          <div class="paper-topline">
-            <h3>{{ paper.title }}</h3>
-            <span class="status-badge">{{ paper.status }}</span>
-          </div>
-          <p class="authors">{{ paper.authors }}</p>
-          <p class="venue">{{ paper.venue }}</p>
-          <p>{{ paper.summary }}</p>
-          {% if paper.links %}
-            <div class="mini-links">
-              {% for link in paper.links %}
-                <a href="{{ link.url }}">{{ link.label }}</a>
-              {% endfor %}
-            </div>
-          {% endif %}
-        </div>
-      </article>
-    {% endfor %}
-  </div>
-  <p class="section-note">
-    Peer-reviewed publication details will be updated as manuscripts are submitted or accepted.
-  </p>
-</section>
-
-<section class="section" id="undergraduate-work">
-  <div class="section-heading split-heading">
-    <div>
-      <p>Undergraduate Work</p>
-      <h2>Earlier Robotics Foundation</h2>
-    </div>
-    <a class="text-link" href="{{ '/projects/#undergraduate' | relative_url }}">View undergraduate projects</a>
-  </div>
-  <div class="compact-work-list">
-    {% for project in undergraduate_projects limit:4 %}
-      {% capture project_href %}/projects/{{ project.id }}/{% endcapture %}
-      <a class="compact-work-row" href="{{ project_href }}">
-        <span>{{ project.track }}</span>
-        <strong>{{ project.title }}</strong>
-        <em>{{ project.summary }}</em>
-      </a>
-    {% endfor %}
-  </div>
-</section>
-
-<section class="section" id="experience">
-  <div class="section-heading">
-    <p>Experience</p>
-    <h2>Research Experience</h2>
-  </div>
-  <div class="timeline">
-    {% for item in experience %}
-      <article class="timeline-item">
-        <div class="timeline-date">{{ item.period }}</div>
-        <div class="timeline-body">
-          <h3>{{ item.role }}</h3>
-          <p class="venue">{{ item.organization }} · {{ item.location }}</p>
-          <p>{{ item.summary }}</p>
-          <ul>
-            {% for highlight in item.highlights %}
-              <li>{{ highlight }}</li>
-            {% endfor %}
-          </ul>
-        </div>
-      </article>
-    {% endfor %}
-  </div>
-</section>
-
-<section class="section" id="recognition">
-  <div class="section-heading split-heading">
-    <div>
-      <p>Recognition</p>
-      <h2>Awards & Milestones</h2>
-    </div>
-  </div>
-  <div class="award-grid">
-    {% for award in awards %}
-      <article class="award-card">
-        <span>{{ award.year }}</span>
-        <h3>{{ award.title }}</h3>
-        <p class="venue">{{ award.organization }}</p>
-        <p>{{ award.summary }}</p>
       </article>
     {% endfor %}
   </div>
