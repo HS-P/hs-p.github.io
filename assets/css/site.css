@@ -4290,6 +4290,7 @@ img {
 
 .project-node-link {
   display: inline-flex;
+  justify-self: start;
   align-items: center;
   gap: 8px;
   min-height: 36px;
