@@ -7031,6 +7031,20 @@ img {
   background: var(--accent-green);
 }
 
+.bubble-nav.is-open .bubble-links .bubble-link:hover,
+.bubble-nav.is-open .bubble-links .bubble-link:nth-child(2):hover,
+.bubble-nav.is-open .bubble-links .bubble-link:nth-child(3):hover,
+.bubble-nav.is-open .bubble-links .bubble-link:nth-child(4):hover,
+.bubble-nav.is-open .bubble-links .bubble-link:focus-visible,
+.bubble-nav.is-open .bubble-links .bubble-link:nth-child(2):focus-visible,
+.bubble-nav.is-open .bubble-links .bubble-link:nth-child(3):focus-visible,
+.bubble-nav.is-open .bubble-links .bubble-link:nth-child(4):focus-visible {
+  opacity: 1;
+  filter: none;
+  color: var(--accent-green);
+  transform: translate3d(-22px, 0, 0) scale(1.18);
+}
+
 @media (max-width: 980px) {
   .home-page .page-shell {
     width: min(100% - 28px, 760px);
