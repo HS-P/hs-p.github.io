@@ -5698,8 +5698,8 @@ img {
 /* Final interaction tuning for the profile card, GitHub activity chart, and project card hover. */
 .home-page .hero-profile-panel {
   justify-self: start;
-  width: min(1220px, calc(100% + 72px));
-  margin-left: clamp(-126px, -7vw, -54px);
+  width: min(1188px, calc(100% + 36px));
+  margin-left: clamp(-62px, -3vw, -28px);
   background: rgba(255, 255, 255, 0.18);
   border-color: rgba(17, 23, 34, 0.075);
   box-shadow:
