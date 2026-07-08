@@ -7057,7 +7057,7 @@ img {
 
 /* Final small layout polish: unframed profile, larger scroll cue, roomier activity grid. */
 .home-page .page-shell {
-  width: min(1320px, calc(100% - 54px));
+  width: min(1370px, calc(100% - 54px));
 }
 
 .home-page .hero-profile-panel {
