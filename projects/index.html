@@ -7,28 +7,32 @@ description: Selected research and engineering projects.
 {% assign projects = site.data.projects | sort: "importance" %}
 
 <section class="project-workspace" id="graduate" data-project-board>
-  <aside class="project-control-panel">
-    <p class="eyebrow">Project index</p>
-    <h1>Projects</h1>
-    <p>
-      Current work comes first: ALLEX software, teleoperation/data loops, and robot-learning deployment. Earlier undergraduate projects stay visible as the engineering foundation behind that trajectory.
-    </p>
-    <div class="project-topic-strip" aria-label="Project topic filters">
-      <button class="is-active" type="button" data-project-topic="all">All</button>
-      <button type="button" data-project-topic="allex">ALLEX</button>
-      <button type="button" data-project-topic="teleoperation">Teleoperation</button>
-      <button type="button" data-project-topic="robot learning">Robot Learning</button>
-      <button type="button" data-project-topic="sim-to-real">Sim-to-Real</button>
-      <button type="button" data-project-topic="robotics">Robotics</button>
+  <header class="project-control-panel">
+    <div class="project-control-copy">
+      <p class="eyebrow">Project index</p>
+      <h1>Projects</h1>
+      <p>
+        Current work comes first: ALLEX software, teleoperation/data loops, and robot-learning deployment. Earlier undergraduate projects stay visible as the engineering foundation behind that trajectory.
+      </p>
     </div>
-    <nav class="project-year-rail" aria-label="Project timeline shortcuts">
-      <button class="is-active" type="button" data-project-year="all"><i class="fa-solid fa-layer-group" aria-hidden="true"></i>All</button>
-      <button type="button" data-project-year="current"><i class="fa-solid fa-bolt" aria-hidden="true"></i>Current</button>
-      <button type="button" data-project-year="2026"><i class="fa-solid fa-clock" aria-hidden="true"></i>2026</button>
-      <button type="button" data-project-year="2025"><i class="fa-solid fa-clock-rotate-left" aria-hidden="true"></i>2025</button>
-      <button type="button" data-project-year="2024"><i class="fa-solid fa-history" aria-hidden="true"></i>2024</button>
-    </nav>
-  </aside>
+    <div class="project-axis-panel">
+      <nav class="project-year-rail" aria-label="Project timeline shortcuts">
+        <button class="is-active" type="button" data-project-year="all"><i class="fa-solid fa-layer-group" aria-hidden="true"></i>All</button>
+        <button type="button" data-project-year="current"><i class="fa-solid fa-bolt" aria-hidden="true"></i>Current</button>
+        <button type="button" data-project-year="2026"><i class="fa-solid fa-clock" aria-hidden="true"></i>2026</button>
+        <button type="button" data-project-year="2025"><i class="fa-solid fa-clock-rotate-left" aria-hidden="true"></i>2025</button>
+        <button type="button" data-project-year="2024"><i class="fa-solid fa-history" aria-hidden="true"></i>2024</button>
+      </nav>
+      <div class="project-topic-strip" aria-label="Project topic filters">
+        <button class="is-active" type="button" data-project-topic="all">All</button>
+        <button type="button" data-project-topic="allex">ALLEX</button>
+        <button type="button" data-project-topic="teleoperation">Teleoperation</button>
+        <button type="button" data-project-topic="robot learning">Robot Learning</button>
+        <button type="button" data-project-topic="sim-to-real">Sim-to-Real</button>
+        <button type="button" data-project-topic="robotics">Robotics</button>
+      </div>
+    </div>
+  </header>
 
   <div class="project-projects">
     <div class="section-heading project-board-heading">
@@ -63,11 +67,14 @@ description: Selected research and engineering projects.
             {% endfor %}
           </div>
           {% if project.details %}
-            <ul>
-              {% for detail in project.details %}
-                <li>{{ detail }}</li>
-              {% endfor %}
-            </ul>
+            <details class="project-node-details">
+              <summary>Details</summary>
+              <ul>
+                {% for detail in project.details %}
+                  <li>{{ detail }}</li>
+                {% endfor %}
+              </ul>
+            </details>
           {% endif %}
         </article>
       {% endfor %}
