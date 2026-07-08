@@ -139,7 +139,7 @@ img {
   overflow: hidden;
   background:
     linear-gradient(150deg, rgba(255, 255, 255, 0.34), rgba(238, 249, 255, 0.18)),
-    url("../img/ui/water-bubble-film.png") center / cover no-repeat;
+    url("../img/ui/water-droplet-organic.png") center / cover no-repeat;
   box-shadow:
     0 34px 84px rgba(16, 21, 34, 0.12),
     inset 18px 22px 48px rgba(255, 255, 255, 0.88),
@@ -156,6 +156,7 @@ img {
   text-shadow: 0 1px 0 rgba(255, 255, 255, 0.86);
   backdrop-filter: blur(0.5px) brightness(1.06);
   translate: 0 0;
+  scale: 1;
   transform: translateX(136px) scale(0.78);
   opacity: 0;
   animation:
@@ -165,6 +166,7 @@ img {
     border-color 180ms ease,
     box-shadow 180ms ease,
     color 180ms ease,
+    scale 180ms cubic-bezier(0.2, 0.8, 0.2, 1),
     transform 220ms cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
@@ -250,7 +252,12 @@ img {
 }
 
 .bubble-link.is-bursting {
-  animation: bubble-press 420ms cubic-bezier(0.16, 0.8, 0.18, 1);
+  scale: 0.94;
+  box-shadow:
+    0 28px 72px rgba(8, 118, 215, 0.14),
+    inset 24px 28px 52px rgba(255, 255, 255, 0.95),
+    inset -24px -28px 58px rgba(137, 182, 219, 0.2),
+    inset 0 0 0 2px rgba(255, 255, 255, 0.72);
 }
 
 .page-shell {
@@ -336,7 +343,7 @@ img {
 .hero-ghost-allex {
   position: absolute;
   top: -18px;
-  left: -410px;
+  left: -650px;
   z-index: 0;
   width: min(90vw, 1200px);
   height: calc(100vh - 82px);
@@ -494,7 +501,7 @@ img {
   object-fit: contain;
   object-position: center bottom;
   filter: drop-shadow(0 34px 48px rgba(16, 21, 34, 0.24));
-  transform: scale(1.28);
+  transform: scale(1.6);
   transform-origin: left bottom;
 }
 
@@ -1425,6 +1432,12 @@ img {
 
   .hero-copy--lab {
     padding-top: 42px;
+  }
+
+  .home-page .hero-copy--lab > * {
+    animation: none;
+    opacity: 1;
+    transform: none;
   }
 
   .hero-visual,
