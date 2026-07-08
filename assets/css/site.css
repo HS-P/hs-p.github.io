@@ -6389,10 +6389,10 @@ img {
   line-height: 0.86;
 }
 
-.bubble-link,
-.bubble-link:nth-child(2),
-.bubble-link:nth-child(3),
-.bubble-link:nth-child(4),
+.bubble-nav .bubble-link,
+.bubble-nav .bubble-link:nth-child(2),
+.bubble-nav .bubble-link:nth-child(3),
+.bubble-nav .bubble-link:nth-child(4),
 .bubble-nav.is-open .bubble-link,
 .bubble-nav.is-open .bubble-link:nth-child(2),
 .bubble-nav.is-open .bubble-link:nth-child(3),
