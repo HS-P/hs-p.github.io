@@ -139,7 +139,7 @@ img {
   overflow: hidden;
   background:
     linear-gradient(150deg, rgba(255, 255, 255, 0.34), rgba(238, 249, 255, 0.18)),
-    url("../img/ui/water-droplet-lens.png") center / cover no-repeat;
+    url("../img/ui/water-bubble-film.png") center / cover no-repeat;
   box-shadow:
     0 34px 84px rgba(16, 21, 34, 0.12),
     inset 18px 22px 48px rgba(255, 255, 255, 0.88),
@@ -336,9 +336,9 @@ img {
 .hero-ghost-allex {
   position: absolute;
   top: -18px;
-  left: -520px;
+  left: -410px;
   z-index: 0;
-  width: min(132vw, 1680px);
+  width: min(90vw, 1200px);
   height: calc(100vh - 82px);
   display: grid;
   place-items: end;
@@ -469,9 +469,9 @@ img {
   place-items: end center;
   align-self: end;
   justify-self: end;
-  width: min(70vw, 1040px);
+  width: min(66vw, 980px);
   min-height: calc(100vh - 78px);
-  margin-right: -150px;
+  margin-right: -96px;
   margin-bottom: -78px;
   animation: allex-appear 920ms cubic-bezier(0.18, 0.86, 0.2, 1) 1040ms forwards;
 }
@@ -489,12 +489,12 @@ img {
 
 .hero-allex img {
   display: block;
-  width: min(72vw, 1080px);
-  height: min(104vh, 1180px);
+  width: min(68vw, 1020px);
+  height: min(96vh, 1080px);
   object-fit: contain;
   object-position: center bottom;
   filter: drop-shadow(0 34px 48px rgba(16, 21, 34, 0.24));
-  transform: scale(1.55);
+  transform: scale(1.28);
   transform-origin: left bottom;
 }
 
