@@ -138,9 +138,8 @@ img {
   border-radius: 55% 45% 52% 48% / 48% 57% 43% 52%;
   overflow: hidden;
   background:
-    radial-gradient(circle at 28% 22%, rgba(255, 255, 255, 0.98) 0 6%, rgba(255, 255, 255, 0.46) 12%, transparent 25%),
-    radial-gradient(circle at 71% 78%, rgba(181, 217, 246, 0.12), transparent 48%),
-    linear-gradient(150deg, rgba(255, 255, 255, 0.9), rgba(242, 249, 255, 0.72) 48%, rgba(218, 238, 252, 0.54));
+    linear-gradient(150deg, rgba(255, 255, 255, 0.34), rgba(238, 249, 255, 0.18)),
+    url("../img/ui/water-droplet-lens.png") center / cover no-repeat;
   box-shadow:
     0 34px 84px rgba(16, 21, 34, 0.12),
     inset 18px 22px 48px rgba(255, 255, 255, 0.88),
@@ -155,7 +154,7 @@ img {
   text-transform: uppercase;
   pointer-events: auto;
   text-shadow: 0 1px 0 rgba(255, 255, 255, 0.86);
-  backdrop-filter: blur(1px) brightness(1.32) saturate(0.72);
+  backdrop-filter: blur(0.5px) brightness(1.06);
   translate: 0 0;
   transform: translateX(136px) scale(0.78);
   opacity: 0;
@@ -205,8 +204,8 @@ img {
   width: 58px;
   height: 34px;
   border-radius: 999px;
-  background: rgba(255, 255, 255, 0.82);
-  filter: blur(0.3px);
+  background: rgba(255, 255, 255, 0.42);
+  filter: blur(0.5px);
   transform: rotate(-21deg);
 }
 
@@ -337,9 +336,9 @@ img {
 .hero-ghost-allex {
   position: absolute;
   top: -18px;
-  left: 4vw;
+  left: -520px;
   z-index: 0;
-  width: min(90vw, 1200px);
+  width: min(132vw, 1680px);
   height: calc(100vh - 82px);
   display: grid;
   place-items: end;
@@ -352,7 +351,7 @@ img {
   height: 100%;
   object-fit: contain;
   object-position: left bottom;
-  opacity: 0.1;
+  opacity: 0.15;
   filter: grayscale(0.2) contrast(1.02) drop-shadow(0 28px 56px rgba(16, 21, 34, 0.1));
   mix-blend-mode: multiply;
   transform: scaleX(-1);
@@ -470,9 +469,10 @@ img {
   place-items: end center;
   align-self: end;
   justify-self: end;
-  width: min(100%, 800px);
-  min-height: calc(100vh - 128px);
-  margin-bottom: -54px;
+  width: min(70vw, 1040px);
+  min-height: calc(100vh - 78px);
+  margin-right: -150px;
+  margin-bottom: -78px;
   animation: allex-appear 920ms cubic-bezier(0.18, 0.86, 0.2, 1) 1040ms forwards;
 }
 
@@ -489,13 +489,13 @@ img {
 
 .hero-allex img {
   display: block;
-  width: min(100%, 790px);
-  height: min(88vh, 960px);
+  width: min(72vw, 1080px);
+  height: min(104vh, 1180px);
   object-fit: contain;
   object-position: center bottom;
   filter: drop-shadow(0 34px 48px rgba(16, 21, 34, 0.24));
-  transform: scale(1);
-  transform-origin: center bottom;
+  transform: scale(1.55);
+  transform-origin: left bottom;
 }
 
 .work-index-no {
@@ -1440,12 +1440,14 @@ img {
   .hero-allex {
     justify-self: center;
     min-height: 320px;
+    margin-right: 0;
     margin-bottom: 0;
   }
 
   .hero-allex img {
     width: min(100%, 360px);
     height: 330px;
+    transform: scale(1);
   }
 
   .hero h1 {
