@@ -5,9 +5,6 @@ description: Selected research and engineering projects.
 ---
 
 {% assign projects = site.data.projects | sort: "importance" %}
-{% assign graduate_projects = projects | where: "stage", "Graduate" %}
-{% assign undergraduate_projects = projects | where: "stage", "Undergraduate" %}
-{% assign featured_projects = projects | where: "featured", true %}
 
 <header class="page-title project-title">
   <div class="project-title-copy">
@@ -16,30 +13,51 @@ description: Selected research and engineering projects.
     <p>
       Current work comes first: ALLEX software, teleoperation/data loops, and robot-learning deployment. Earlier undergraduate projects stay visible as the engineering foundation behind that trajectory.
     </p>
+    <div class="project-topic-strip" aria-label="Project topic filters">
+      <button class="is-active" type="button" data-project-topic="all">All</button>
+      <button type="button" data-project-topic="allex">ALLEX</button>
+      <button type="button" data-project-topic="teleoperation">Teleoperation</button>
+      <button type="button" data-project-topic="robot learning">Robot Learning</button>
+      <button type="button" data-project-topic="sim-to-real">Sim-to-Real</button>
+      <button type="button" data-project-topic="robotics">Robotics</button>
+    </div>
   </div>
   <nav class="project-year-rail" aria-label="Project timeline shortcuts">
-    <a href="#graduate">Current</a>
-    <span>2026</span>
-    <span>2025</span>
-    <span>2024</span>
-    <a href="#undergraduate">Earlier</a>
+    <button class="is-active" type="button" data-project-year="all"><i class="fa-solid fa-layer-group" aria-hidden="true"></i>All</button>
+    <button type="button" data-project-year="current"><i class="fa-solid fa-bolt" aria-hidden="true"></i>Current</button>
+    <button type="button" data-project-year="2026"><i class="fa-solid fa-clock" aria-hidden="true"></i>2026</button>
+    <button type="button" data-project-year="2025"><i class="fa-solid fa-clock-rotate-left" aria-hidden="true"></i>2025</button>
+    <button type="button" data-project-year="2024"><i class="fa-solid fa-history" aria-hidden="true"></i>2024</button>
   </nav>
 </header>
 
-<section class="project-group" id="graduate">
-  <div class="section-heading">
-    <p>Graduate</p>
-    <h2>Current Work Index</h2>
+<section class="project-board" id="graduate" data-project-board>
+  <div class="section-heading project-board-heading">
+    <p>Filtered work map</p>
+    <h2>Topic and timeline aware project blocks</h2>
   </div>
-  <div class="work-index detailed-work-index">
-    {% for project in featured_projects %}
-      <article class="work-index-row" id="{{ project.id }}">
-        <span class="work-index-no">0{{ forloop.index }}</span>
-        <div>
-          <p>{{ project.track }}</p>
-          <h3>{{ project.title }}</h3>
+  <div class="project-node-grid">
+    {% assign undergraduate_anchor_done = false %}
+    {% for project in projects %}
+      {% if project.stage == "Undergraduate" and undergraduate_anchor_done == false %}
+        <span class="anchor-point" id="undergraduate"></span>
+        {% assign undergraduate_anchor_done = true %}
+      {% endif %}
+      {% assign project_topics = project.tags | join: ',' | downcase %}
+      <article class="project-node is-selected"
+        id="{{ project.id }}"
+        data-project-card
+        data-stage="{{ project.stage | downcase }}"
+        data-status="{{ project.status | downcase }}"
+        data-year="{{ project.year_group }}"
+        data-topics="{{ project_topics }}">
+        <div class="project-node-topline">
+          <span>0{{ forloop.index }}</span>
+          <em>{{ project.year_group }}</em>
         </div>
-        <em>{{ project.summary }}</em>
+        <p class="project-node-track">{{ project.track }}</p>
+        <h2>{{ project.title }}</h2>
+        <p class="project-node-summary">{{ project.summary }}</p>
         <div class="tag-row">
           {% for tag in project.tags limit:4 %}
             <span>{{ tag }}</span>
@@ -52,27 +70,6 @@ description: Selected research and engineering projects.
             {% endfor %}
           </ul>
         {% endif %}
-      </article>
-    {% endfor %}
-  </div>
-</section>
-
-<section class="project-group" id="undergraduate">
-  <div class="section-heading">
-    <p>Undergraduate</p>
-    <h2>Earlier Robotics Foundation</h2>
-  </div>
-  <div class="compact-work-list">
-    {% for project in undergraduate_projects %}
-      <article class="compact-work-row" id="{{ project.id }}">
-        <span>{{ project.track }}</span>
-        <strong>{{ project.title }}</strong>
-        <em>{{ project.summary }}</em>
-        <div class="tag-row">
-          {% for tag in project.tags limit:4 %}
-            <span>{{ tag }}</span>
-          {% endfor %}
-        </div>
       </article>
     {% endfor %}
   </div>

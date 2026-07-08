@@ -5,6 +5,7 @@
   subtitle: "Public collaboration track for robot learning research"
   importance: 3
   status: "Current"
+  year_group: "2026"
   featured: true
   tags: [Physical AI, Robot Learning, VLA, Dexterous Manipulation]
   summary: "A public-facing research collaboration around physical AI, robot learning workflows, and manipulation-policy research."
@@ -21,6 +22,7 @@
   subtitle: "Dexterous hand software and robot learning infrastructure"
   importance: 1
   status: "Current"
+  year_group: "2026"
   featured: true
   image: /assets/img/allex/hero-allex.png
   tags: [ALLEX, Dexterous Hand, ROS 2, Robot Learning]
@@ -37,8 +39,9 @@
   subtitle: "Quest/vision-based teleoperation, dataset logging, and policy workflow support"
   importance: 2
   status: "Current"
+  year_group: "2026"
   featured: true
-  tags: [Teleoperation, Dataset Logging, ROS 2, Policy Deployment]
+  tags: [Teleoperation, Robot Learning, Dataset Logging, ROS 2, Policy Deployment]
   summary: "A systems track for collecting demonstrations, monitoring robot state, and preparing data for learning-based manipulation workflows."
   public_note: "Representative media will be added after the final public setup is selected."
   details:
@@ -52,6 +55,7 @@
   subtitle: "Reinforcement learning method for robust sim-to-real deployment"
   importance: 4
   status: "Past"
+  year_group: "2025"
   tags: [Reinforcement Learning, Sim-to-Real, System Identification, IsaacLab]
   summary: "An undergraduate research prototype on improving sim-to-real performance by combining system identification with an A-RMA-style reinforcement learning pipeline."
   public_note: "Poster/PDF material exists locally; representative web media is pending."
@@ -68,6 +72,7 @@
   image: /assets/img/projects/defense-robot.jpg
   importance: 5
   status: "Past"
+  year_group: "2024"
   tags: [ROS 2, Embedded, Camera, Robotics]
   summary: "A team robotics project covering mechanical design, embedded control, ROS 2 integration, camera setup, and field-oriented debugging."
   details:
@@ -81,6 +86,7 @@
   subtitle: "K-Community robotics learning program"
   importance: 6
   status: "Past"
+  year_group: "2024"
   tags: [ROS 2, TurtleBot, OpenCR, Robotics Education]
   summary: "A structured robotics learning project covering Python, Arduino, ROS, OpenCR, TurtleBot bring-up, and team-based debugging."
   public_note: "Representative media is pending."
@@ -96,6 +102,7 @@
   image: /assets/img/projects/battle-robot.jpg
   importance: 7
   status: "Past"
+  year_group: "2024"
   tags: [Mechatronics, Embedded, Fabrication]
   summary: "An early hands-on robotics project involving mechanical fabrication, actuator selection, wiring, testing, and competition preparation."
   details:

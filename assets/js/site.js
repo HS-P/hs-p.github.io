@@ -88,4 +88,80 @@
       window.setTimeout(() => document.body.classList.remove("bubble-pop"), 520);
     });
   }
+
+  const projectBoard = document.querySelector("[data-project-board]");
+  const projectCards = Array.from(document.querySelectorAll("[data-project-card]"));
+  const topicButtons = Array.from(document.querySelectorAll("[data-project-topic]"));
+  const yearButtons = Array.from(document.querySelectorAll("[data-project-year]"));
+
+  if (projectBoard && projectCards.length && topicButtons.length && yearButtons.length) {
+    const state = {
+      topic: "all",
+      year: "all",
+    };
+
+    function topicMatches(card, topic) {
+      if (topic === "all") return true;
+      return (card.dataset.topics || "").includes(topic);
+    }
+
+    function yearMatches(card, year) {
+      if (year === "all") return true;
+      if (year === "current") return card.dataset.status === "current";
+      return card.dataset.year === year;
+    }
+
+    function cardMatches(card, nextState = state) {
+      return topicMatches(card, nextState.topic) && yearMatches(card, nextState.year);
+    }
+
+    function hasMatch(nextState) {
+      return projectCards.some((card) => cardMatches(card, nextState));
+    }
+
+    function updateFilter() {
+      const isFiltered = state.topic !== "all" || state.year !== "all";
+      projectBoard.classList.toggle("is-filtered", isFiltered);
+
+      projectCards.forEach((card) => {
+        const matches = cardMatches(card);
+        card.classList.toggle("is-selected", matches);
+        card.classList.toggle("is-muted", !matches);
+      });
+
+      topicButtons.forEach((button) => {
+        const topic = button.dataset.projectTopic;
+        const active = topic === state.topic;
+        const available = hasMatch({ topic, year: state.year });
+        button.classList.toggle("is-active", active);
+        button.classList.toggle("is-available", !active && available && state.year !== "all");
+        button.classList.toggle("is-unavailable", !active && !available);
+      });
+
+      yearButtons.forEach((button) => {
+        const year = button.dataset.projectYear;
+        const active = year === state.year;
+        const available = hasMatch({ topic: state.topic, year });
+        button.classList.toggle("is-active", active);
+        button.classList.toggle("is-available", !active && available && state.topic !== "all");
+        button.classList.toggle("is-unavailable", !active && !available);
+      });
+    }
+
+    topicButtons.forEach((button) => {
+      button.addEventListener("click", () => {
+        state.topic = button.dataset.projectTopic || "all";
+        updateFilter();
+      });
+    });
+
+    yearButtons.forEach((button) => {
+      button.addEventListener("click", () => {
+        state.year = button.dataset.projectYear || "all";
+        updateFilter();
+      });
+    });
+
+    updateFilter();
+  }
 })();
