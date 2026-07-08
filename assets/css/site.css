@@ -7131,3 +7131,45 @@ img {
   margin: -10px -12px;
   padding: 24px 36px;
 }
+
+/* Latest home tuning: push profile farther left and let activities breathe. */
+.home-page .page-shell {
+  width: min(1420px, calc(100% - 4px));
+}
+
+.activities-section {
+  padding: 116px 0 104px;
+}
+
+.activities-heading {
+  margin-bottom: 52px;
+}
+
+.video-board {
+  width: min(1248px, 100%);
+  gap: 36px;
+}
+
+.video-copy {
+  padding: 16px 17px 18px;
+}
+
+.video-copy h3 {
+  font-size: 1.08rem;
+}
+
+.video-copy p {
+  font-size: 0.9rem;
+  line-height: 1.4;
+}
+
+@media (max-width: 980px) {
+  .home-page .page-shell {
+    width: min(100% - 28px, 760px);
+  }
+
+  .video-board {
+    width: min(100%, 720px);
+    gap: 24px;
+  }
+}
