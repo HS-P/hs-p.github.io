@@ -194,8 +194,22 @@
   const scrollCue = document.querySelector(".scroll-cue");
   if (homeActivities) {
     let isSnapping = false;
+    let snapTarget = "";
+    let snapTimer;
     function atActivities() {
       return window.scrollY > window.innerHeight * 0.45;
+    }
+    function snapTo(targetName) {
+      const target = targetName === "top" ? homeHero : homeActivities;
+      if (!target) return;
+      window.clearTimeout(snapTimer);
+      isSnapping = true;
+      snapTarget = targetName;
+      target.scrollIntoView({ behavior: "smooth", block: "start" });
+      snapTimer = window.setTimeout(() => {
+        isSnapping = false;
+        snapTarget = "";
+      }, 980);
     }
     function syncScrollCue() {
       if (!scrollCue) return;
@@ -210,32 +224,27 @@
     if (scrollCue) {
       scrollCue.addEventListener("click", (event) => {
         event.preventDefault();
-        const target = atActivities() ? homeHero : homeActivities;
-        if (target) target.scrollIntoView({ behavior: "smooth", block: "start" });
+        snapTo(atActivities() ? "top" : "activities");
       });
     }
 
     window.addEventListener("wheel", (event) => {
       if (isSnapping) {
+        const reverseToTop = event.deltaY < -8 && snapTarget === "activities";
+        const reverseToActivities = event.deltaY > 8 && snapTarget === "top";
         event.preventDefault();
+        if (reverseToTop) snapTo("top");
+        if (reverseToActivities) snapTo("activities");
         return;
       }
       if (event.deltaY > 8 && window.scrollY <= 90) {
         event.preventDefault();
-        isSnapping = true;
-        homeActivities.scrollIntoView({ behavior: "smooth", block: "start" });
-        window.setTimeout(() => {
-          isSnapping = false;
-        }, 1400);
+        snapTo("activities");
         return;
       }
       if (event.deltaY < -8 && atActivities() && homeHero) {
         event.preventDefault();
-        isSnapping = true;
-        homeHero.scrollIntoView({ behavior: "smooth", block: "start" });
-        window.setTimeout(() => {
-          isSnapping = false;
-        }, 1400);
+        snapTo("top");
       }
     }, { passive: false });
   }
