@@ -3939,7 +3939,7 @@ img {
 
 .year-timeline button span {
   display: inline-block;
-  font-size: clamp(2.45rem, 4.9vw, 5.3rem);
+  font-size: clamp(2.25rem, 4vw, 4.45rem);
   font-weight: 880;
   line-height: 0.86;
   transform-origin: center bottom;
@@ -3949,7 +3949,7 @@ img {
 }
 
 .year-timeline button[data-project-year="before"] span {
-  font-size: clamp(2.25rem, 4.45vw, 4.9rem);
+  font-size: clamp(2.05rem, 3.55vw, 4rem);
 }
 
 .year-timeline:hover .year-timeline-line {
