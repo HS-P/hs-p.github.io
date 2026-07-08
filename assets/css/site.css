@@ -5152,6 +5152,26 @@ img {
   transform: translateY(-12px) scale(1.1);
 }
 
+.project-timeline-page .project-node {
+  animation-fill-mode: backwards;
+}
+
+.project-timeline-page.is-card-hover .project-node:not(.is-hovered) {
+  opacity: 0.26;
+  filter: grayscale(1);
+  transform: scale(0.985);
+}
+
+.project-timeline-page.is-card-hover .project-node.is-hovered {
+  opacity: 1;
+  filter: none;
+  transform: translateX(8px) scale(1.018);
+  border-color: rgba(67, 201, 71, 0.5);
+  box-shadow:
+    0 28px 70px rgba(67, 201, 71, 0.14),
+    inset 0 1px 0 rgba(255, 255, 255, 0.96);
+}
+
 @media (max-width: 980px) {
   .project-axis-stage {
     min-height: 300px;
