@@ -5,121 +5,158 @@ layout: default
 {% assign project = site.data.projects | where: "id", page.project_id | first %}
 
 {% if project %}
-<article class="project-detail-page">
-  <a class="project-back-button project-detail-back" href="{{ '/projects/' | relative_url }}">
+<article class="pd">
+  <a class="pd-back" href="{{ '/projects/' | relative_url }}">
     <i class="fa-solid fa-arrow-left" aria-hidden="true"></i>
-    Projects
+    All projects
   </a>
 
-  <header class="project-detail-hero{% unless project.image %} project-detail-hero--text{% endunless %}">
-    <div class="project-detail-copy">
+  <header class="pd-hero{% unless project.image %} pd-hero--text{% endunless %}">
+    <div class="pd-hero-copy">
+      <p class="pd-eyebrow">
+        <span class="pd-status pd-status--{{ project.status | downcase }}">{{ project.status }}</span>
+        <span class="pd-eyebrow-sep">{{ project.track }}</span>
+        <span class="pd-eyebrow-sep">{{ project.year_group }}</span>
+      </p>
       <h1>{{ project.short_title | default: project.title }}</h1>
-      <p class="project-detail-fulltitle">{{ project.title }}</p>
-      <p class="project-detail-summary">{{ project.summary }}</p>
-      <div class="tag-row">
+      <p class="pd-fulltitle">{{ project.title }}</p>
+      <p class="pd-summary">{{ project.summary }}</p>
+      <div class="pd-tags">
         {% for tag in project.tags %}
           <a href="{{ '/projects/' | relative_url }}?topic={{ tag | downcase | replace: ' ', '%20' }}">{{ tag }}</a>
         {% endfor %}
       </div>
+      {% if project.links %}
+        <div class="pd-links">
+          {% if project.links.github %}<a href="{{ project.links.github }}" target="_blank" rel="noopener"><i class="fa-brands fa-github" aria-hidden="true"></i>Code</a>{% endif %}
+          {% if project.links.video %}<a href="{{ project.links.video }}" target="_blank" rel="noopener"><i class="fa-brands fa-youtube" aria-hidden="true"></i>Video</a>{% endif %}
+          {% if project.links.paper %}<a href="{{ project.links.paper }}" target="_blank" rel="noopener"><i class="fa-solid fa-file-lines" aria-hidden="true"></i>Paper</a>{% endif %}
+          {% if project.links.demo %}<a href="{{ project.links.demo }}" target="_blank" rel="noopener"><i class="fa-solid fa-play" aria-hidden="true"></i>Demo</a>{% endif %}
+          {% if project.links.website %}<a href="{{ project.links.website }}" target="_blank" rel="noopener"><i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i>Page</a>{% endif %}
+        </div>
+      {% endif %}
     </div>
 
-    {% if project.image %}
-      <figure class="project-detail-media">
-        <img src="{{ project.image | relative_url }}" alt="{{ project.title }} project image">
-      </figure>
-    {% endif %}
+    <figure class="pd-media">
+      {% if project.image %}
+        <img src="{{ project.image | relative_url }}" alt="{{ project.title }}">
+      {% else %}
+        <div class="pd-media-empty" aria-hidden="true">
+          <i class="fa-regular fa-image"></i>
+          <span>Project media coming soon</span>
+        </div>
+      {% endif %}
+    </figure>
   </header>
 
-  <div class="project-detail-grid">
-    <section class="project-detail-section project-progress-section">
-      <h2>Progress</h2>
-      <div class="project-progress-line">
-        <span>{{ project.status }}</span>
-        <strong>{{ project.year_group }}</strong>
-      </div>
-      {% if project.progress %}
-        <ul class="project-detail-list">
-          {% for item in project.progress %}
-            <li>{{ item }}</li>
-          {% endfor %}
-        </ul>
-      {% else %}
-        <p class="project-detail-note">Detailed progress notes will be added as public material is selected.</p>
-      {% endif %}
-    </section>
+  <div class="pd-facts">
+    <div class="pd-fact"><dt>Role</dt><dd>{{ project.role | default: "Robotics Engineer" }}</dd></div>
+    <div class="pd-fact"><dt>Timeline</dt><dd>{{ project.timeline | default: project.year_group }}</dd></div>
+    <div class="pd-fact"><dt>Stage</dt><dd>{{ project.stage }}</dd></div>
+    <div class="pd-fact"><dt>Status</dt><dd>{{ project.status }}</dd></div>
+  </div>
 
-    <section class="project-detail-section">
-      <h2>Project Notes</h2>
+  <div class="pd-body">
+    <div class="pd-main">
+      <section class="pd-block">
+        <h2>Overview</h2>
+        <p class="pd-lead">{{ project.overview | default: project.summary }}</p>
+        {{ content }}
+      </section>
+
+      {% if project.highlights %}
+        <section class="pd-block">
+          <h2>Highlights</h2>
+          <ul class="pd-checklist">
+            {% for item in project.highlights %}<li>{{ item }}</li>{% endfor %}
+          </ul>
+        </section>
+      {% endif %}
+
       {% if project.details %}
-        <ul class="project-detail-list">
-          {% for detail in project.details %}
-            <li>{{ detail }}</li>
-          {% endfor %}
-        </ul>
+        <section class="pd-block">
+          <h2>What I worked on</h2>
+          <ul class="pd-checklist">
+            {% for item in project.details %}<li>{{ item }}</li>{% endfor %}
+          </ul>
+        </section>
       {% endif %}
-      {% if project.public_note %}
-        <p class="project-detail-note">{{ project.public_note }}</p>
-      {% endif %}
-      {{ content }}
-    </section>
 
-    <aside class="project-detail-meta">
-      <dl>
-        <div>
-          <dt>Track</dt>
-          <dd>{{ project.track }}</dd>
+      {% if project.progress %}
+        <section class="pd-block">
+          <h2>Progress</h2>
+          <ol class="pd-timeline">
+            {% for item in project.progress %}<li>{{ item }}</li>{% endfor %}
+          </ol>
+        </section>
+      {% endif %}
+
+      {% if project.public_note %}
+        <p class="pd-note">{{ project.public_note }}</p>
+      {% endif %}
+    </div>
+
+    <aside class="pd-side">
+      {% if project.tech %}
+        <div class="pd-card">
+          <h3>Tech Stack</h3>
+          <div class="pd-chips">
+            {% for t in project.tech %}<span>{{ t }}</span>{% endfor %}
+          </div>
         </div>
-        <div>
-          <dt>Stage</dt>
-          <dd>{{ project.stage }}</dd>
-        </div>
-        <div>
-          <dt>Year</dt>
-          <dd>{{ project.year_group }}</dd>
-        </div>
-        <div>
-          <dt>Status</dt>
-          <dd>{{ project.status }}</dd>
-        </div>
-      </dl>
-      {% if project.github or project.website or project.paper or project.demo %}
-        <div class="project-detail-links">
-          {% if project.github %}<a href="{{ project.github }}" target="_blank" rel="noopener">GitHub</a>{% endif %}
-          {% if project.website %}<a href="{{ project.website }}" target="_blank" rel="noopener">Project Page</a>{% endif %}
-          {% if project.paper %}<a href="{{ project.paper }}" target="_blank" rel="noopener">Paper</a>{% endif %}
-          {% if project.demo %}<a href="{{ project.demo }}" target="_blank" rel="noopener">Demo</a>{% endif %}
+      {% endif %}
+
+      <div class="pd-card">
+        <h3>At a glance</h3>
+        <dl class="pd-dl">
+          <div><dt>Track</dt><dd>{{ project.track }}</dd></div>
+          <div><dt>Stage</dt><dd>{{ project.stage }}</dd></div>
+          <div><dt>Year</dt><dd>{{ project.year_group }}</dd></div>
+          <div><dt>Status</dt><dd>{{ project.status }}</dd></div>
+        </dl>
+      </div>
+
+      {% if project.links %}
+        <div class="pd-card">
+          <h3>Links</h3>
+          <div class="pd-card-links">
+            {% if project.links.github %}<a href="{{ project.links.github }}" target="_blank" rel="noopener"><i class="fa-brands fa-github" aria-hidden="true"></i>Code repository</a>{% endif %}
+            {% if project.links.video %}<a href="{{ project.links.video }}" target="_blank" rel="noopener"><i class="fa-brands fa-youtube" aria-hidden="true"></i>Video walkthrough</a>{% endif %}
+            {% if project.links.paper %}<a href="{{ project.links.paper }}" target="_blank" rel="noopener"><i class="fa-solid fa-file-lines" aria-hidden="true"></i>Paper / report</a>{% endif %}
+            {% if project.links.demo %}<a href="{{ project.links.demo }}" target="_blank" rel="noopener"><i class="fa-solid fa-play" aria-hidden="true"></i>Live demo</a>{% endif %}
+            {% if project.links.website %}<a href="{{ project.links.website }}" target="_blank" rel="noopener"><i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i>Project page</a>{% endif %}
+          </div>
         </div>
       {% endif %}
     </aside>
   </div>
 
-  {% if project.gallery or project.videos %}
-    <section class="project-collage-board">
-      {% if project.gallery %}
-        <div class="project-collage-section">
-          <h2>Image Board</h2>
-          <div class="project-gallery-grid">
-            {% for item in project.gallery %}
-              <figure>
-                <img src="{{ item.src | relative_url }}" alt="{{ item.alt | default: project.title }}">
-                {% if item.caption %}<figcaption>{{ item.caption }}</figcaption>{% endif %}
-              </figure>
-            {% endfor %}
-          </div>
-        </div>
-      {% endif %}
-      {% if project.videos %}
-        <div class="project-collage-section">
-          <h2>Video Log</h2>
-          <div class="project-video-grid">
-            {% for video in project.videos %}
-              <iframe src="{{ video.embed }}" title="{{ video.title | default: project.title }}" allowfullscreen loading="lazy"></iframe>
-            {% endfor %}
-          </div>
-        </div>
-      {% endif %}
-    </section>
-  {% endif %}
+  <section class="pd-gallery">
+    <div class="pd-gallery-head">
+      <h2>Gallery</h2>
+      {% unless project.gallery %}<span class="pd-gallery-hint">Media will be added as public material is cleared.</span>{% endunless %}
+    </div>
+    {% if project.gallery %}
+      <div class="pd-gallery-grid">
+        {% for item in project.gallery %}
+          <figure>
+            <img src="{{ item.src | relative_url }}" alt="{{ item.alt | default: project.title }}">
+            {% if item.caption %}<figcaption>{{ item.caption }}</figcaption>{% endif %}
+          </figure>
+        {% endfor %}
+      </div>
+    {% else %}
+      <div class="pd-gallery-grid pd-gallery-grid--empty" aria-hidden="true">
+        <div class="pd-slot"><i class="fa-regular fa-image"></i></div>
+        <div class="pd-slot"><i class="fa-regular fa-image"></i></div>
+        <div class="pd-slot"><i class="fa-regular fa-image"></i></div>
+      </div>
+    {% endif %}
+  </section>
+
+  <nav class="pd-footnav">
+    <a href="{{ '/projects/' | relative_url }}"><i class="fa-solid fa-arrow-left" aria-hidden="true"></i> Back to all projects</a>
+  </nav>
 </article>
 {% else %}
 <article class="prose-page">

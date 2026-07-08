@@ -192,61 +192,71 @@
   const homeHero = document.querySelector(".home-page .hero");
   const homeActivities = document.querySelector("[data-home-activities]");
   const scrollCue = document.querySelector(".scroll-cue");
-  if (homeActivities) {
-    let isSnapping = false;
-    let snapTarget = "";
-    let snapTimer;
-    function atActivities() {
-      return window.scrollY > window.innerHeight * 0.45;
-    }
-    function snapTo(targetName) {
-      const target = targetName === "top" ? homeHero : homeActivities;
-      if (!target) return;
-      window.clearTimeout(snapTimer);
-      isSnapping = true;
-      snapTarget = targetName;
-      target.scrollIntoView({ behavior: "smooth", block: "start" });
-      snapTimer = window.setTimeout(() => {
-        isSnapping = false;
-        snapTarget = "";
-      }, 980);
-    }
+  if (homeHero && homeActivities) {
+    // Deterministic two-panel snap: every wheel gesture resolves to panel 0 (hero)
+    // or panel 1 (activities). Down always advances, up always retreats, and an
+    // opposite-direction wheel mid-animation reverses immediately — never stuck between.
+    const panels = [homeHero, homeActivities];
+    const panelFromScroll = () => (window.scrollY > window.innerHeight * 0.5 ? 1 : 0);
+    let current = panelFromScroll();
+    let locked = false;
+    let lockTimer;
+
     function syncScrollCue() {
       if (!scrollCue) return;
-      const up = atActivities();
+      const up = current === 1;
       scrollCue.classList.toggle("is-up", up);
       scrollCue.setAttribute("href", up ? "#about" : "#activities");
       scrollCue.setAttribute("aria-label", up ? "Scroll to top" : "Scroll to activities");
     }
 
+    function goTo(idx) {
+      current = idx < 0 ? 0 : idx > 1 ? 1 : idx;
+      panels[current].scrollIntoView({ behavior: "smooth", block: "start" });
+      locked = true;
+      window.clearTimeout(lockTimer);
+      lockTimer = window.setTimeout(() => {
+        locked = false;
+        current = panelFromScroll();
+        syncScrollCue();
+      }, 620);
+      syncScrollCue();
+    }
+
     syncScrollCue();
-    window.addEventListener("scroll", syncScrollCue, { passive: true });
+    window.addEventListener(
+      "scroll",
+      () => {
+        if (locked) return;
+        current = panelFromScroll();
+        syncScrollCue();
+      },
+      { passive: true }
+    );
+
     if (scrollCue) {
       scrollCue.addEventListener("click", (event) => {
         event.preventDefault();
-        snapTo(atActivities() ? "top" : "activities");
+        goTo(current === 0 ? 1 : 0);
       });
     }
 
-    window.addEventListener("wheel", (event) => {
-      if (isSnapping) {
-        const reverseToTop = event.deltaY < -8 && snapTarget === "activities";
-        const reverseToActivities = event.deltaY > 8 && snapTarget === "top";
+    window.addEventListener(
+      "wheel",
+      (event) => {
+        if (Math.abs(event.deltaY) < 6) return;
+        const dir = event.deltaY > 0 ? 1 : -1;
+        const next = current + dir;
+        if (next < 0 || next > 1) {
+          // At an edge: hold position while a snap is settling, else allow native scroll.
+          if (locked) event.preventDefault();
+          return;
+        }
         event.preventDefault();
-        if (reverseToTop) snapTo("top");
-        if (reverseToActivities) snapTo("activities");
-        return;
-      }
-      if (event.deltaY > 8 && window.scrollY <= 90) {
-        event.preventDefault();
-        snapTo("activities");
-        return;
-      }
-      if (event.deltaY < -8 && atActivities() && homeHero) {
-        event.preventDefault();
-        snapTo("top");
-      }
-    }, { passive: false });
+        goTo(next);
+      },
+      { passive: false }
+    );
   }
 
   const projectBoard = document.querySelector("[data-project-board]");

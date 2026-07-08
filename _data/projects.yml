@@ -1,3 +1,7 @@
+# Public-facing project portfolio.
+# Confidential / company-internal specifics are intentionally kept high-level.
+# Add real media by filling `gallery:` (src/alt/caption) and `image:` per project.
+
 - id: aws-physical-ai
   stage: "Graduate"
   track: "Research Collaboration"
@@ -8,13 +12,20 @@
   status: "Current"
   year_group: "2026"
   featured: true
+  role: "Research Collaborator"
+  timeline: "2026 – Present"
   tags: [Physical AI, Robot Learning, VLA, Dexterous Manipulation]
   summary: "A public-facing research collaboration around physical AI, robot learning workflows, and manipulation-policy research."
-  public_note: "Detailed methods will be added after public release or clearance."
-  details:
-    - "Frames robot learning work around deployable physical AI systems."
-    - "Connects VLA-style policy research, manipulation workflows, and public research communication."
-    - "Keeps unreleased collaboration details separated from public portfolio content."
+  overview: >-
+    A public-facing collaboration track exploring physical AI and robot-learning
+    workflows for real-world manipulation, connecting vision-language-action policy
+    research with deployable robot systems.
+  highlights:
+    - "Frames robot-learning work around deployable physical AI systems."
+    - "Connects VLA-style policy research with dexterous manipulation workflows."
+    - "Keeps unreleased collaboration details separate from public portfolio content."
+  tech: [Physical AI, VLA, Robot Learning, PyTorch]
+  public_note: "Detailed methods and results will be added after public release or clearance."
 
 - id: allex-dexterous-platform
   stage: "Graduate"
@@ -27,12 +38,20 @@
   year_group: "2026"
   featured: true
   image: /assets/img/allex/hero-allex.png
+  role: "Robot Software Engineer"
+  timeline: "2025 – Present"
   tags: [ALLEX, Dexterous Hand, ROS 2, Robot Learning]
   summary: "The main project track for ALLEX hand-arm software, control interfaces, data collection, and manipulation-policy deployment."
+  overview: >-
+    The core software track for the ALLEX dexterous hand-arm platform: control
+    interfaces, ROS 2 integration, hand calibration and retargeting, and the robot
+    software that learning-based manipulation policies run on.
+  highlights:
+    - "ROS 2 control and interface layer for a dexterous hand-arm system."
+    - "Hand calibration and finger-retargeting utilities for teleoperation and policy control."
+    - "Policy-facing robot software connecting simulation, real hardware, and deployment."
+  tech: [ROS 2, Python, MuJoCo, Isaac Sim, Dexterous Hand]
   public_note: "Public demo material will be added after approved media is selected."
-  details:
-    - "Organizes hand control, ROS 2 interfaces, retargeting, and policy-facing robot software into a portfolio-ready project track."
-    - "Will collect public demos, diagrams, and technical notes as the platform material becomes shareable."
 
 - id: teleoperation-data-pipeline
   stage: "Graduate"
@@ -44,29 +63,46 @@
   status: "Current"
   year_group: "2026"
   featured: true
+  role: "Systems Engineer"
+  timeline: "2025 – Present"
   tags: [Teleoperation, Robot Learning, Dataset Logging, ROS 2, Policy Deployment]
   summary: "A systems track for collecting demonstrations, monitoring robot state, and preparing data for learning-based manipulation workflows."
+  overview: >-
+    A systems track for collecting teleoperation demonstrations and preparing data
+    for learning-based manipulation: VR / vision-based teleoperation, camera and
+    robot-state streaming, and dataset logging for policy training.
+  highlights:
+    - "VR / vision-based teleoperation for demonstration collection."
+    - "Camera and robot-state streaming with synchronized logging."
+    - "Dataset preparation feeding learning-based manipulation policies."
+  tech: [ROS 2, Python, Meta Quest, Stereo Vision, Dataset Logging]
   public_note: "Representative media will be added after the final public setup is selected."
-  details:
-    - "Connects teleoperation, camera/video streams, robot state topics, and dataset logging workflows."
-    - "Supports future public writeups around demonstration collection and policy deployment."
 
 - id: redshow-sysid-rma
   stage: "Undergraduate"
   track: "Research Prototype"
   title: "RedShow SYSID-A-RMA Sim-to-Real Project"
   short_title: "RedShow RMA"
-  subtitle: "Reinforcement learning method for robust sim-to-real deployment"
+  subtitle: "Reinforcement learning for robust sim-to-real deployment"
   importance: 4
   status: "Past"
   year_group: "2025"
+  role: "Undergraduate Researcher (team of 3)"
+  timeline: "2025"
   tags: [Reinforcement Learning, Sim-to-Real, System Identification, IsaacLab]
   summary: "An undergraduate research prototype on improving sim-to-real performance by combining system identification with an A-RMA-style reinforcement learning pipeline."
-  public_note: "Poster/PDF material exists locally; representative web media is pending."
-  details:
-    - "Focused on reducing domain gap while avoiding overly conservative domain randomization."
-    - "Used encoder and IMU feedback, policy-rate control, and adaptation concepts for robust deployment."
-    - "Presented as a team prototype with Hansol Park, Hyeokjo Kwon, and Seongwoo Bae."
+  overview: >-
+    An undergraduate research prototype improving sim-to-real transfer by combining
+    system identification with an A-RMA-style reinforcement-learning pipeline —
+    reducing the domain gap without relying on overly conservative domain randomization.
+  highlights:
+    - "Combined system identification with A-RMA adaptation for robust deployment."
+    - "Used encoder and IMU feedback with policy-rate control for adaptation."
+    - "Team prototype with Hansol Park, Hyeokjo Kwon, and Seongwoo Bae."
+  tech: [Reinforcement Learning, IsaacLab, PyTorch, Sim-to-Real, System Identification]
+  links:
+    video: "https://www.youtube.com/watch?v=RLcMXT-4FUA"
+  public_note: "Poster / PDF material exists locally; additional web media is pending."
 
 - id: defense-robot
   stage: "Undergraduate"
@@ -78,11 +114,18 @@
   importance: 5
   status: "Past"
   year_group: "2024"
+  role: "Team Member — Integration"
+  timeline: "2024"
   tags: [ROS 2, Embedded, Camera, Robotics]
   summary: "A team robotics project covering mechanical design, embedded control, ROS 2 integration, camera setup, and field-oriented debugging."
-  details:
-    - "Built practical experience across Linux, ROS 2, embedded control, sensors, and camera integration."
-    - "Documented development notes and system bring-up in the original Sol's Diary archive."
+  overview: >-
+    A team robotics competition project spanning mechanical design, embedded control,
+    ROS 2 integration, camera setup, and hands-on field debugging.
+  highlights:
+    - "Mechanical design and embedded control bring-up."
+    - "ROS 2 integration and camera / sensor setup."
+    - "Field-oriented debugging and full system integration."
+  tech: [ROS 2, Embedded C, Linux, Camera]
 
 - id: turtlebot-ros2-learning
   stage: "Undergraduate"
@@ -93,12 +136,19 @@
   importance: 6
   status: "Past"
   year_group: "2024"
+  role: "Team Member (Excellent Team)"
+  timeline: "2024"
   tags: [ROS 2, TurtleBot, OpenCR, Robotics Education]
   summary: "A structured robotics learning project covering Python, Arduino, ROS, OpenCR, TurtleBot bring-up, and team-based debugging."
-  public_note: "Representative media is pending."
-  details:
+  overview: >-
+    A structured robotics learning program covering Python, Arduino, ROS, OpenCR,
+    and TurtleBot bring-up — the software foundation later reused in competition and
+    research projects.
+  highlights:
+    - "Python, Arduino, ROS, and OpenCR fundamentals."
+    - "TurtleBot bring-up and team-based debugging."
     - "Recognized as an excellent team in the K-Community Learning Program."
-    - "Helped build the robotics software foundation used in later competition and research projects."
+  tech: [ROS, Python, Arduino, OpenCR, TurtleBot]
 
 - id: battle-robot
   stage: "Undergraduate"
@@ -110,7 +160,16 @@
   importance: 7
   status: "Past"
   year_group: "2024"
+  role: "Builder"
+  timeline: "2024"
   tags: [Mechatronics, Embedded, Fabrication]
   summary: "An early hands-on robotics project involving mechanical fabrication, actuator selection, wiring, testing, and competition preparation."
-  details:
-    - "Served as a foundation for later ROS and robot software work."
+  overview: >-
+    An early hands-on robotics build — mechanical fabrication, actuator selection,
+    wiring, testing, and competition prep — that became the foundation for later ROS
+    and robot-software work.
+  highlights:
+    - "Mechanical fabrication and actuator selection."
+    - "Wiring, testing, and competition preparation."
+    - "Foundation for later ROS and robot-software work."
+  tech: [Mechatronics, Embedded, Fabrication]
