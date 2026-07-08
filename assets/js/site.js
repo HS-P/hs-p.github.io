@@ -216,7 +216,10 @@
     }
 
     window.addEventListener("wheel", (event) => {
-      if (isSnapping) return;
+      if (isSnapping) {
+        event.preventDefault();
+        return;
+      }
       if (event.deltaY > 8 && window.scrollY <= 90) {
         event.preventDefault();
         isSnapping = true;
