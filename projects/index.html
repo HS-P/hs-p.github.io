@@ -8,17 +8,16 @@ description: Selected research and engineering projects.
 
 <section class="project-workspace project-timeline-page" id="graduate" data-project-board>
   <div class="project-intro" data-project-intro>
-    <p class="eyebrow">Project index</p>
     <h1>PROJECT</h1>
     <p class="project-intro-copy">
       Work is grouped by time first, so the page opens like a map instead of showing every project at once.
-      Choose a year and the matching projects will land into view in newest-first order.
+      Choose a year or switch to topics; matching projects open as a focused list.
     </p>
 
     <button class="project-mode-toggle" type="button" data-project-toggle aria-pressed="true">
       <span>Timeline</span>
       <i aria-hidden="true"></i>
-      <span>Focused List</span>
+      <span>Topic</span>
     </button>
 
     <nav class="year-timeline" aria-label="Project timeline">
@@ -36,59 +35,69 @@ description: Selected research and engineering projects.
         <span>Before</span>
       </button>
     </nav>
+
+    <div class="project-topic-panel" aria-label="Project topics" data-project-topics>
+      <button type="button" data-project-topic="physical ai">Physical AI</button>
+      <button type="button" data-project-topic="allex">ALLEX</button>
+      <button type="button" data-project-topic="teleoperation">Teleoperation</button>
+      <button type="button" data-project-topic="robot learning">Robot Learning</button>
+      <button type="button" data-project-topic="sim-to-real">Sim-to-Real</button>
+      <button type="button" data-project-topic="robotics">Robotics</button>
+    </div>
   </div>
 
-  <section class="project-year-view" data-project-year-view hidden>
+  <section class="project-focus-view" data-project-year-view hidden>
     <button class="project-back-button" type="button" data-project-back>
       <i class="fa-solid fa-arrow-left" aria-hidden="true"></i>
       Back
     </button>
-    <p class="eyebrow">Selected year</p>
-    <h2 data-project-year-title>2026</h2>
-    <p class="project-year-copy" data-project-year-copy>
-      Projects from this period are listed below.
-    </p>
-    <div class="project-node-grid" data-project-results>
-    {% assign undergraduate_anchor_done = false %}
-    {% for project in projects %}
-      {% if project.stage == "Undergraduate" and undergraduate_anchor_done == false %}
-        <span class="anchor-point" id="undergraduate"></span>
-        {% assign undergraduate_anchor_done = true %}
-      {% endif %}
-      {% assign project_topics = project.tags | join: ',' | downcase %}
-      <article class="project-node is-selected"
-        id="{{ project.id }}"
-        data-project-card
-        data-importance="{{ project.importance }}"
-        data-stage="{{ project.stage | downcase }}"
-        data-status="{{ project.status | downcase }}"
-        data-year="{{ project.year_group }}"
-        data-topics="{{ project_topics }}"
-        hidden>
-        <div class="project-node-topline">
-          <span>0{{ forloop.index }}</span>
-          <em>{{ project.year_group }}</em>
-        </div>
-        <p class="project-node-track">{{ project.track }}</p>
-        <h2>{{ project.title }}</h2>
-        <p class="project-node-summary">{{ project.summary }}</p>
-        <div class="tag-row">
-          {% for tag in project.tags limit:4 %}
-            <span>{{ tag }}</span>
-          {% endfor %}
-        </div>
-        {% if project.details %}
-          <details class="project-node-details">
-            <summary>Details</summary>
-            <ul>
-              {% for detail in project.details %}
-                <li>{{ detail }}</li>
-              {% endfor %}
-            </ul>
-          </details>
+    <div class="project-focus-layout">
+      <aside class="project-focus-title">
+        <h2 data-project-year-title>2026</h2>
+      </aside>
+      <div class="project-node-grid" data-project-results>
+      {% assign undergraduate_anchor_done = false %}
+      {% for project in projects %}
+        {% if project.stage == "Undergraduate" and undergraduate_anchor_done == false %}
+          <span class="anchor-point" id="undergraduate"></span>
+          {% assign undergraduate_anchor_done = true %}
         {% endif %}
-      </article>
-    {% endfor %}
+        {% assign project_topics = project.tags | join: ',' | downcase %}
+        <article class="project-node is-selected"
+          id="{{ project.id }}"
+          data-project-card
+          data-importance="{{ project.importance }}"
+          data-stage="{{ project.stage | downcase }}"
+          data-status="{{ project.status | downcase }}"
+          data-year="{{ project.year_group }}"
+          data-topics="{{ project_topics }}"
+          hidden>
+          <div class="project-node-topline">
+            <span>0{{ forloop.index }}</span>
+            <em>{{ project.year_group }}</em>
+          </div>
+          <p class="project-node-track">{{ project.track }}</p>
+          <h2>{{ project.short_title | default: project.title }}</h2>
+          <p class="project-node-fulltitle">{{ project.title }}</p>
+          <p class="project-node-summary">{{ project.summary }}</p>
+          <div class="tag-row">
+            {% for tag in project.tags limit:4 %}
+              <span>{{ tag }}</span>
+            {% endfor %}
+          </div>
+          {% if project.details %}
+            <details class="project-node-details">
+              <summary>Details</summary>
+              <ul>
+                {% for detail in project.details %}
+                  <li>{{ detail }}</li>
+                {% endfor %}
+              </ul>
+            </details>
+          {% endif %}
+        </article>
+      {% endfor %}
+      </div>
     </div>
   </section>
 </section>

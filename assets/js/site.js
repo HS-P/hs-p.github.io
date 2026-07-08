@@ -92,16 +92,25 @@
   const projectBoard = document.querySelector("[data-project-board]");
   const projectCards = Array.from(document.querySelectorAll("[data-project-card]"));
   const yearButtons = Array.from(document.querySelectorAll("[data-project-year]"));
+  const topicButtons = Array.from(document.querySelectorAll("[data-project-topic]"));
   const projectResults = document.querySelector("[data-project-results]");
   const projectIntro = document.querySelector("[data-project-intro]");
   const projectYearView = document.querySelector("[data-project-year-view]");
   const projectYearTitle = document.querySelector("[data-project-year-title]");
-  const projectYearCopy = document.querySelector("[data-project-year-copy]");
   const projectBack = document.querySelector("[data-project-back]");
   const projectToggle = document.querySelector("[data-project-toggle]");
 
   if (projectBoard && projectCards.length && yearButtons.length && projectIntro && projectYearView && projectYearTitle) {
     let closeTimer;
+    const state = {
+      mode: "timeline",
+      kind: "",
+      value: "",
+    };
+
+    const topicLabels = new Map(
+      topicButtons.map((button) => [button.dataset.projectTopic, button.textContent.trim()])
+    );
 
     function sortCards() {
       if (!projectResults) return;
@@ -121,41 +130,70 @@
       return card.dataset.year === year;
     }
 
-    function setCardsForYear(year) {
+    function matchesTopic(card, topic) {
+      return (card.dataset.topics || "").includes(topic);
+    }
+
+    function setCards(kind, value) {
       let visibleCount = 0;
       projectCards.forEach((card) => {
-        const matches = matchesYear(card, year);
+        const matches = kind === "topic" ? matchesTopic(card, value) : matchesYear(card, value);
         card.hidden = !matches;
         card.classList.toggle("is-selected", matches);
         card.classList.remove("is-muted");
         if (matches) {
+          card.style.setProperty("--card-delay", `${visibleCount * 420}ms`);
           visibleCount += 1;
+        } else {
+          card.style.removeProperty("--card-delay");
         }
       });
       return visibleCount;
     }
 
-    function setActiveYear(year) {
+    function setActive(kind, value) {
       yearButtons.forEach((button) => {
-        const active = button.dataset.projectYear === year;
+        const active = kind === "year" && button.dataset.projectYear === value;
+        button.classList.toggle("is-active", active);
+        button.setAttribute("aria-pressed", String(active));
+      });
+      topicButtons.forEach((button) => {
+        const active = kind === "topic" && button.dataset.projectTopic === value;
         button.classList.toggle("is-active", active);
         button.setAttribute("aria-pressed", String(active));
       });
     }
 
-    function openYear(year, label) {
-      window.clearTimeout(closeTimer);
-      const visibleCount = setCardsForYear(year);
-      projectYearTitle.textContent = label;
-      if (projectYearCopy) {
-        projectYearCopy.textContent = visibleCount
-          ? `${visibleCount} project${visibleCount === 1 ? "" : "s"} from ${label}, sorted newest first.`
-          : `No public ${label} project cards are ready yet.`;
+    function setMode(mode) {
+      state.mode = mode;
+      const topicMode = mode === "topic";
+      projectBoard.classList.toggle("is-topic-mode", topicMode);
+      if (projectToggle) {
+        projectToggle.classList.toggle("is-active", topicMode);
+        projectToggle.setAttribute("aria-pressed", String(topicMode));
       }
+    }
+
+    function pulseButton(button) {
+      if (!button) return;
+      button.classList.remove("is-pressed");
+      void button.offsetWidth;
+      button.classList.add("is-pressed");
+      window.setTimeout(() => button.classList.remove("is-pressed"), 540);
+    }
+
+    function openFocus(kind, value, label, sourceButton) {
+      window.clearTimeout(closeTimer);
+      setCards(kind, value);
+      projectYearTitle.textContent = label;
       projectYearView.hidden = false;
-      projectBoard.dataset.projectYear = year;
+      state.kind = kind;
+      state.value = value;
+      projectBoard.dataset.projectFocus = value;
+      projectBoard.dataset.projectKind = kind;
       projectBoard.classList.add("is-year-open");
-      setActiveYear(year);
+      setActive(kind, value);
+      pulseButton(sourceButton);
       window.requestAnimationFrame(() => {
         projectBoard.classList.add("is-year-settled");
       });
@@ -163,12 +201,16 @@
 
     function closeYear() {
       projectBoard.classList.remove("is-year-settled", "is-year-open");
-      projectBoard.removeAttribute("data-project-year");
-      setActiveYear("");
+      projectBoard.removeAttribute("data-project-focus");
+      projectBoard.removeAttribute("data-project-kind");
+      state.kind = "";
+      state.value = "";
+      setActive("", "");
       closeTimer = window.setTimeout(() => {
         projectYearView.hidden = true;
         projectCards.forEach((card) => {
           card.hidden = true;
+          card.style.removeProperty("--card-delay");
         });
       }, 560);
     }
@@ -184,7 +226,15 @@
       button.addEventListener("click", () => {
         const year = button.dataset.projectYear || "";
         const label = button.dataset.projectYearLabel || button.textContent.trim();
-        openYear(year, label);
+        openFocus("year", year, label, button);
+      });
+    });
+
+    topicButtons.forEach((button) => {
+      button.setAttribute("aria-pressed", "false");
+      button.addEventListener("click", () => {
+        const topic = button.dataset.projectTopic || "";
+        openFocus("topic", topic, topicLabels.get(topic) || button.textContent.trim(), button);
       });
     });
 
@@ -194,8 +244,7 @@
 
     if (projectToggle) {
       projectToggle.addEventListener("click", () => {
-        projectToggle.classList.toggle("is-active");
-        projectToggle.setAttribute("aria-pressed", String(projectToggle.classList.contains("is-active")));
+        setMode(state.mode === "timeline" ? "topic" : "timeline");
       });
     }
 
@@ -208,9 +257,10 @@
     sortCards();
     const hashCard = window.location.hash ? document.querySelector(window.location.hash) : null;
     if (hashCard && hashCard.matches("[data-project-card]")) {
-      openYear(hashCard.dataset.year || "", hashCard.dataset.year || "Projects");
+      openFocus("year", hashCard.dataset.year || "", hashCard.dataset.year || "Projects");
     } else {
       closeYear();
     }
+    setMode("timeline");
   }
 })();

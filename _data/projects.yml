@@ -2,6 +2,7 @@
   stage: "Graduate"
   track: "Research Collaboration"
   title: "AWS / NVIDIA Physical AI Collaboration"
+  short_title: "AWS Physical AI"
   subtitle: "Public collaboration track for robot learning research"
   importance: 3
   status: "Current"
@@ -19,6 +20,7 @@
   stage: "Graduate"
   track: "Robot Platform"
   title: "ALLEX Dexterous Manipulation Platform"
+  short_title: "ALLEX Platform"
   subtitle: "Dexterous hand software and robot learning infrastructure"
   importance: 1
   status: "Current"
@@ -36,6 +38,7 @@
   stage: "Graduate"
   track: "Data & Deployment"
   title: "Teleoperation and Robot Learning Data Pipeline"
+  short_title: "Teleop Pipeline"
   subtitle: "Quest/vision-based teleoperation, dataset logging, and policy workflow support"
   importance: 2
   status: "Current"
@@ -52,6 +55,7 @@
   stage: "Undergraduate"
   track: "Research Prototype"
   title: "RedShow SYSID-A-RMA Sim-to-Real Project"
+  short_title: "RedShow RMA"
   subtitle: "Reinforcement learning method for robust sim-to-real deployment"
   importance: 4
   status: "Past"
@@ -68,6 +72,7 @@
   stage: "Undergraduate"
   track: "Competition Platform"
   title: "Defense Robotics Competition Platform"
+  short_title: "Defense Robot"
   subtitle: "Competition robot system integration"
   image: /assets/img/projects/defense-robot.jpg
   importance: 5
@@ -83,6 +88,7 @@
   stage: "Undergraduate"
   track: "Learning Program"
   title: "TurtleBot and ROS 2 Bring-up"
+  short_title: "TurtleBot ROS2"
   subtitle: "K-Community robotics learning program"
   importance: 6
   status: "Past"
@@ -98,6 +104,7 @@
   stage: "Undergraduate"
   track: "Mechanical Build"
   title: "Battle Robot"
+  short_title: "Battle Robot"
   subtitle: "Mechanical and embedded robotics build"
   image: /assets/img/projects/battle-robot.jpg
   importance: 7

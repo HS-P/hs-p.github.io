@@ -19,12 +19,10 @@
   </head>
   <body class="{% if page.url == '/' %}home-page{% else %}sub-page{% endif %}">
     {% include site-header.html %}
-    <main class="page-shell">
+    <main class="page-shell{% if page.url == '/projects/' %} page-shell--wide{% endif %}">
       {{ content }}
     </main>
-    {% if page.url == '/' %}
-      {% include orb-nav.html %}
-    {% endif %}
+    {% include orb-nav.html %}
     {% include site-footer.html %}
     <script src="{{ '/assets/js/site.js' | relative_url }}"></script>
   </body>
