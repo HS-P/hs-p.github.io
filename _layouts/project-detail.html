@@ -13,13 +13,12 @@ layout: default
 
   <header class="project-detail-hero{% unless project.image %} project-detail-hero--text{% endunless %}">
     <div class="project-detail-copy">
-      <p class="eyebrow">{{ project.stage }} / {{ project.status }} / {{ project.year_group }}</p>
       <h1>{{ project.short_title | default: project.title }}</h1>
       <p class="project-detail-fulltitle">{{ project.title }}</p>
       <p class="project-detail-summary">{{ project.summary }}</p>
       <div class="tag-row">
         {% for tag in project.tags %}
-          <span>{{ tag }}</span>
+          <a href="{{ '/projects/' | relative_url }}?topic={{ tag | downcase | replace: ' ', '%20' }}">{{ tag }}</a>
         {% endfor %}
       </div>
     </div>
@@ -32,6 +31,23 @@ layout: default
   </header>
 
   <div class="project-detail-grid">
+    <section class="project-detail-section project-progress-section">
+      <h2>Progress</h2>
+      <div class="project-progress-line">
+        <span>{{ project.status }}</span>
+        <strong>{{ project.year_group }}</strong>
+      </div>
+      {% if project.progress %}
+        <ul class="project-detail-list">
+          {% for item in project.progress %}
+            <li>{{ item }}</li>
+          {% endfor %}
+        </ul>
+      {% else %}
+        <p class="project-detail-note">Detailed progress notes will be added as public material is selected.</p>
+      {% endif %}
+    </section>
+
     <section class="project-detail-section">
       <h2>Project Notes</h2>
       {% if project.details %}
@@ -66,8 +82,44 @@ layout: default
           <dd>{{ project.status }}</dd>
         </div>
       </dl>
+      {% if project.github or project.website or project.paper or project.demo %}
+        <div class="project-detail-links">
+          {% if project.github %}<a href="{{ project.github }}" target="_blank" rel="noopener">GitHub</a>{% endif %}
+          {% if project.website %}<a href="{{ project.website }}" target="_blank" rel="noopener">Project Page</a>{% endif %}
+          {% if project.paper %}<a href="{{ project.paper }}" target="_blank" rel="noopener">Paper</a>{% endif %}
+          {% if project.demo %}<a href="{{ project.demo }}" target="_blank" rel="noopener">Demo</a>{% endif %}
+        </div>
+      {% endif %}
     </aside>
   </div>
+
+  {% if project.gallery or project.videos %}
+    <section class="project-collage-board">
+      {% if project.gallery %}
+        <div class="project-collage-section">
+          <h2>Image Board</h2>
+          <div class="project-gallery-grid">
+            {% for item in project.gallery %}
+              <figure>
+                <img src="{{ item.src | relative_url }}" alt="{{ item.alt | default: project.title }}">
+                {% if item.caption %}<figcaption>{{ item.caption }}</figcaption>{% endif %}
+              </figure>
+            {% endfor %}
+          </div>
+        </div>
+      {% endif %}
+      {% if project.videos %}
+        <div class="project-collage-section">
+          <h2>Video Log</h2>
+          <div class="project-video-grid">
+            {% for video in project.videos %}
+              <iframe src="{{ video.embed }}" title="{{ video.title | default: project.title }}" allowfullscreen loading="lazy"></iframe>
+            {% endfor %}
+          </div>
+        </div>
+      {% endif %}
+    </section>
+  {% endif %}
 </article>
 {% else %}
 <article class="prose-page">

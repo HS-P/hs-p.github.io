@@ -38,12 +38,9 @@ description: Selected research and engineering projects.
       </nav>
 
       <div class="project-topic-panel" aria-label="Project topics" data-project-topics>
-        <button type="button" data-project-topic="physical ai">Physical AI</button>
         <button type="button" data-project-topic="allex">ALLEX</button>
-        <button type="button" data-project-topic="teleoperation">Teleoperation</button>
-        <button type="button" data-project-topic="robot learning">Robot Learning</button>
-        <button type="button" data-project-topic="sim-to-real">Sim-to-Real</button>
-        <button type="button" data-project-topic="robotics">Robotics</button>
+        <button type="button" data-project-topic="teleoperation">TELEOPERATION</button>
+        <button type="button" data-project-topic="vla">VLA</button>
       </div>
     </div>
   </div>
@@ -69,11 +66,15 @@ description: Selected research and engineering projects.
         <article class="project-node is-selected"
           id="{{ project.id }}"
           data-project-card
+          data-project-url="{{ project_url | relative_url }}"
           data-importance="{{ project.importance }}"
           data-stage="{{ project.stage | downcase }}"
           data-status="{{ project.status | downcase }}"
           data-year="{{ project.year_group }}"
           data-topics="{{ project_topics }}"
+          role="link"
+          tabindex="0"
+          aria-label="Open {{ project.short_title | default: project.title }}"
           hidden>
           <div class="project-node-topline">
             <span>0{{ forloop.index }}</span>
@@ -85,7 +86,7 @@ description: Selected research and engineering projects.
           <p class="project-node-summary">{{ project.summary }}</p>
           <div class="tag-row">
             {% for tag in project.tags limit:4 %}
-              <span>{{ tag }}</span>
+              <button type="button" data-project-tag="{{ tag | downcase }}">{{ tag }}</button>
             {% endfor %}
           </div>
           <a class="project-node-link" href="{{ project_url | relative_url }}">

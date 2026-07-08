@@ -112,6 +112,17 @@
       topicButtons.map((button) => [button.dataset.projectTopic, button.textContent.trim()])
     );
 
+    function formatTopicLabel(value) {
+      return (value || "")
+        .split(/[\s-]+/)
+        .filter(Boolean)
+        .map((word) => {
+          const upper = word.toUpperCase();
+          return upper.length <= 3 ? upper : upper.charAt(0) + upper.slice(1).toLowerCase();
+        })
+        .join(" ");
+    }
+
     function sortCards() {
       if (!projectResults) return;
       projectCards
@@ -199,6 +210,12 @@
       });
     }
 
+    function openTopic(topic, label, sourceButton) {
+      if (!topic) return;
+      setMode("topic");
+      openFocus("topic", topic, label || topicLabels.get(topic) || formatTopicLabel(topic), sourceButton);
+    }
+
     function closeYear() {
       projectBoard.classList.remove("is-year-settled", "is-year-open");
       projectBoard.removeAttribute("data-project-focus");
@@ -234,7 +251,7 @@
       button.setAttribute("aria-pressed", "false");
       button.addEventListener("click", () => {
         const topic = button.dataset.projectTopic || "";
-        openFocus("topic", topic, topicLabels.get(topic) || button.textContent.trim(), button);
+        openTopic(topic, topicLabels.get(topic) || button.textContent.trim(), button);
       });
     });
 
@@ -249,8 +266,26 @@
     }
 
     projectCards.forEach((card) => {
+      const projectUrl = card.dataset.projectUrl;
       card.addEventListener("animationend", () => {
         card.classList.remove("is-landing");
+      });
+      card.addEventListener("click", (event) => {
+        const tag = event.target.closest("[data-project-tag]");
+        if (tag) {
+          event.preventDefault();
+          event.stopPropagation();
+          openTopic(tag.dataset.projectTag || "", tag.textContent.trim(), tag);
+          return;
+        }
+        if (event.target.closest("a, button, summary, details")) return;
+        if (projectUrl) window.location.href = projectUrl;
+      });
+      card.addEventListener("keydown", (event) => {
+        if (event.key !== "Enter" && event.key !== " ") return;
+        if (event.target.closest("a, button, summary, details")) return;
+        event.preventDefault();
+        if (projectUrl) window.location.href = projectUrl;
       });
       card.addEventListener("mouseenter", () => {
         projectBoard.classList.add("is-card-hover");
@@ -271,12 +306,16 @@
     });
 
     sortCards();
+    const queryTopic = new URLSearchParams(window.location.search).get("topic");
     const hashCard = window.location.hash ? document.querySelector(window.location.hash) : null;
-    if (hashCard && hashCard.matches("[data-project-card]")) {
+    if (queryTopic) {
+      openTopic(queryTopic.toLowerCase(), formatTopicLabel(queryTopic));
+    } else if (hashCard && hashCard.matches("[data-project-card]")) {
+      setMode("timeline");
       openFocus("year", hashCard.dataset.year || "", hashCard.dataset.year || "Projects");
     } else {
+      setMode("timeline");
       closeYear();
     }
-    setMode("timeline");
   }
 })();
