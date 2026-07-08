@@ -10,13 +10,20 @@ description: Selected research and engineering projects.
 {% assign featured_projects = projects | where: "featured", true %}
 
 <header class="page-title project-title">
-  <div>
+  <div class="project-title-copy">
     <p class="eyebrow">Project index</p>
-    <h1>Systems I am building, not just things I have done.</h1>
+    <h1>Projects</h1>
     <p>
       Current work comes first: ALLEX software, teleoperation/data loops, and robot-learning deployment. Earlier undergraduate projects stay visible as the engineering foundation behind that trajectory.
     </p>
   </div>
+  <nav class="project-year-rail" aria-label="Project timeline shortcuts">
+    <a href="#graduate">Current</a>
+    <span>2026</span>
+    <span>2025</span>
+    <span>2024</span>
+    <a href="#undergraduate">Earlier</a>
+  </nav>
 </header>
 
 <section class="project-group" id="graduate">

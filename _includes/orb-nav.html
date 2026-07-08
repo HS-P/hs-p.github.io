@@ -1,6 +1,11 @@
 <nav class="bubble-nav" aria-label="Floating home navigation" data-bubble-nav>
-  <a class="bubble-link" href="{{ '/#research' | relative_url }}"><span>Research</span></a>
-  <a class="bubble-link" href="{{ '/projects/' | relative_url }}"><span>Project</span></a>
-  <a class="bubble-link" href="{{ '/#experience' | relative_url }}"><span>Experience</span></a>
-  <a class="bubble-link" href="{{ '/cv/' | relative_url }}"><span>CV</span></a>
+  <button class="bubble-toggle" type="button" aria-label="Open floating navigation" aria-expanded="false" data-bubble-toggle>
+    <i class="fa-solid fa-bars-staggered" aria-hidden="true"></i>
+  </button>
+  <div class="bubble-links">
+    <a class="bubble-link" href="{{ '/#research' | relative_url }}"><span class="bubble-skin" aria-hidden="true"></span><span class="bubble-label">Research</span></a>
+    <a class="bubble-link" href="{{ '/projects/' | relative_url }}"><span class="bubble-skin" aria-hidden="true"></span><span class="bubble-label">Project</span></a>
+    <a class="bubble-link" href="{{ '/#experience' | relative_url }}"><span class="bubble-skin" aria-hidden="true"></span><span class="bubble-label">Experience</span></a>
+    <a class="bubble-link" href="{{ '/cv/' | relative_url }}"><span class="bubble-skin" aria-hidden="true"></span><span class="bubble-label">CV</span></a>
+  </div>
 </nav>

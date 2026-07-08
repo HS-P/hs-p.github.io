@@ -27,6 +27,35 @@
   }
 
   if (bubbleNav) {
+    const bubbleToggle = bubbleNav.querySelector("[data-bubble-toggle]");
+
+    function setBubbleNav(open) {
+      bubbleNav.classList.toggle("is-open", open);
+      if (bubbleToggle) {
+        bubbleToggle.setAttribute("aria-expanded", String(open));
+        bubbleToggle.setAttribute("aria-label", open ? "Close floating navigation" : "Open floating navigation");
+      }
+    }
+
+    if (bubbleToggle) {
+      bubbleToggle.addEventListener("click", (event) => {
+        event.stopPropagation();
+        setBubbleNav(!bubbleNav.classList.contains("is-open"));
+      });
+    }
+
+    document.addEventListener("click", (event) => {
+      if (!bubbleNav.contains(event.target)) {
+        setBubbleNav(false);
+      }
+    });
+
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "Escape") {
+        setBubbleNav(false);
+      }
+    });
+
     bubbleNav.addEventListener("click", (event) => {
       const link = event.target.closest("a");
       if (!link) return;
@@ -55,6 +84,7 @@
         window.history.pushState(null, "", url.hash);
         revealTarget(target);
       }, 230);
+      window.setTimeout(() => setBubbleNav(false), 360);
       window.setTimeout(() => document.body.classList.remove("bubble-pop"), 520);
     });
   }
