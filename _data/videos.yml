@@ -10,11 +10,11 @@
   published: "2025-11-04"
   summary: "RedShow sim-to-real workflow with A-RMA and system identification."
 
-- title: "Reinforcement Learning TestBed Sim-to-Real"
-  video_id: "CuyNOA60UXc"
-  topic: "RL"
-  published: "2025-06-21"
-  summary: "Robot learning testbed for sim-to-real policy transfer."
+- title: "4-1 Semester Digital Twin Term Project"
+  video_id: "VB5vlCer3c0"
+  topic: "Isaac Sim"
+  published: "2025-06-15"
+  summary: "Digital twin term project work connected to simulation-based robotics practice."
 
 - title: "Isaac Sim Physical Simulation: Tree Planting"
   video_id: "NxsqzEvVpEo"
