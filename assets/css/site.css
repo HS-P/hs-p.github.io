@@ -155,30 +155,8 @@ img {
     transform 220ms cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
-.bubble-toggle-hand {
-  width: 62px;
-  height: 62px;
-  border-radius: 18px;
-  object-fit: cover;
-  object-position: center;
-  filter: drop-shadow(0 10px 16px rgba(16, 21, 34, 0.2));
-  transform: translateY(2px) rotate(-8deg);
-  transition: transform 260ms cubic-bezier(0.2, 0.8, 0.2, 1);
-}
-
-.bubble-toggle-lines {
-  position: absolute;
-  right: 12px;
-  bottom: 12px;
-  width: 22px;
-  height: 18px;
-  border-radius: 999px;
-  background:
-    linear-gradient(rgba(18, 33, 49, 0.82), rgba(18, 33, 49, 0.82)) 50% 2px / 14px 2px no-repeat,
-    linear-gradient(rgba(18, 33, 49, 0.82), rgba(18, 33, 49, 0.82)) 50% 8px / 18px 2px no-repeat,
-    linear-gradient(rgba(18, 33, 49, 0.82), rgba(18, 33, 49, 0.82)) 50% 14px / 11px 2px no-repeat;
-  background-color: rgba(255, 255, 255, 0.62);
-  box-shadow: 0 6px 16px rgba(16, 21, 34, 0.08);
+.bubble-toggle i {
+  font-size: 2.05rem;
 }
 
 .bubble-toggle:hover,
@@ -192,19 +170,13 @@ img {
   scale: 1.035;
 }
 
-.bubble-toggle:hover .bubble-toggle-hand,
-.bubble-toggle:focus-visible .bubble-toggle-hand,
-.bubble-nav.is-open .bubble-toggle-hand {
-  transform: translateY(0) rotate(0deg) scale(1.05);
-}
-
 .bubble-toggle:focus-visible {
   outline: 2px solid rgba(8, 118, 215, 0.34);
   outline-offset: 5px;
 }
 
 .bubble-nav.is-open .bubble-toggle {
-  transform: rotate(90deg);
+  transform: none;
 }
 
 .bubble-links {
@@ -235,7 +207,7 @@ img {
   width: 282px;
   height: 84px;
   border: 0;
-  border-radius: 999px;
+  border-radius: 30px;
   overflow: visible;
   background: transparent;
   box-shadow: none;
@@ -295,7 +267,7 @@ img {
   --drift-name: bubble-drift-b;
   width: 268px;
   height: 84px;
-  border-radius: 999px;
+  border-radius: 30px;
 }
 
 .bubble-link:nth-child(2)::before {
@@ -315,7 +287,7 @@ img {
   --drift-name: bubble-drift-c;
   width: 306px;
   height: 84px;
-  border-radius: 999px;
+  border-radius: 30px;
 }
 
 .bubble-link:nth-child(3)::before {
@@ -335,7 +307,7 @@ img {
   --drift-name: bubble-drift-d;
   width: 182px;
   height: 78px;
-  border-radius: 999px;
+  border-radius: 28px;
 }
 
 .bubble-link:nth-child(4)::before {
@@ -412,11 +384,13 @@ img {
   z-index: 1;
   display: block;
   border-radius: inherit;
+  clip-path: polygon(9% 0, 100% 8%, 91% 92%, 0 100%, 4% 50%);
   border: 1px solid rgba(170, 198, 222, 0.56);
   background:
-    radial-gradient(circle at 18% 18%, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0) 28%),
-    linear-gradient(135deg, rgba(255, 255, 255, 0.78), rgba(217, 233, 246, 0.48) 48%, rgba(255, 255, 255, 0.52)),
-    rgba(248, 251, 254, 0.48);
+    linear-gradient(112deg, rgba(255, 255, 255, 0.92) 0 16%, rgba(255, 255, 255, 0.18) 17% 28%, transparent 29%),
+    radial-gradient(circle at 23% 38%, rgba(52, 213, 175, 0.2), transparent 34%),
+    linear-gradient(142deg, rgba(255, 255, 255, 0.74), rgba(217, 233, 246, 0.38) 48%, rgba(255, 255, 255, 0.46)),
+    rgba(248, 251, 254, 0.42);
   box-shadow:
     0 24px 48px rgba(16, 45, 74, 0.12),
     inset 0 1px 1px rgba(255, 255, 255, 0.96),
@@ -436,7 +410,7 @@ img {
   inset: 1px;
   border-radius: inherit;
   background:
-    linear-gradient(105deg, transparent 0 32%, rgba(255, 255, 255, 0.72) 42%, transparent 54%),
+    linear-gradient(105deg, transparent 0 30%, rgba(255, 255, 255, 0.78) 42%, transparent 56%),
     radial-gradient(circle at 92% 28%, rgba(42, 202, 152, 0.16), transparent 28%);
   opacity: 0.55;
   pointer-events: none;
@@ -580,7 +554,9 @@ img {
 }
 
 .home-page .hero-copy--lab > * {
-  animation: hero-copy-in 720ms cubic-bezier(0.2, 0.78, 0.18, 1) forwards;
+  opacity: 0;
+  transform: translateX(-36px);
+  animation: hero-copy-in 720ms cubic-bezier(0.2, 0.78, 0.18, 1) both;
 }
 
 .home-page .hero-copy--lab > *:nth-child(1) {
@@ -779,7 +755,7 @@ img {
   object-fit: contain;
   object-position: center bottom;
   filter: drop-shadow(0 34px 48px rgba(16, 21, 34, 0.24));
-  transform: scale(1.6);
+  transform: scale(1.52);
   transform-origin: left bottom;
 }
 
@@ -1076,7 +1052,7 @@ img {
 
 .project-title-copy {
   opacity: 1;
-  animation: project-copy-in 1120ms cubic-bezier(0.16, 0.86, 0.2, 1) 120ms backwards;
+  animation: project-copy-in 1120ms cubic-bezier(0.16, 0.86, 0.2, 1) 120ms both;
 }
 
 .project-title h1 {
@@ -1319,6 +1295,73 @@ img {
   font-weight: 720;
 }
 
+.project-workspace {
+  display: grid;
+  grid-template-columns: minmax(280px, 360px) minmax(0, 1fr);
+  gap: 40px;
+  align-items: start;
+  padding: 62px 0 82px;
+}
+
+.project-control-panel {
+  position: sticky;
+  top: 96px;
+  min-width: 0;
+  padding: 0 28px 28px 0;
+  border-right: 1px solid rgba(207, 217, 228, 0.92);
+  opacity: 1;
+  animation: project-copy-in 1120ms cubic-bezier(0.16, 0.86, 0.2, 1) 120ms both;
+}
+
+.project-control-panel h1 {
+  max-width: 820px;
+  margin: 0;
+  font-size: clamp(2.8rem, 5vw, 5.2rem);
+  line-height: 0.95;
+  font-weight: 850;
+}
+
+.project-control-panel p:not(.eyebrow) {
+  max-width: 34rem;
+  margin: 16px 0 0;
+  color: var(--muted);
+  font-size: 1.04rem;
+}
+
+.project-control-panel .project-topic-strip {
+  display: grid;
+  grid-template-columns: 1fr;
+  align-items: start;
+  gap: 10px;
+  margin-top: 28px;
+}
+
+.project-control-panel .project-topic-strip button {
+  justify-self: start;
+  min-width: min(100%, 260px);
+  text-align: left;
+}
+
+.project-control-panel .project-year-rail {
+  justify-content: flex-start;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 24px;
+  padding-top: 22px;
+  padding-bottom: 0;
+  border-top: 1px solid rgba(207, 217, 228, 0.82);
+  white-space: normal;
+}
+
+.project-control-panel .project-year-rail::before {
+  display: none;
+}
+
+.project-projects {
+  min-width: 0;
+  padding-top: 92px;
+}
+
 .project-board {
   position: relative;
   padding: 8px 0 72px;
@@ -1327,13 +1370,13 @@ img {
 .project-board-heading {
   max-width: 720px;
   opacity: 1;
-  animation: project-copy-in 900ms cubic-bezier(0.16, 0.86, 0.2, 1) 320ms backwards;
+  animation: project-copy-in 900ms cubic-bezier(0.16, 0.86, 0.2, 1) 320ms both;
 }
 
 .project-node-grid {
   position: relative;
   display: grid;
-  grid-template-columns: repeat(12, minmax(0, 1fr));
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 18px;
   align-items: stretch;
 }
@@ -1358,7 +1401,7 @@ img {
 
 .project-node {
   position: relative;
-  grid-column: span 4;
+  grid-column: auto;
   min-height: 316px;
   display: flex;
   flex-direction: column;
@@ -1372,7 +1415,7 @@ img {
   overflow: hidden;
   opacity: 1;
   transform: translate3d(0, 0, 0);
-  animation: project-node-in 880ms cubic-bezier(0.16, 0.86, 0.2, 1) backwards;
+  animation: project-node-in 880ms cubic-bezier(0.16, 0.86, 0.2, 1) both;
   transition:
     border-color 560ms ease,
     background 560ms ease,
@@ -1435,19 +1478,19 @@ img {
 
 .project-node:nth-of-type(1),
 .project-node:nth-of-type(2) {
-  grid-column: span 6;
+  grid-column: auto;
 }
 
 .project-node:nth-of-type(4) {
-  grid-column: span 5;
+  grid-column: auto;
 }
 
 .project-node:nth-of-type(5) {
-  grid-column: span 4;
+  grid-column: auto;
 }
 
 .project-node:nth-of-type(6) {
-  grid-column: span 3;
+  grid-column: auto;
 }
 
 .project-node-topline {
@@ -1511,13 +1554,13 @@ img {
   line-height: 1.55;
 }
 
-.project-board.is-filtered .project-node {
+.project-workspace.is-filtered .project-node {
   opacity: 0.3;
   filter: grayscale(0.86);
   scale: 0.985;
 }
 
-.project-board.is-filtered .project-node.is-selected {
+.project-workspace.is-filtered .project-node.is-selected {
   border-color: transparent;
   background:
     linear-gradient(148deg, rgba(255, 255, 255, 0.94), rgba(237, 250, 244, 0.82)) padding-box,
@@ -1531,12 +1574,12 @@ img {
   z-index: 2;
 }
 
-.project-board.is-filtered .project-node.is-selected::after {
+.project-workspace.is-filtered .project-node.is-selected::after {
   opacity: 1;
   transform: scaleX(1);
 }
 
-.project-board.is-filtered .project-node.is-selected .project-node-topline em {
+.project-workspace.is-filtered .project-node.is-selected .project-node-topline em {
   border-color: rgba(43, 199, 143, 0.46);
   color: #0b5c3f;
 }
@@ -2035,19 +2078,13 @@ img {
 
 @keyframes project-node-in {
   0% {
-    opacity: 0;
-    transform: translate3d(-34px, 10px, 0);
-    filter: blur(9px);
+    transform: translate3d(-42px, 0, 0);
   }
   64% {
-    opacity: 0.86;
     transform: translate3d(8px, 0, 0);
-    filter: blur(2px);
   }
   100% {
-    opacity: 1;
     transform: translate3d(0, 0, 0);
-    filter: blur(0);
   }
 }
 
@@ -2371,6 +2408,7 @@ img {
   .sub-page .blog-row,
   .sub-page .cv-block,
   .sub-page .project-group,
+  .project-control-panel,
   .project-title-copy,
   .project-topic-strip button,
   .project-year-rail::before,
@@ -2458,6 +2496,7 @@ img {
   .hero,
   .work-index-row,
   .project-title,
+  .project-workspace,
   .project-overview,
   .featured-work,
   .project-grid.wide .project-card:not(.project-card--text),
@@ -2520,9 +2559,54 @@ img {
   .intro,
   .section-lead,
   .project-overview p:not(.eyebrow),
-  .project-title p:not(.eyebrow) {
+  .project-title p:not(.eyebrow),
+  .project-control-panel p:not(.eyebrow) {
     max-width: 100%;
     overflow-wrap: anywhere;
+  }
+
+  .project-workspace {
+    gap: 26px;
+    padding: 48px 0 64px;
+  }
+
+  .project-control-panel {
+    position: relative;
+    top: auto;
+    padding: 0 0 24px;
+    border-right: 0;
+    border-bottom: 1px solid rgba(207, 217, 228, 0.92);
+    animation: none;
+    opacity: 1;
+    transform: none;
+    filter: none;
+  }
+
+  .project-control-panel h1 {
+    font-size: 3rem;
+  }
+
+  .project-projects {
+    padding-top: 0;
+  }
+
+  .project-board-heading,
+  .project-topic-strip button,
+  .project-year-rail button,
+  .project-node {
+    animation: none;
+    opacity: 1;
+    transform: none;
+    filter: none;
+  }
+
+  .project-control-panel .project-topic-strip {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .project-control-panel .project-topic-strip button {
+    justify-self: stretch;
+    min-width: 0;
   }
 
   .project-year-rail {
@@ -2661,7 +2745,8 @@ img {
   }
 
   .hero h1,
-  .project-title h1 {
+  .project-title h1,
+  .project-control-panel h1 {
     font-size: 3rem;
   }
 
