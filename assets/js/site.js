@@ -263,8 +263,13 @@
   const hashCard = projectBoard && window.location.hash ? document.querySelector(window.location.hash) : null;
 
   if (projectBoard && projectIntro && !queryTopic && !(hashCard && hashCard.matches("[data-project-card]"))) {
+    const reduceProjectIntroMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     projectBoard.classList.add("has-project-intro");
-    window.setTimeout(() => projectBoard.classList.add("is-project-intro-complete"), 7000);
+    projectIntro.inert = !reduceProjectIntroMotion;
+    window.setTimeout(() => {
+      projectBoard.classList.add("is-project-intro-complete");
+      projectIntro.inert = false;
+    }, reduceProjectIntroMotion ? 0 : 9300);
   }
 
   if (projectBoard && projectCards.length && yearButtons.length && projectIntro && projectYearView && projectYearTitle) {
@@ -385,7 +390,7 @@
       });
       hoverUnlockTimer = window.setTimeout(() => {
         projectBoard.classList.remove("is-hover-locked");
-      }, Math.min(2200, 980 + visibleCount * 220));
+      }, 1080 + Math.max(0, visibleCount - 1) * 420);
     }
 
     function openTopic(topic, label, sourceButton) {

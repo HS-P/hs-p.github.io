@@ -77,11 +77,14 @@ description: Selected research and engineering projects.
           hidden>
           <div class="project-node-topline">
             <span>0{{ forloop.index }}</span>
-            <em>{{ project.year_group }}</em>
+            <em>{{ project.status }} · {{ project.year_group }}</em>
           </div>
           <p class="project-node-track">{{ project.track }}</p>
-          <h2>{{ project.short_title | default: project.title }}</h2>
-          <p class="project-node-fulltitle">{{ project.title }}</p>
+          {% assign project_card_title = project.short_title | default: project.title %}
+          <h2>{{ project_card_title }}</h2>
+          {% unless project.title == project_card_title %}
+            <p class="project-node-fulltitle">{{ project.title }}</p>
+          {% endunless %}
           <p class="project-node-summary">{{ project.summary }}</p>
           <div class="tag-row">
             {% for tag in project.tags limit:4 %}
