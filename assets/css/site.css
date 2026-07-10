@@ -7666,3 +7666,320 @@ img {
     min-height: 230px !important;
   }
 }
+
+/* ============================================================
+   Name-card hero: typed identity + interactive ALLEX nav (home)
+   ============================================================ */
+
+/* -- Layout: push the profile card further left, enlarge, lighten -- */
+.home-page .hero-profile-panel.namecard {
+  grid-template-columns: minmax(140px, 172px) minmax(0, 1fr);
+  gap: 26px 30px;
+  justify-self: start;
+  align-self: center;
+  width: min(1240px, 88%);
+  margin-left: clamp(-136px, -8vw, -60px);
+  padding: 30px 36px 28px;
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(17, 23, 34, 0.055);
+  box-shadow:
+    0 22px 66px rgba(17, 23, 34, 0.04),
+    inset 0 1px 0 rgba(255, 255, 255, 0.4);
+  backdrop-filter: blur(4px);
+  pointer-events: none;
+}
+
+/* Panel is click-through so hover/click reaches the ALLEX beneath;
+   re-enable only the contact links that need to stay clickable. */
+.home-page .namecard .link-row a {
+  pointer-events: auto;
+}
+
+.home-page .hero-profile-panel.namecard .hero-avatar {
+  width: min(13vw, 172px);
+  min-width: 140px;
+}
+
+.home-page .namecard .hero-identity {
+  max-width: none;
+}
+
+/* -- Bigger, tighter name (business-card feel) -- */
+.home-page .namecard .hero-identity h1 .hero-name-main {
+  font-size: clamp(4.4rem, 6.7vw, 7.4rem);
+  letter-spacing: -0.024em;
+  line-height: 0.86;
+  white-space: nowrap;
+}
+
+.home-page .namecard .hero-identity h1 .hero-name-sub {
+  margin-top: 10px;
+  font-size: clamp(1.42rem, 1.95vw, 2.15rem);
+}
+
+.home-page .namecard .hero-role {
+  font-size: clamp(1.05rem, 1.35vw, 1.42rem);
+  font-weight: 730;
+}
+
+/* -- Typing: caret + no-layout-jump placeholder + delayed reveal -- */
+.namecard [data-type] {
+  white-space: pre-wrap;
+}
+
+.namecard.is-typing-ready [data-type]:empty::before {
+  content: "\200b";
+}
+
+.namecard [data-type].nc-caret::after {
+  content: "";
+  display: inline-block;
+  width: 0.055em;
+  height: 0.9em;
+  margin-left: 0.07em;
+  vertical-align: -0.09em;
+  background: var(--accent-green);
+  border-radius: 1px;
+  animation: nc-caret 900ms steps(1, end) infinite;
+}
+
+@keyframes nc-caret {
+  0%, 50% { opacity: 1; }
+  50.01%, 100% { opacity: 0; }
+}
+
+.namecard.is-typing-ready [data-type-reveal] {
+  opacity: 0;
+  transform: translateY(10px);
+}
+
+.namecard.is-typed [data-type-reveal] {
+  opacity: 1;
+  transform: none;
+  transition:
+    opacity 560ms ease,
+    transform 560ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+/* -- Interactive ALLEX: wake on hover, reveal nav on click (home) -- */
+.home-page .hero-ghost-allex.allex-nav {
+  pointer-events: none;
+}
+
+.home-page .allex-nav img {
+  transition:
+    opacity 460ms ease,
+    transform 620ms cubic-bezier(0.2, 0.82, 0.2, 1),
+    filter 460ms ease;
+}
+
+.home-page .allex-nav.is-awake img {
+  opacity: 0.97;
+  transform: scaleX(1) scale(1.035);
+  filter: grayscale(0) contrast(1.05) drop-shadow(0 26px 56px rgba(16, 21, 34, 0.22));
+}
+
+.allex-nav-trigger {
+  position: fixed;
+  top: 58px;
+  right: 0;
+  width: min(56vw, 840px);
+  height: calc(100vh - 58px);
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  z-index: 1;
+  pointer-events: auto;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.allex-nav-trigger.is-parked {
+  pointer-events: none;
+}
+
+.allex-nav-trigger:focus-visible {
+  outline: 2px solid var(--accent-green);
+  outline-offset: -8px;
+  border-radius: 14px;
+}
+
+/* ALLEX part-anchored topic callouts: dot on the part -> gray leader line ->
+   green bar blooming out -> label below. Positions tunable via inline --rx/--ty
+   (anchor: distance from right edge, top) and --dx/--dy (offset to the label). */
+.allex-topics {
+  position: fixed;
+  inset: 0;
+  z-index: 8;
+  pointer-events: none;
+}
+
+.allex-topic {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 0;
+  height: 0;
+  color: inherit;
+  text-decoration: none;
+}
+
+.allex-topic:nth-child(1) { --t: 0; }
+.allex-topic:nth-child(2) { --t: 1; }
+.allex-topic:nth-child(3) { --t: 2; }
+.allex-topic:nth-child(4) { --t: 3; }
+
+.topic-dot {
+  position: absolute;
+  left: -5px;
+  top: -5px;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: rgba(83, 98, 116, 0.9);
+  box-shadow: 0 0 0 4px rgba(83, 98, 116, 0.14);
+  opacity: 0;
+  transform: scale(0);
+  transition:
+    transform 220ms cubic-bezier(0.2, 1.4, 0.3, 1),
+    opacity 150ms ease;
+}
+
+.topic-line {
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 2px;
+  width: var(--len, 0px);
+  background: linear-gradient(90deg, rgba(83, 98, 116, 0.28), rgba(83, 98, 116, 0.82));
+  transform-origin: left center;
+  transform: rotate(var(--ang, 0deg)) scaleX(0);
+  opacity: 0;
+  transition:
+    transform 300ms cubic-bezier(0.3, 0.9, 0.2, 1),
+    opacity 120ms ease;
+}
+
+.topic-flag {
+  position: absolute;
+  left: var(--dx, 0px);
+  top: var(--dy, 0px);
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  pointer-events: none;
+}
+
+.allex-topic[data-side="left"] .topic-flag {
+  align-items: flex-end;
+  transform: translate(-100%, -50%);
+  text-align: right;
+}
+
+.allex-topic[data-side="right"] .topic-flag {
+  align-items: flex-start;
+  transform: translate(0, -50%);
+  text-align: left;
+}
+
+.topic-bloom {
+  width: 100%;
+  height: 7px;
+  border-radius: 6px;
+  background: var(--accent-green);
+  box-shadow: 0 4px 14px rgba(36, 146, 45, 0.4);
+  transform: scaleX(0);
+  transition: transform 380ms cubic-bezier(0.16, 1.5, 0.3, 1);
+}
+
+.allex-topic[data-side="left"] .topic-bloom { transform-origin: right center; }
+.allex-topic[data-side="right"] .topic-bloom { transform-origin: left center; }
+
+.topic-text {
+  font-size: 1.2rem;
+  font-weight: 800;
+  letter-spacing: 0.004em;
+  color: var(--text);
+  white-space: nowrap;
+  text-shadow:
+    0 1px 2px rgba(255, 255, 255, 0.92),
+    0 0 10px rgba(255, 255, 255, 0.72);
+  opacity: 0;
+  transform: translateY(-5px);
+  transition:
+    opacity 240ms ease,
+    transform 240ms ease,
+    color 150ms ease;
+}
+
+.allex-topics.is-open .topic-flag {
+  pointer-events: auto;
+}
+
+.allex-topics.is-open .topic-dot {
+  opacity: 1;
+  transform: scale(1);
+  transition-delay: calc(var(--t, 0) * 150ms);
+}
+
+.allex-topics.is-open .topic-line {
+  opacity: 1;
+  transform: rotate(var(--ang, 0deg)) scaleX(1);
+  transition-delay: calc(var(--t, 0) * 150ms + 110ms);
+}
+
+.allex-topics.is-open .topic-bloom {
+  transform: scaleX(1);
+  transition-delay: calc(var(--t, 0) * 150ms + 360ms);
+}
+
+.allex-topics.is-open .topic-text {
+  opacity: 1;
+  transform: translateY(0);
+  transition-delay: calc(var(--t, 0) * 150ms + 520ms);
+}
+
+.allex-topic:hover .topic-text,
+.allex-topic:focus-visible .topic-text {
+  color: var(--accent-strong);
+  outline: none;
+}
+
+.allex-topic:hover .topic-bloom,
+.allex-topic:focus-visible .topic-bloom {
+  filter: brightness(1.08) saturate(1.1);
+}
+
+/* Home replaces the floating hamburger with the ALLEX nav. */
+.home-page .bubble-nav {
+  display: none;
+}
+
+@media (max-width: 980px) {
+  /* Fixed-robot nav is desktop-only; fall back to the hamburger on mobile home. */
+  .allex-nav-trigger,
+  .allex-nav-links {
+    display: none;
+  }
+
+  .home-page .bubble-nav {
+    display: block;
+  }
+
+  .home-page .bubble-toggle {
+    pointer-events: auto;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .namecard [data-type].nc-caret::after {
+    animation: none;
+  }
+
+  .home-page .allex-nav img,
+  .allex-nav-link,
+  .namecard.is-typed [data-type-reveal] {
+    transition: none;
+  }
+}

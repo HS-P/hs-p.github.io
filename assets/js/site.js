@@ -494,4 +494,130 @@
       closeYear();
     }
   }
+
+  // Typewriter identity for the home name-card hero.
+  const typeSeq = document.querySelector("[data-typeseq]");
+  if (typeSeq) {
+    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const lines = Array.from(typeSeq.querySelectorAll("[data-type]"));
+    if (lines.length && !reduceMotion) {
+      typeSeq.classList.add("is-typing-ready");
+      const targets = lines.map((el) => {
+        const text = el.textContent.trim();
+        el.textContent = "";
+        return { el, text };
+      });
+
+      function speedFor(el) {
+        if (el.classList.contains("hero-name-main")) return 90;
+        if (el.classList.contains("hero-name-sub")) return 118;
+        return 32;
+      }
+
+      let li = 0;
+      function typeLine() {
+        if (li >= targets.length) {
+          typeSeq.classList.add("is-typed");
+          return;
+        }
+        const { el, text } = targets[li];
+        el.classList.add("nc-caret");
+        const speed = speedFor(el);
+        let ci = 0;
+        function step() {
+          el.textContent = text.slice(0, ci);
+          ci += 1;
+          if (ci <= text.length) {
+            window.setTimeout(step, speed);
+          } else {
+            el.classList.remove("nc-caret");
+            li += 1;
+            window.setTimeout(typeLine, 220);
+          }
+        }
+        step();
+      }
+      window.setTimeout(typeLine, 520);
+    }
+  }
+
+  // Interactive ALLEX: wake on hover, reveal part-anchored topic callouts (home).
+  const allexNav = document.querySelector("[data-allex-nav]");
+  if (allexNav) {
+    const allexToggle = document.querySelector("[data-allex-toggle]");
+    const allexTopicsEl = document.querySelector("[data-allex-links]");
+    const allexTopics = allexTopicsEl ? Array.from(allexTopicsEl.querySelectorAll(".allex-topic")) : [];
+    let isOpen = false;
+    let isHover = false;
+    let parked = false;
+
+    // Pin each callout to its ALLEX part and derive the leader-line geometry.
+    // --rx = anchor distance from the right edge, --ty = top; --dx/--dy = label offset.
+    function layoutTopics() {
+      allexTopics.forEach((t) => {
+        const cs = getComputedStyle(t);
+        const rx = parseFloat(cs.getPropertyValue("--rx")) || 0;
+        const ty = parseFloat(cs.getPropertyValue("--ty")) || 0;
+        const dx = parseFloat(cs.getPropertyValue("--dx")) || 0;
+        const dy = parseFloat(cs.getPropertyValue("--dy")) || 0;
+        t.style.left = (window.innerWidth - rx) + "px";
+        t.style.top = ty + "px";
+        t.style.setProperty("--len", Math.hypot(dx, dy) + "px");
+        t.style.setProperty("--ang", (Math.atan2(dy, dx) * 180 / Math.PI) + "deg");
+      });
+    }
+    layoutTopics();
+    window.addEventListener("resize", layoutTopics);
+
+    function render() {
+      allexNav.classList.toggle("is-awake", isOpen || isHover);
+      if (allexTopicsEl) allexTopicsEl.classList.toggle("is-open", isOpen);
+      if (allexToggle) {
+        allexToggle.setAttribute("aria-expanded", String(isOpen));
+        allexToggle.setAttribute("aria-label", isOpen ? "Close ALLEX topics" : "Explore ALLEX topics");
+      }
+    }
+
+    if (allexToggle) {
+      allexToggle.addEventListener("mouseenter", () => { isHover = true; render(); });
+      allexToggle.addEventListener("mouseleave", () => { isHover = false; render(); });
+      allexToggle.addEventListener("focus", () => { isHover = true; render(); });
+      allexToggle.addEventListener("blur", () => { isHover = false; render(); });
+      allexToggle.addEventListener("click", (event) => {
+        event.stopPropagation();
+        isOpen = !isOpen;
+        render();
+      });
+    }
+
+    document.addEventListener("click", (event) => {
+      const insideUI =
+        (allexToggle && allexToggle.contains(event.target)) ||
+        (allexTopicsEl && allexTopicsEl.contains(event.target));
+      if (isOpen && !insideUI) {
+        isOpen = false;
+        render();
+      }
+    });
+
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "Escape" && isOpen) {
+        isOpen = false;
+        render();
+      }
+    });
+
+    function syncPark() {
+      const shouldPark = window.scrollY > window.innerHeight * 0.45;
+      if (shouldPark === parked) return;
+      parked = shouldPark;
+      if (allexToggle) allexToggle.classList.toggle("is-parked", parked);
+      if (parked && isOpen) {
+        isOpen = false;
+        render();
+      }
+    }
+    syncPark();
+    window.addEventListener("scroll", syncPark, { passive: true });
+  }
 })();

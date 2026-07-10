@@ -8,42 +8,52 @@ description: Personal academic homepage of Hansol Park.
 {% assign videos = site.data.videos %}
 
 <section class="hero" id="about">
-  <div class="hero-ghost-allex" aria-hidden="true">
-    <img src="{{ '/assets/img/allex/allex-official-hero-source.png' | relative_url }}" alt="">
+  <div class="hero-ghost-allex allex-nav" data-allex-nav>
+    <img src="{{ '/assets/img/allex/allex-official-hero-source.png' | relative_url }}" alt="" aria-hidden="true">
   </div>
-  <div class="hero-copy hero-copy--lab hero-profile-panel">
+  <button class="allex-nav-trigger" type="button" aria-expanded="false" aria-label="Explore ALLEX topics" data-allex-toggle></button>
+  <div class="allex-topics" aria-label="ALLEX topics" data-allex-links>
+    <a class="allex-topic" data-side="left" style="--rx: 525px; --ty: 245px; --dx: -210px; --dy: 80px;" href="{{ '/projects/' | relative_url }}">
+      <span class="topic-dot"></span>
+      <span class="topic-line"></span>
+      <span class="topic-flag"><span class="topic-bloom"></span><span class="topic-text">Computer Vision</span></span>
+    </a>
+    <a class="allex-topic" data-side="right" style="--rx: 430px; --ty: 135px; --dx: 150px; --dy: -30px;" href="{{ '/projects/' | relative_url }}?topic=vla">
+      <span class="topic-dot"></span>
+      <span class="topic-line"></span>
+      <span class="topic-flag"><span class="topic-bloom"></span><span class="topic-text">ACT / VLA</span></span>
+    </a>
+    <a class="allex-topic" data-side="left" style="--rx: 640px; --ty: 485px; --dx: -196px; --dy: 10px;" href="{{ '/projects/' | relative_url }}?topic=teleoperation">
+      <span class="topic-dot"></span>
+      <span class="topic-line"></span>
+      <span class="topic-flag"><span class="topic-bloom"></span><span class="topic-text">Teleoperation</span></span>
+    </a>
+    <a class="allex-topic" data-side="right" style="--rx: 535px; --ty: 400px; --dx: 150px; --dy: 36px;" href="{{ '/projects/' | relative_url }}">
+      <span class="topic-dot"></span>
+      <span class="topic-line"></span>
+      <span class="topic-flag"><span class="topic-bloom"></span><span class="topic-text">RL</span></span>
+    </a>
+  </div>
+  <div class="hero-copy hero-copy--lab hero-profile-panel namecard" data-typeseq>
     <img class="hero-avatar" src="{{ profile.image | relative_url }}" alt="{{ profile.name }} profile photo">
     <div class="hero-identity">
       <h1>
-        <span class="hero-name-main">{{ profile.name }}</span>
-        <span class="hero-name-sub">{{ profile.korean_name }}</span>
+        <span class="hero-name-main" data-type>{{ profile.name }}</span>
+        <span class="hero-name-sub" data-type>{{ profile.korean_name }}</span>
       </h1>
-      <p class="hero-role">{{ profile.role }}</p>
-      <p class="affiliation">{{ profile.affiliation }}</p>
-      <p class="advisor">Advised by {{ profile.advisor }}</p>
-      <div class="keyword-row">
+      <p class="hero-role" data-type>{{ profile.role }}, Korea</p>
+      <p class="affiliation" data-type>{{ profile.affiliation }}</p>
+      <p class="advisor" data-type>Advised by {{ profile.advisor }}</p>
+      <div class="keyword-row" data-type-reveal>
         {% for keyword in profile.keywords limit:4 %}
           <span>{{ keyword }}</span>
         {% endfor %}
       </div>
-      <div class="link-row">
+      <div class="link-row" data-type-reveal>
         <a href="mailto:{{ profile.email }}"><i class="fa-solid fa-envelope"></i>Email</a>
         <a href="{{ profile.github }}" target="_blank" rel="noopener"><i class="fa-brands fa-github"></i>GitHub</a>
         <a href="{{ profile.linkedin }}" target="_blank" rel="noopener"><i class="fa-brands fa-linkedin"></i>LinkedIn</a>
         <a href="{{ '/cv/' | relative_url }}"><i class="fa-solid fa-file-lines"></i>CV</a>
-      </div>
-    </div>
-    <div class="github-activity-panel" data-github-activity data-github-user="HS-P" data-github-range="2026" data-github-total="35">
-      <div class="github-activity-topline">
-        <span data-github-activity-status>2026 Public GitHub Activity</span>
-        <a href="{{ profile.github }}" target="_blank" rel="noopener">@HS-P</a>
-      </div>
-      <div class="github-activity-chart" data-github-activity-chart aria-label="2026 public GitHub contribution chart"></div>
-      <div class="github-activity-footline">
-        <span>GitHub activity updates from the profile contribution graph.</span>
-        <span class="github-activity-scale" aria-hidden="true">
-          <i></i><i></i><i></i><i></i><i></i>
-        </span>
       </div>
     </div>
   </div>
