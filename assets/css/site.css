@@ -7678,7 +7678,7 @@ img {
   justify-self: start;
   align-self: center;
   width: min(1240px, 88%);
-  margin-left: clamp(-136px, -8vw, -60px);
+  margin-left: calc(24px - max(2px, (100vw - 1420px) / 2));
   padding: 30px 36px 28px;
   background: rgba(255, 255, 255, 0.12);
   border-color: rgba(17, 23, 34, 0.055);
@@ -7775,7 +7775,7 @@ img {
 
 .home-page .allex-nav.is-awake img {
   opacity: 0.97;
-  transform: scaleX(1) scale(1.035);
+  transform: scaleX(1) scale(1.025);
   filter: grayscale(0) contrast(1.05) drop-shadow(0 26px 56px rgba(16, 21, 34, 0.22));
 }
 
@@ -7805,9 +7805,8 @@ img {
   border-radius: 14px;
 }
 
-/* ALLEX part-anchored topic callouts: dot on the part -> gray leader line ->
-   green bar blooming out -> label below. Positions tunable via inline --rx/--ty
-   (anchor: distance from right edge, top) and --dx/--dy (offset to the label). */
+/* ALLEX part-anchored topic callouts: dot -> horizontal run -> short diagonal
+   bend -> green bloom -> typed label. */
 .allex-topics {
   position: fixed;
   inset: 0;
@@ -7817,8 +7816,8 @@ img {
 
 .allex-topic {
   position: fixed;
-  left: 0;
-  top: 0;
+  left: calc(100vw - var(--rx));
+  top: var(--ty);
   width: 0;
   height: 0;
   color: inherit;
@@ -7842,8 +7841,8 @@ img {
   opacity: 0;
   transform: scale(0);
   transition:
-    transform 220ms cubic-bezier(0.2, 1.4, 0.3, 1),
-    opacity 150ms ease;
+    transform 300ms cubic-bezier(0.2, 1.4, 0.3, 1),
+    opacity 220ms ease;
 }
 
 .topic-line {
@@ -7851,20 +7850,31 @@ img {
   left: 0;
   top: 0;
   height: 2px;
-  width: var(--len, 0px);
+  width: 0;
   background: linear-gradient(90deg, rgba(83, 98, 116, 0.28), rgba(83, 98, 116, 0.82));
   transform-origin: left center;
-  transform: rotate(var(--ang, 0deg)) scaleX(0);
+  transform: scaleX(0);
   opacity: 0;
   transition:
-    transform 300ms cubic-bezier(0.3, 0.9, 0.2, 1),
-    opacity 120ms ease;
+    transform 400ms cubic-bezier(0.22, 0.86, 0.24, 1),
+    opacity 180ms ease;
+}
+
+.topic-line--horizontal {
+  width: var(--run-length, 0px);
+  transform: rotate(var(--run-angle, 0deg)) scaleX(0);
+}
+
+.topic-line--diagonal {
+  left: var(--run, 0px);
+  width: var(--bend-length, 0px);
+  transform: rotate(var(--bend-angle, 0deg)) scaleX(0);
 }
 
 .topic-flag {
   position: absolute;
-  left: var(--dx, 0px);
-  top: var(--dy, 0px);
+  left: var(--end-x, 0px);
+  top: var(--bend-y, 0px);
   display: flex;
   flex-direction: column;
   gap: 7px;
@@ -7890,14 +7900,15 @@ img {
   background: var(--accent-green);
   box-shadow: 0 4px 14px rgba(36, 146, 45, 0.4);
   transform: scaleX(0);
-  transition: transform 380ms cubic-bezier(0.16, 1.5, 0.3, 1);
+  transition: transform 510ms cubic-bezier(0.16, 1.3, 0.3, 1);
 }
 
 .allex-topic[data-side="left"] .topic-bloom { transform-origin: right center; }
 .allex-topic[data-side="right"] .topic-bloom { transform-origin: left center; }
 
 .topic-text {
-  font-size: 1.2rem;
+  min-width: var(--topic-text-width, max-content);
+  font-size: clamp(1.42rem, 1.45vw, 1.62rem);
   font-weight: 800;
   letter-spacing: 0.004em;
   color: var(--text);
@@ -7908,8 +7919,8 @@ img {
   opacity: 0;
   transform: translateY(-5px);
   transition:
-    opacity 240ms ease,
-    transform 240ms ease,
+    opacity 320ms ease,
+    transform 340ms ease,
     color 150ms ease;
 }
 
@@ -7918,26 +7929,65 @@ img {
 }
 
 .allex-topics.is-open .topic-dot {
-  opacity: 1;
-  transform: scale(1);
-  transition-delay: calc(var(--t, 0) * 150ms);
+  animation: topic-dot-pop 300ms cubic-bezier(0.2, 1, 0.3, 1) calc(var(--t, 0) * 360ms) both;
 }
 
-.allex-topics.is-open .topic-line {
+.allex-topics.is-open .topic-line--horizontal {
   opacity: 1;
-  transform: rotate(var(--ang, 0deg)) scaleX(1);
-  transition-delay: calc(var(--t, 0) * 150ms + 110ms);
+  transform: rotate(var(--run-angle, 0deg)) scaleX(1);
+  transition-delay: calc(var(--t, 0) * 360ms + 150ms);
+}
+
+.allex-topics.is-open .topic-line--diagonal {
+  opacity: 1;
+  transform: rotate(var(--bend-angle, 0deg)) scaleX(1);
+  transition-delay: calc(var(--t, 0) * 360ms + 550ms);
 }
 
 .allex-topics.is-open .topic-bloom {
-  transform: scaleX(1);
-  transition-delay: calc(var(--t, 0) * 150ms + 360ms);
+  animation: topic-bloom-spread 510ms cubic-bezier(0.16, 0.92, 0.2, 1) calc(var(--t, 0) * 360ms + 820ms) both;
 }
 
 .allex-topics.is-open .topic-text {
   opacity: 1;
   transform: translateY(0);
-  transition-delay: calc(var(--t, 0) * 150ms + 520ms);
+  transition-delay: calc(var(--t, 0) * 360ms + 1030ms);
+}
+
+@keyframes topic-dot-pop {
+  0% {
+    opacity: 0;
+    transform: scale(0);
+  }
+  62% {
+    opacity: 1;
+    transform: scale(1.5);
+  }
+  82% {
+    transform: scale(0.88);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes topic-bloom-spread {
+  0% {
+    border-radius: 50%;
+    transform: scaleX(0);
+  }
+  58% {
+    border-radius: 8px;
+    transform: scaleX(1.12);
+  }
+  78% {
+    transform: scaleX(0.94);
+  }
+  100% {
+    border-radius: 6px;
+    transform: scaleX(1);
+  }
 }
 
 .allex-topic:hover .topic-text,
@@ -7959,7 +8009,7 @@ img {
 @media (max-width: 980px) {
   /* Fixed-robot nav is desktop-only; fall back to the hamburger on mobile home. */
   .allex-nav-trigger,
-  .allex-nav-links {
+  .allex-topics {
     display: none;
   }
 
@@ -7970,6 +8020,43 @@ img {
   .home-page .bubble-toggle {
     pointer-events: auto;
   }
+
+  .home-page .hero-profile-panel.namecard {
+    width: 100%;
+    margin-left: 0;
+  }
+}
+
+@media (max-width: 760px) {
+  .home-page .hero-profile-panel.namecard {
+    grid-template-columns: minmax(0, 1fr);
+    justify-items: center;
+    gap: 22px;
+    padding: 26px 22px;
+  }
+
+  .home-page .hero-profile-panel.namecard .hero-avatar {
+    width: 158px;
+    min-width: 0;
+    transform: none;
+  }
+
+  .home-page .namecard .hero-identity {
+    width: 100%;
+    min-width: 0;
+    margin-left: 0;
+    justify-items: center;
+    text-align: center;
+  }
+
+  .home-page .namecard .hero-identity h1 .hero-name-main {
+    font-size: clamp(2.75rem, 14vw, 3.5rem);
+  }
+
+  .home-page .namecard .keyword-row,
+  .home-page .namecard .link-row {
+    justify-content: center;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -7978,8 +8065,214 @@ img {
   }
 
   .home-page .allex-nav img,
-  .allex-nav-link,
+  .allex-topic,
   .namecard.is-typed [data-type-reveal] {
     transition: none;
+  }
+
+  .topic-dot,
+  .topic-line,
+  .topic-bloom,
+  .topic-text {
+    animation-delay: 0ms !important;
+    animation-duration: 1ms !important;
+    transition: none;
+  }
+}
+
+/* ============================================================
+   Project landing: ALLEX curtain -> green typed title -> roadmap
+   ============================================================ */
+
+.project-timeline-page.has-project-intro .project-intro {
+  position: relative;
+  isolation: isolate;
+}
+
+.project-timeline-page.has-project-intro .project-intro::before {
+  content: "";
+  position: fixed;
+  inset: 58px 0 0;
+  z-index: 0;
+  pointer-events: none;
+  background-image: url("/assets/img/allex/hero-allex.png");
+  background-repeat: no-repeat;
+  background-position: center bottom;
+  background-size: min(62vw, 960px) auto;
+  opacity: 0;
+  filter: grayscale(0.08) drop-shadow(0 36px 68px rgba(17, 23, 34, 0.12));
+  transform-origin: center bottom;
+  animation: project-allex-curtain 3200ms cubic-bezier(0.2, 0.72, 0.2, 1) both;
+}
+
+.project-timeline-page.has-project-intro .project-intro > * {
+  position: relative;
+  z-index: 1;
+  animation: none;
+  opacity: 1;
+  transform: none;
+  filter: none;
+}
+
+.project-timeline-page.has-project-intro .project-intro-title-text {
+  display: inline-block;
+  color: var(--accent-green);
+  clip-path: inset(0 100% 0 0);
+  animation:
+    project-title-write 840ms steps(7, end) 1900ms both,
+    project-title-ink 650ms ease 2850ms both;
+}
+
+.project-timeline-page.has-project-intro .project-intro-copy {
+  animation: project-support-in 680ms cubic-bezier(0.2, 0.82, 0.2, 1) 3450ms backwards;
+}
+
+.project-timeline-page.has-project-intro .project-mode-toggle {
+  animation: project-support-in 720ms cubic-bezier(0.2, 0.82, 0.2, 1) 3750ms backwards;
+}
+
+.project-timeline-page.has-project-intro .project-axis-stage {
+  animation: project-support-in 760ms cubic-bezier(0.2, 0.82, 0.2, 1) 4050ms backwards;
+}
+
+.project-timeline-page.has-project-intro .year-timeline-line {
+  animation: project-timeline-draw 1100ms cubic-bezier(0.16, 0.86, 0.2, 1) 4200ms backwards;
+}
+
+.project-timeline-page.has-project-intro .year-timeline button {
+  animation: project-year-arrive 940ms cubic-bezier(0.16, 0.9, 0.2, 1) var(--project-intro-year-delay) backwards;
+}
+
+.project-timeline-page.has-project-intro .year-timeline button[data-project-year="before"] {
+  --project-intro-year-delay: 4450ms;
+}
+
+.project-timeline-page.has-project-intro .year-timeline button[data-project-year="2024"] {
+  --project-intro-year-delay: 4950ms;
+}
+
+.project-timeline-page.has-project-intro .year-timeline button[data-project-year="2025"] {
+  --project-intro-year-delay: 5450ms;
+}
+
+.project-timeline-page.has-project-intro .year-timeline button[data-project-year="2026"] {
+  --project-intro-year-delay: 5950ms;
+}
+
+.project-timeline-page.has-project-intro:not(.is-project-intro-complete) .project-mode-toggle,
+.project-timeline-page.has-project-intro:not(.is-project-intro-complete) .year-timeline {
+  pointer-events: none;
+}
+
+@keyframes project-allex-curtain {
+  0% {
+    opacity: 0;
+    transform: scale(0.985);
+  }
+  38%, 50% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.012);
+  }
+}
+
+@keyframes project-title-write {
+  from {
+    clip-path: inset(0 100% 0 0);
+  }
+  to {
+    clip-path: inset(0 0 0 0);
+  }
+}
+
+@keyframes project-title-ink {
+  from {
+    color: var(--accent-green);
+  }
+  to {
+    color: var(--project-ink);
+  }
+}
+
+@keyframes project-support-in {
+  0% {
+    opacity: 0;
+    transform: translate3d(0, 28px, 0);
+    filter: blur(10px);
+  }
+  68% {
+    opacity: 1;
+    transform: translate3d(0, -3px, 0);
+    filter: blur(0);
+  }
+  100% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+    filter: blur(0);
+  }
+}
+
+@keyframes project-timeline-draw {
+  0% {
+    opacity: 0;
+    transform: scaleX(0);
+    filter: blur(5px);
+  }
+  70% {
+    opacity: 1;
+    transform: scaleX(1.035);
+    filter: blur(0);
+  }
+  100% {
+    opacity: 1;
+    transform: scaleX(1);
+    filter: blur(0);
+  }
+}
+
+@keyframes project-year-arrive {
+  0% {
+    opacity: 0;
+    transform: translate3d(0, -32px, 0) scale(0.86);
+    filter: blur(12px);
+  }
+  68% {
+    opacity: 1;
+    transform: translate3d(0, 5px, 0) scale(1.045);
+    filter: blur(0);
+  }
+  100% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
+    filter: blur(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .project-timeline-page.has-project-intro .project-intro::before {
+    display: none;
+  }
+
+  .project-timeline-page.has-project-intro .project-intro > *,
+  .project-timeline-page.has-project-intro .project-intro-title-text,
+  .project-timeline-page.has-project-intro .year-timeline-line,
+  .project-timeline-page.has-project-intro .year-timeline button {
+    animation: none;
+    opacity: 1;
+    transform: none;
+    filter: none;
+    clip-path: none;
+  }
+
+  .project-timeline-page.has-project-intro .project-intro-title-text {
+    color: var(--project-ink);
+  }
+
+  .project-timeline-page.has-project-intro .project-mode-toggle,
+  .project-timeline-page.has-project-intro .year-timeline {
+    pointer-events: auto;
   }
 }

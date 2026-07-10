@@ -259,6 +259,13 @@
   const projectYearTitle = document.querySelector("[data-project-year-title]");
   const projectBack = document.querySelector("[data-project-back]");
   const projectToggle = document.querySelector("[data-project-toggle]");
+  const queryTopic = projectBoard ? new URLSearchParams(window.location.search).get("topic") : "";
+  const hashCard = projectBoard && window.location.hash ? document.querySelector(window.location.hash) : null;
+
+  if (projectBoard && projectIntro && !queryTopic && !(hashCard && hashCard.matches("[data-project-card]"))) {
+    projectBoard.classList.add("has-project-intro");
+    window.setTimeout(() => projectBoard.classList.add("is-project-intro-complete"), 7000);
+  }
 
   if (projectBoard && projectCards.length && yearButtons.length && projectIntro && projectYearView && projectYearTitle) {
     let closeTimer;
@@ -482,8 +489,6 @@
     });
 
     sortCards();
-    const queryTopic = new URLSearchParams(window.location.search).get("topic");
-    const hashCard = window.location.hash ? document.querySelector(window.location.hash) : null;
     if (queryTopic) {
       openTopic(queryTopic.toLowerCase(), formatTopicLabel(queryTopic));
     } else if (hashCard && hashCard.matches("[data-project-card]")) {
@@ -511,7 +516,7 @@
       function speedFor(el) {
         if (el.classList.contains("hero-name-main")) return 90;
         if (el.classList.contains("hero-name-sub")) return 118;
-        return 32;
+        return 25;
       }
 
       let li = 0;
@@ -547,23 +552,65 @@
     const allexToggle = document.querySelector("[data-allex-toggle]");
     const allexTopicsEl = document.querySelector("[data-allex-links]");
     const allexTopics = allexTopicsEl ? Array.from(allexTopicsEl.querySelectorAll(".allex-topic")) : [];
+    const reduceAllexMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     let isOpen = false;
     let isHover = false;
     let parked = false;
 
-    // Pin each callout to its ALLEX part and derive the leader-line geometry.
-    // --rx = anchor distance from the right edge, --ty = top; --dx/--dy = label offset.
+    const topicTypingTimers = [];
+
+    allexTopics.forEach((topic) => {
+      const label = topic.querySelector(".topic-text");
+      if (!label) return;
+      label.dataset.fullText = label.textContent.trim();
+      label.style.setProperty("--topic-text-width", `${Math.ceil(label.getBoundingClientRect().width)}px`);
+    });
+
+    function clearTopicTyping() {
+      while (topicTypingTimers.length) window.clearTimeout(topicTypingTimers.pop());
+    }
+
+    function typeTopicLabels() {
+      clearTopicTyping();
+      if (reduceAllexMotion) {
+        allexTopics.forEach((topic) => {
+          const label = topic.querySelector(".topic-text");
+          if (label) label.textContent = label.dataset.fullText || "";
+        });
+        return;
+      }
+      allexTopics.forEach((topic, topicIndex) => {
+        const label = topic.querySelector(".topic-text");
+        if (!label) return;
+        const text = label.dataset.fullText || "";
+        label.textContent = "";
+        let charIndex = 0;
+
+        function typeCharacter() {
+          charIndex += 1;
+          label.textContent = text.slice(0, charIndex);
+          if (charIndex < text.length) {
+            topicTypingTimers.push(window.setTimeout(typeCharacter, 42));
+          }
+        }
+
+        topicTypingTimers.push(window.setTimeout(typeCharacter, 1050 + topicIndex * 360));
+      });
+    }
+
+    // Pin each callout to its ALLEX part and derive a horizontal run followed
+    // by a short diagonal bend into the label.
     function layoutTopics() {
       allexTopics.forEach((t) => {
         const cs = getComputedStyle(t);
-        const rx = parseFloat(cs.getPropertyValue("--rx")) || 0;
-        const ty = parseFloat(cs.getPropertyValue("--ty")) || 0;
-        const dx = parseFloat(cs.getPropertyValue("--dx")) || 0;
-        const dy = parseFloat(cs.getPropertyValue("--dy")) || 0;
-        t.style.left = (window.innerWidth - rx) + "px";
-        t.style.top = ty + "px";
-        t.style.setProperty("--len", Math.hypot(dx, dy) + "px");
-        t.style.setProperty("--ang", (Math.atan2(dy, dx) * 180 / Math.PI) + "deg");
+        const run = parseFloat(cs.getPropertyValue("--run")) || 0;
+        const bendX = parseFloat(cs.getPropertyValue("--bend-x")) || 0;
+        const bendY = parseFloat(cs.getPropertyValue("--bend-y")) || 0;
+        t.style.setProperty("--run-length", Math.abs(run) + "px");
+        t.style.setProperty("--run-angle", (run < 0 ? 180 : 0) + "deg");
+        t.style.setProperty("--bend-length", Math.hypot(bendX, bendY) + "px");
+        t.style.setProperty("--bend-angle", (Math.atan2(bendY, bendX) * 180 / Math.PI) + "deg");
+        t.style.setProperty("--end-x", (run + bendX) + "px");
       });
     }
     layoutTopics();
@@ -586,6 +633,8 @@
       allexToggle.addEventListener("click", (event) => {
         event.stopPropagation();
         isOpen = !isOpen;
+        if (isOpen) typeTopicLabels();
+        else clearTopicTyping();
         render();
       });
     }
@@ -596,6 +645,7 @@
         (allexTopicsEl && allexTopicsEl.contains(event.target));
       if (isOpen && !insideUI) {
         isOpen = false;
+        clearTopicTyping();
         render();
       }
     });
@@ -603,6 +653,7 @@
     document.addEventListener("keydown", (event) => {
       if (event.key === "Escape" && isOpen) {
         isOpen = false;
+        clearTopicTyping();
         render();
       }
     });
@@ -614,6 +665,7 @@
       if (allexToggle) allexToggle.classList.toggle("is-parked", parked);
       if (parked && isOpen) {
         isOpen = false;
+        clearTopicTyping();
         render();
       }
     }
