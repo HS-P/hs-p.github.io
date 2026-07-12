@@ -5,15 +5,9 @@ layout: default
 {% assign project = site.data.projects | where: "id", page.project_id | first %}
 
 {% if project %}
-<article class="project-detail-page">
-  <a class="project-back-button project-detail-back" href="{{ '/projects/' | relative_url }}">
-    <i class="fa-solid fa-arrow-left" aria-hidden="true"></i>
-    Projects
-  </a>
-
-  <header class="project-detail-hero{% unless project.youtube or project.image %} project-detail-hero--text{% endunless %}">
+{% capture copy_block %}
     <div class="project-detail-copy">
-      <p class="project-detail-eyebrow">{{ project.track }}{% if project.year_group %} · {{ project.year_group }}{% endif %}</p>
+      <p class="project-detail-eyebrow">{{ project.track }}{% if project.year_group %} &middot; {{ project.year_group }}{% endif %}</p>
       <h1>{{ project.short_title | default: project.title }}</h1>
       <p class="project-detail-fulltitle">{{ project.title }}</p>
       <p class="project-detail-summary">{{ project.summary }}</p>
@@ -23,22 +17,45 @@ layout: default
         {% endfor %}
       </div>
     </div>
+{% endcapture %}
 
-    {% if project.youtube %}
-      <figure class="project-detail-media project-detail-media--video">
-        <iframe
-          src="https://www.youtube-nocookie.com/embed/{{ project.youtube }}"
-          title="{{ project.title }} video"
-          loading="lazy"
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-          allowfullscreen></iframe>
-      </figure>
-    {% elsif project.image %}
+<article class="project-detail-page">
+  <a class="project-back-button project-detail-back" href="{{ '/projects/' | relative_url }}">
+    <i class="fa-solid fa-arrow-left" aria-hidden="true"></i>
+    Projects
+  </a>
+
+  {% if project.youtube %}
+    <header class="project-detail-hero project-detail-hero--text">{{ copy_block }}</header>
+    <div class="project-video-hero">
+      <iframe
+        src="https://www.youtube-nocookie.com/embed/{{ project.youtube }}"
+        title="{{ project.title }} video"
+        loading="lazy"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+        allowfullscreen></iframe>
+    </div>
+  {% elsif project.image %}
+    <header class="project-detail-hero">
+      {{ copy_block }}
       <figure class="project-detail-media">
         <img src="{{ project.image | relative_url }}" alt="{{ project.title }} project image">
       </figure>
-    {% endif %}
-  </header>
+    </header>
+  {% else %}
+    <header class="project-detail-hero project-detail-hero--text">{{ copy_block }}</header>
+  {% endif %}
+
+  {% if project.highlights %}
+    <section class="project-highlights" aria-label="Key highlights">
+      {% for item in project.highlights %}
+        <div class="project-highlight">
+          <span>Highlight {{ forloop.index }}</span>
+          <p>{{ item }}</p>
+        </div>
+      {% endfor %}
+    </section>
+  {% endif %}
 
   <section class="project-detail-block project-did-block">
     <div class="project-block-head">
@@ -110,30 +127,25 @@ layout: default
   </section>
 
   {% if project.gallery or project.videos %}
-    <section class="project-collage-board">
-      {% if project.gallery %}
-        <div class="project-collage-section">
-          <h2>Image Board</h2>
-          <div class="project-gallery-grid">
-            {% for item in project.gallery %}
-              <figure>
-                <img src="{{ item.src | relative_url }}" alt="{{ item.alt | default: project.title }}">
-                {% if item.caption %}<figcaption>{{ item.caption }}</figcaption>{% endif %}
-              </figure>
-            {% endfor %}
+    <section class="project-media-board">
+      <div class="project-block-head">
+        <span class="project-block-index">03</span>
+        <h2>Media</h2>
+      </div>
+      <div class="project-media-grid">
+        {% for item in project.gallery %}
+          <figure class="project-media-item">
+            <img src="{{ item.src | relative_url }}" alt="{{ item.alt | default: project.title }}" loading="lazy">
+            {% if item.caption %}<figcaption>{{ item.caption }}</figcaption>{% endif %}
+          </figure>
+        {% endfor %}
+        {% for video in project.videos %}
+          <div class="project-media-item project-media-item--video">
+            <iframe src="{{ video.embed }}" title="{{ video.title | default: project.title }}" allowfullscreen loading="lazy"></iframe>
+            {% if video.title %}<figcaption>{{ video.title }}</figcaption>{% endif %}
           </div>
-        </div>
-      {% endif %}
-      {% if project.videos %}
-        <div class="project-collage-section">
-          <h2>Video Log</h2>
-          <div class="project-video-grid">
-            {% for video in project.videos %}
-              <iframe src="{{ video.embed }}" title="{{ video.title | default: project.title }}" allowfullscreen loading="lazy"></iframe>
-            {% endfor %}
-          </div>
-        </div>
-      {% endif %}
+        {% endfor %}
+      </div>
     </section>
   {% endif %}
 </article>
