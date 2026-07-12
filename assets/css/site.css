@@ -9049,3 +9049,98 @@ img {
     grid-template-columns: minmax(0, 1fr);
   }
 }
+
+/* ============================================================
+   Home ALLEX: click affordance (breathing, hint, first-visit teaser)
+   ============================================================ */
+
+/* Subtle idle breathing so ALLEX doesn't read as a static background. */
+@media (prefers-reduced-motion: no-preference) {
+  .home-page .allex-nav img {
+    animation: allex-breathe 7s ease-in-out infinite;
+  }
+
+  .home-page .allex-nav.is-awake img {
+    animation: none;
+  }
+}
+
+@keyframes allex-breathe {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.014) translateY(-0.5%); }
+}
+
+/* Floating hint that ALLEX is interactive. */
+.allex-hint {
+  position: fixed;
+  z-index: 2;
+  right: clamp(20px, 11vw, 200px);
+  top: 58%;
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity 620ms ease, transform 620ms ease;
+  pointer-events: none;
+}
+
+.allex-hint.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.allex-hint-dot {
+  position: relative;
+  flex: none;
+  width: 13px;
+  height: 13px;
+  border-radius: 50%;
+  background: var(--accent-green);
+  box-shadow: 0 0 14px rgba(67, 201, 71, 0.7);
+}
+
+.allex-hint-dot::before {
+  content: "";
+  position: absolute;
+  inset: -5px;
+  border-radius: 50%;
+  border: 2px solid var(--accent-green);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .allex-hint-dot::before {
+    animation: allex-hint-pulse 1.9s ease-out infinite;
+  }
+}
+
+@keyframes allex-hint-pulse {
+  0% { transform: scale(0.6); opacity: 0.85; }
+  100% { transform: scale(2.1); opacity: 0; }
+}
+
+.allex-hint-text {
+  padding: 8px 15px;
+  border: 1px solid rgba(67, 201, 71, 0.38);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.92);
+  box-shadow: 0 10px 30px rgba(17, 23, 34, 0.12);
+  color: var(--text);
+  font-size: 0.92rem;
+  font-weight: 760;
+  white-space: nowrap;
+  backdrop-filter: blur(4px);
+}
+
+@media (max-width: 760px) {
+  .allex-hint {
+    right: 50%;
+    top: auto;
+    bottom: 15vh;
+    transform: translate(50%, 10px);
+  }
+
+  .allex-hint.is-visible {
+    transform: translate(50%, 0);
+  }
+}

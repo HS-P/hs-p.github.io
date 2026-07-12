@@ -582,9 +582,29 @@
     const allexTopicsEl = document.querySelector("[data-allex-links]");
     const allexTopics = allexTopicsEl ? Array.from(allexTopicsEl.querySelectorAll(".allex-topic")) : [];
     const reduceAllexMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const allexHint = document.querySelector("[data-allex-hint]");
+    if (allexHint) {
+      const hintText = allexHint.querySelector(".allex-hint-text");
+      if (hintText) {
+        const isTouch = window.matchMedia("(pointer: coarse)").matches;
+        hintText.textContent = (isTouch ? "Tap" : "Click") + " ALLEX";
+      }
+    }
     let isOpen = false;
     let isHover = false;
     let parked = false;
+    let hintDismissed = false;
+
+    function showHint() {
+      if (allexHint && !hintDismissed && !parked && !isOpen) allexHint.classList.add("is-visible");
+    }
+    function hideHint() {
+      if (allexHint) allexHint.classList.remove("is-visible");
+    }
+    function dismissHint() {
+      hintDismissed = true;
+      hideHint();
+    }
 
     const topicTypingTimers = [];
 
@@ -647,6 +667,7 @@
 
     function render() {
       allexNav.classList.toggle("is-awake", isOpen || isHover);
+      if (isOpen) hideHint();
       if (allexTopicsEl) allexTopicsEl.classList.toggle("is-open", isOpen);
       if (allexToggle) {
         allexToggle.setAttribute("aria-expanded", String(isOpen));
@@ -655,12 +676,14 @@
     }
 
     if (allexToggle) {
-      allexToggle.addEventListener("mouseenter", () => { isHover = true; render(); });
+      allexToggle.addEventListener("mouseenter", () => { cancelTeaser(); isHover = true; render(); });
       allexToggle.addEventListener("mouseleave", () => { isHover = false; render(); });
       allexToggle.addEventListener("focus", () => { isHover = true; render(); });
       allexToggle.addEventListener("blur", () => { isHover = false; render(); });
       allexToggle.addEventListener("click", (event) => {
         event.stopPropagation();
+        cancelTeaser();
+        dismissHint();
         isOpen = !isOpen;
         if (isOpen) typeTopicLabels();
         else clearTopicTyping();
@@ -697,9 +720,42 @@
         clearTopicTyping();
         render();
       }
+      if (parked) hideHint();
+      else showHint();
     }
     syncPark();
     window.addEventListener("scroll", syncPark, { passive: true });
+
+    // First-visit teaser: briefly auto-open the callouts so visitors learn
+    // ALLEX is interactive; afterwards leave the floating hint in place.
+    let teaserTimer;
+    function cancelTeaser() {
+      window.clearTimeout(teaserTimer);
+    }
+    function runTeaser() {
+      if (parked || isOpen || hintDismissed) return;
+      let seen = false;
+      try { seen = !!localStorage.getItem("allexTeaserSeen"); } catch (e) {}
+      if (reduceAllexMotion || seen) {
+        showHint();
+        return;
+      }
+      try { localStorage.setItem("allexTeaserSeen", "1"); } catch (e) {}
+      isOpen = true;
+      isHover = true;
+      typeTopicLabels();
+      render();
+      window.setTimeout(() => {
+        isHover = false;
+        if (isOpen) {
+          isOpen = false;
+          clearTopicTyping();
+          render();
+        }
+        showHint();
+      }, 3600);
+    }
+    teaserTimer = window.setTimeout(runTeaser, 4200);
   }
 
   // Auto-fit the project detail hero title (large h1) to a single line.
