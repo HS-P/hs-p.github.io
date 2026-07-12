@@ -4126,8 +4126,11 @@ img {
 }
 
 .project-timeline-page .project-node h2 {
-  max-width: 95%;
+  max-width: 100%;
   font-size: clamp(1.42rem, 2.25vw, 2.15rem);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .project-timeline-page .project-node[hidden],
@@ -8178,18 +8181,20 @@ img {
 @keyframes project-allex-curtain {
   0% {
     opacity: 0;
-    transform: scale(0.96);
+    transform: scale(0.92);
   }
   12% {
-    opacity: 0.06;
+    opacity: 0.1;
   }
-  42%, 54% {
+  42%, 56% {
     opacity: 1;
     transform: scale(1);
   }
   100% {
-    opacity: 0;
-    transform: scale(1.015);
+    /* Grow and fade until it settles into the resting background watermark
+       (720px * 1.3333 = 960px, matching .sub-page::before at min(62vw, 960px)). */
+    opacity: 0.055;
+    transform: scale(1.3333);
   }
 }
 
@@ -8288,6 +8293,15 @@ img {
   .project-timeline-page.has-project-intro:not(.is-project-intro-complete) .project-mode-toggle,
   .project-timeline-page.has-project-intro:not(.is-project-intro-complete) .year-timeline {
     pointer-events: auto;
+  }
+}
+
+/* During the animated intro the foreground ALLEX grows and fades until it
+   becomes the resting background itself, so the standalone body watermark is
+   suppressed (kept under reduced-motion, where the foreground is hidden). */
+@media (prefers-reduced-motion: no-preference) {
+  body.sub-page:has(.project-timeline-page.has-project-intro)::before {
+    display: none;
   }
 }
 
@@ -8739,5 +8753,184 @@ img {
   .project-timeline-page .project-node {
     animation: none !important;
     transition: none !important;
+  }
+}
+
+/* ============================================================
+   Project detail re-layout: hero YouTube + What I Did + facts
+   ============================================================ */
+
+/* Track / Year eyebrow replaces the generic "Selected project" label. */
+.project-detail-copy::before {
+  display: none;
+}
+
+.project-detail-eyebrow {
+  margin: 0 0 4px;
+  color: var(--accent-green);
+  font-size: 0.82rem;
+  font-weight: 900;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+/* Right-hand YouTube embed in the hero (sits in the media grid column). */
+.project-detail-media--video {
+  align-self: end;
+  width: 100%;
+  padding: 12px;
+}
+
+.project-detail-media--video iframe {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 16 / 9;
+  border: 0;
+  border-radius: 15px;
+}
+
+/* Stacked content blocks (What I Did, Topics / Stack / Code). */
+.project-detail-block {
+  position: relative;
+  margin-top: 40px;
+  padding: 34px 36px 36px;
+  border: 1px solid rgba(17, 23, 34, 0.09);
+  border-radius: 22px;
+  background:
+    linear-gradient(145deg, rgba(255, 255, 255, 0.94), rgba(248, 252, 249, 0.84)),
+    rgba(255, 255, 255, 0.8);
+  box-shadow:
+    0 18px 52px rgba(17, 23, 34, 0.075),
+    inset 0 1px 0 rgba(255, 255, 255, 0.98);
+}
+
+.project-block-head {
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+  margin-bottom: 20px;
+}
+
+.project-block-index {
+  color: var(--accent-green);
+  font-size: 0.92rem;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+}
+
+.project-detail-block h2 {
+  margin: 0;
+  color: var(--text);
+  font-size: clamp(1.5rem, 2.4vw, 2rem);
+  font-weight: 880;
+  line-height: 1.1;
+}
+
+/* What I Did — numbered contribution list. */
+.project-did-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  counter-reset: did;
+  display: grid;
+  gap: 14px;
+}
+
+.project-did-list li {
+  position: relative;
+  padding-left: 44px;
+  color: var(--text);
+  font-size: clamp(1rem, 1.25vw, 1.14rem);
+  line-height: 1.62;
+  counter-increment: did;
+}
+
+.project-did-list li::before {
+  content: counter(did, decimal-leading-zero);
+  position: absolute;
+  left: 0;
+  top: 0.1em;
+  color: var(--accent-green);
+  font-size: 0.9rem;
+  font-weight: 900;
+  letter-spacing: 0.04em;
+}
+
+/* Topics / Stack / Code — facts grid at the bottom. */
+.project-facts-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 26px 32px;
+}
+
+.project-facts-cell h3 {
+  margin: 0 0 10px;
+  color: var(--muted);
+  font-size: 0.76rem;
+  font-weight: 900;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.project-facts-cell p {
+  margin: 0;
+  color: var(--text);
+  font-size: 1rem;
+  line-height: 1.6;
+}
+
+.tag-row--plain {
+  gap: 8px;
+}
+
+.tag-row--plain span {
+  display: inline-flex;
+  align-items: center;
+  padding: 5px 12px;
+  border: 1px solid rgba(17, 23, 34, 0.12);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.7);
+  color: var(--text);
+  font-size: 0.86rem;
+  font-weight: 620;
+}
+
+.project-facts-dl {
+  margin: 0;
+  display: grid;
+  gap: 10px;
+}
+
+.project-facts-dl > div {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid rgba(17, 23, 34, 0.07);
+}
+
+.project-facts-dl dt {
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.project-facts-dl dd {
+  margin: 0;
+  color: var(--text);
+  font-size: 0.9rem;
+  font-weight: 680;
+  text-align: right;
+}
+
+@media (max-width: 720px) {
+  .project-detail-block {
+    margin-top: 26px;
+    padding: 26px 22px 28px;
+  }
+
+  .project-facts-grid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 22px;
   }
 }

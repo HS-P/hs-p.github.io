@@ -60,6 +60,7 @@
   importance: 4
   status: "Past"
   year_group: "2025"
+  youtube: "RLcMXT-4FUA"
   tags: [Reinforcement Learning, Sim-to-Real, System Identification, IsaacLab]
   summary: "An undergraduate research prototype on improving sim-to-real performance by combining system identification with an A-RMA-style reinforcement learning pipeline."
   public_note: "Poster/PDF material exists locally; representative web media is pending."

@@ -340,6 +340,28 @@
       projectCards.forEach((card) => card.classList.remove("is-hovered"));
     }
 
+    // Shrink a card title until it fits on a single line (auto-fit).
+    function fitCardTitle(h2) {
+      h2.style.fontSize = "";
+      if (!h2.clientWidth) return;
+      let size = parseFloat(window.getComputedStyle(h2).fontSize);
+      const minSize = 15;
+      let guard = 0;
+      while (h2.scrollWidth > h2.clientWidth + 1 && size > minSize && guard < 48) {
+        size -= 1;
+        h2.style.fontSize = size + "px";
+        guard += 1;
+      }
+    }
+
+    function fitVisibleTitles() {
+      projectCards.forEach((card) => {
+        if (card.hidden) return;
+        const h2 = card.querySelector("h2");
+        if (h2) fitCardTitle(h2);
+      });
+    }
+
     function setActive(kind, value) {
       yearButtons.forEach((button) => {
         const active = kind === "year" && button.dataset.projectYear === value;
@@ -387,6 +409,7 @@
       pulseButton(sourceButton);
       window.requestAnimationFrame(() => {
         projectBoard.classList.add("is-year-settled");
+        fitVisibleTitles();
       });
       hoverUnlockTimer = window.setTimeout(() => {
         projectBoard.classList.remove("is-hover-locked");
@@ -494,6 +517,7 @@
     });
 
     sortCards();
+    window.addEventListener("resize", fitVisibleTitles);
     if (queryTopic) {
       openTopic(queryTopic.toLowerCase(), formatTopicLabel(queryTopic));
     } else if (hashCard && hashCard.matches("[data-project-card]")) {
@@ -521,7 +545,7 @@
       function speedFor(el) {
         if (el.classList.contains("hero-name-main")) return 90;
         if (el.classList.contains("hero-name-sub")) return 118;
-        return 25;
+        return 12;
       }
 
       let li = 0;
