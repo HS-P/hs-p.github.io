@@ -7771,9 +7771,9 @@ img {
 
 .home-page .allex-nav img {
   transition:
-    opacity 460ms ease,
-    transform 620ms cubic-bezier(0.2, 0.82, 0.2, 1),
-    filter 460ms ease;
+    opacity 860ms cubic-bezier(0.33, 0, 0.2, 1),
+    transform 940ms cubic-bezier(0.2, 0.82, 0.2, 1),
+    filter 860ms cubic-bezier(0.33, 0, 0.2, 1);
 }
 
 .home-page .allex-nav.is-awake img {
@@ -9074,12 +9074,12 @@ img {
 .allex-hint {
   position: fixed;
   z-index: 2;
-  left: calc(100vw - 574px);
-  top: clamp(198px, 22vh, 240px);
+  left: calc(100vw - 588px);
+  top: clamp(258px, 28vh, 312px);
   right: auto;
   display: inline-flex;
   align-items: center;
-  gap: 11px;
+  gap: 18px;
   opacity: 0;
   transform: translateY(8px);
   transition: opacity 620ms ease, transform 620ms ease;
@@ -9095,20 +9095,20 @@ img {
 .allex-hint-dot {
   position: relative;
   flex: none;
-  width: 20px;
-  height: 20px;
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
   background: var(--accent-green);
   opacity: 0.5;
-  box-shadow: 0 0 18px rgba(67, 201, 71, 0.6);
+  box-shadow: 0 0 30px rgba(67, 201, 71, 0.6);
 }
 
 .allex-hint-dot::before {
   content: "";
   position: absolute;
-  inset: -7px;
+  inset: -13px;
   border-radius: 50%;
-  border: 2px solid var(--accent-green);
+  border: 3px solid var(--accent-green);
 }
 
 @media (prefers-reduced-motion: no-preference) {
@@ -9125,13 +9125,13 @@ img {
 /* Text only — no pill background. */
 .allex-hint-text {
   color: var(--accent-strong);
-  font-size: 1.04rem;
+  font-size: 2.08rem;
   font-weight: 820;
   letter-spacing: 0.01em;
   white-space: nowrap;
   text-shadow:
-    0 1px 2px rgba(255, 255, 255, 0.92),
-    0 0 10px rgba(255, 255, 255, 0.72);
+    0 1px 3px rgba(255, 255, 255, 0.94),
+    0 0 14px rgba(255, 255, 255, 0.75);
 }
 
 @media (max-width: 760px) {
