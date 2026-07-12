@@ -269,7 +269,7 @@
     window.setTimeout(() => {
       projectBoard.classList.add("is-project-intro-complete");
       projectIntro.inert = false;
-    }, reduceProjectIntroMotion ? 0 : 9300);
+    }, reduceProjectIntroMotion ? 0 : 7500);
   }
 
   if (projectBoard && projectCards.length && yearButtons.length && projectIntro && projectYearView && projectYearTitle) {
@@ -700,5 +700,27 @@
     }
     syncPark();
     window.addEventListener("scroll", syncPark, { passive: true });
+  }
+
+  // Auto-fit the project detail hero title (large h1) to a single line.
+  const detailTitle = document.querySelector(".project-detail-copy h1");
+  if (detailTitle) {
+    function fitDetailTitle() {
+      detailTitle.style.fontSize = "";
+      if (!detailTitle.clientWidth) return;
+      let size = parseFloat(window.getComputedStyle(detailTitle).fontSize);
+      const minSize = 34;
+      let guard = 0;
+      while (detailTitle.scrollWidth > detailTitle.clientWidth + 1 && size > minSize && guard < 90) {
+        size -= 2;
+        detailTitle.style.fontSize = size + "px";
+        guard += 1;
+      }
+    }
+    fitDetailTitle();
+    if (document.fonts && document.fonts.ready) {
+      document.fonts.ready.then(fitDetailTitle);
+    }
+    window.addEventListener("resize", fitDetailTitle);
   }
 })();
