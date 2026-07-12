@@ -269,7 +269,7 @@
     window.setTimeout(() => {
       projectBoard.classList.add("is-project-intro-complete");
       projectIntro.inert = false;
-    }, reduceProjectIntroMotion ? 0 : 7500);
+    }, reduceProjectIntroMotion ? 0 : 6400);
   }
 
   if (projectBoard && projectCards.length && yearButtons.length && projectIntro && projectYearView && projectYearTitle) {
@@ -548,30 +548,52 @@
         return 12;
       }
 
-      let li = 0;
-      function typeLine() {
-        if (li >= targets.length) {
+      // Group consecutive lines flagged with data-type-sync so they type at
+      // the same time (e.g. affiliation + advisor appear together).
+      const groups = [];
+      targets.forEach((t) => {
+        if (t.el.hasAttribute("data-type-sync") && groups.length) {
+          groups[groups.length - 1].push(t);
+        } else {
+          groups.push([t]);
+        }
+      });
+
+      let gi = 0;
+      function typeGroup() {
+        if (gi >= groups.length) {
           typeSeq.classList.add("is-typed");
+          document.dispatchEvent(new Event("hero-typed"));
           return;
         }
-        const { el, text } = targets[li];
-        el.classList.add("nc-caret");
-        const speed = speedFor(el);
-        let ci = 0;
-        function step() {
-          el.textContent = text.slice(0, ci);
-          ci += 1;
-          if (ci <= text.length) {
-            window.setTimeout(step, speed);
-          } else {
-            el.classList.remove("nc-caret");
-            li += 1;
-            window.setTimeout(typeLine, 220);
+        const group = groups[gi];
+        let remaining = group.length;
+        group.forEach(({ el, text }) => {
+          el.classList.add("nc-caret");
+          const speed = speedFor(el);
+          let ci = 0;
+          function step() {
+            el.textContent = text.slice(0, ci);
+            ci += 1;
+            if (ci <= text.length) {
+              window.setTimeout(step, speed);
+            } else {
+              el.classList.remove("nc-caret");
+              remaining -= 1;
+              if (remaining === 0) {
+                gi += 1;
+                window.setTimeout(typeGroup, 220);
+              }
+            }
           }
-        }
-        step();
+          step();
+        });
       }
-      window.setTimeout(typeLine, 520);
+      window.setTimeout(typeGroup, 520);
+    } else {
+      // Reduced motion / nothing to type: still announce completion (deferred
+      // so the ALLEX hint listener, registered later, receives it).
+      window.setTimeout(() => document.dispatchEvent(new Event("hero-typed")), 200);
     }
   }
 
@@ -583,20 +605,16 @@
     const allexTopics = allexTopicsEl ? Array.from(allexTopicsEl.querySelectorAll(".allex-topic")) : [];
     const reduceAllexMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     const allexHint = document.querySelector("[data-allex-hint]");
-    if (allexHint) {
-      const hintText = allexHint.querySelector(".allex-hint-text");
-      if (hintText) {
-        const isTouch = window.matchMedia("(pointer: coarse)").matches;
-        hintText.textContent = (isTouch ? "Tap" : "Click") + " ALLEX";
-      }
-    }
     let isOpen = false;
     let isHover = false;
     let parked = false;
     let hintDismissed = false;
+    let heroReady = false;
 
     function showHint() {
-      if (allexHint && !hintDismissed && !parked && !isOpen) allexHint.classList.add("is-visible");
+      if (allexHint && heroReady && !hintDismissed && !parked && !isOpen) {
+        allexHint.classList.add("is-visible");
+      }
     }
     function hideHint() {
       if (allexHint) allexHint.classList.remove("is-visible");
@@ -676,13 +694,12 @@
     }
 
     if (allexToggle) {
-      allexToggle.addEventListener("mouseenter", () => { cancelTeaser(); isHover = true; render(); });
+      allexToggle.addEventListener("mouseenter", () => { isHover = true; render(); });
       allexToggle.addEventListener("mouseleave", () => { isHover = false; render(); });
       allexToggle.addEventListener("focus", () => { isHover = true; render(); });
       allexToggle.addEventListener("blur", () => { isHover = false; render(); });
       allexToggle.addEventListener("click", (event) => {
         event.stopPropagation();
-        cancelTeaser();
         dismissHint();
         isOpen = !isOpen;
         if (isOpen) typeTopicLabels();
@@ -726,36 +743,14 @@
     syncPark();
     window.addEventListener("scroll", syncPark, { passive: true });
 
-    // First-visit teaser: briefly auto-open the callouts so visitors learn
-    // ALLEX is interactive; afterwards leave the floating hint in place.
-    let teaserTimer;
-    function cancelTeaser() {
-      window.clearTimeout(teaserTimer);
+    // Reveal the "Click!" hint only once the home entrance animations finish.
+    function armHint() {
+      heroReady = true;
+      showHint();
     }
-    function runTeaser() {
-      if (parked || isOpen || hintDismissed) return;
-      let seen = false;
-      try { seen = !!localStorage.getItem("allexTeaserSeen"); } catch (e) {}
-      if (reduceAllexMotion || seen) {
-        showHint();
-        return;
-      }
-      try { localStorage.setItem("allexTeaserSeen", "1"); } catch (e) {}
-      isOpen = true;
-      isHover = true;
-      typeTopicLabels();
-      render();
-      window.setTimeout(() => {
-        isHover = false;
-        if (isOpen) {
-          isOpen = false;
-          clearTopicTyping();
-          render();
-        }
-        showHint();
-      }, 3600);
-    }
-    teaserTimer = window.setTimeout(runTeaser, 4200);
+    document.addEventListener("hero-typed", armHint);
+    // Fallback in case the typing sequence never signals completion.
+    window.setTimeout(armHint, 6000);
   }
 
   // Auto-fit the project detail hero title (large h1) to a single line.

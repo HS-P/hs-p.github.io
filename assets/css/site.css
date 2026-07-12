@@ -8116,7 +8116,7 @@ img {
   opacity: 0;
   filter: grayscale(0.08) drop-shadow(0 36px 68px rgba(17, 23, 34, 0.12));
   transform-origin: center bottom;
-  animation: project-allex-curtain 3333ms ease-in-out both;
+  animation: project-allex-curtain 3000ms ease-in-out both;
 }
 
 .project-timeline-page.has-project-intro .project-intro > * {
@@ -8133,44 +8133,44 @@ img {
   color: var(--accent-green);
   clip-path: inset(0 100% 0 0);
   animation:
-    project-title-write 1260ms steps(7, end) 1200ms both,
-    project-title-ink 900ms ease 2600ms both;
+    project-title-write 1130ms steps(7, end) 720ms both,
+    project-title-ink 810ms ease 2000ms both;
 }
 
 .project-timeline-page.has-project-intro .project-intro-copy {
-  animation: project-support-in 680ms cubic-bezier(0.2, 0.82, 0.2, 1) 3700ms backwards;
+  animation: project-support-in 610ms cubic-bezier(0.2, 0.82, 0.2, 1) 3000ms backwards;
 }
 
 .project-timeline-page.has-project-intro .project-mode-toggle {
-  animation: project-support-in 720ms cubic-bezier(0.2, 0.82, 0.2, 1) 3980ms backwards;
+  animation: project-support-in 650ms cubic-bezier(0.2, 0.82, 0.2, 1) 3250ms backwards;
 }
 
 .project-timeline-page.has-project-intro .project-axis-stage {
-  animation: project-support-in 760ms cubic-bezier(0.2, 0.82, 0.2, 1) 4260ms backwards;
+  animation: project-support-in 680ms cubic-bezier(0.2, 0.82, 0.2, 1) 3500ms backwards;
 }
 
 .project-timeline-page.has-project-intro .year-timeline-line {
-  animation: project-timeline-draw 1100ms cubic-bezier(0.16, 0.86, 0.2, 1) 4400ms backwards;
+  animation: project-timeline-draw 990ms cubic-bezier(0.16, 0.86, 0.2, 1) 3650ms backwards;
 }
 
 .project-timeline-page.has-project-intro .year-timeline button {
-  animation: project-year-arrive 940ms cubic-bezier(0.16, 0.9, 0.2, 1) var(--project-intro-year-delay) backwards;
+  animation: project-year-arrive 850ms cubic-bezier(0.16, 0.9, 0.2, 1) var(--project-intro-year-delay) backwards;
 }
 
 .project-timeline-page.has-project-intro .year-timeline button[data-project-year="before"] {
-  --project-intro-year-delay: 4700ms;
+  --project-intro-year-delay: 3900ms;
 }
 
 .project-timeline-page.has-project-intro .year-timeline button[data-project-year="2024"] {
-  --project-intro-year-delay: 5250ms;
+  --project-intro-year-delay: 4400ms;
 }
 
 .project-timeline-page.has-project-intro .year-timeline button[data-project-year="2025"] {
-  --project-intro-year-delay: 5800ms;
+  --project-intro-year-delay: 4900ms;
 }
 
 .project-timeline-page.has-project-intro .year-timeline button[data-project-year="2026"] {
-  --project-intro-year-delay: 6350ms;
+  --project-intro-year-delay: 5400ms;
 }
 
 .project-timeline-page.has-project-intro:not(.is-project-intro-complete) .project-mode-toggle,
@@ -8186,9 +8186,9 @@ img {
   8% {
     opacity: 0.14;
   }
-  24%, 36% {
-    /* Quick entrance (24% = 800ms), then hold until the fade/grow begins at
-       36% (1200ms), synced with the PROJECT title typing start. */
+  20%, 24% {
+    /* Quick entrance (20% = 600ms), brief hold, then the fade/grow begins at
+       24% (720ms) — synced with the PROJECT title typing start. */
     opacity: 1;
     transform: scale(1);
   }
@@ -9070,17 +9070,18 @@ img {
   50% { transform: scale(1.014) translateY(-0.5%); }
 }
 
-/* Floating hint that ALLEX is interactive. */
+/* "Click!" hint pinned to the ALLEX face/camera. */
 .allex-hint {
   position: fixed;
   z-index: 2;
-  right: clamp(20px, 11vw, 200px);
-  top: 58%;
+  left: calc(100vw - 574px);
+  top: clamp(198px, 22vh, 240px);
+  right: auto;
   display: inline-flex;
   align-items: center;
-  gap: 12px;
+  gap: 11px;
   opacity: 0;
-  transform: translateY(10px);
+  transform: translateY(8px);
   transition: opacity 620ms ease, transform 620ms ease;
   pointer-events: none;
 }
@@ -9090,20 +9091,22 @@ img {
   transform: translateY(0);
 }
 
+/* Semi-transparent target circle (~1.5x the original dot). */
 .allex-hint-dot {
   position: relative;
   flex: none;
-  width: 13px;
-  height: 13px;
+  width: 20px;
+  height: 20px;
   border-radius: 50%;
   background: var(--accent-green);
-  box-shadow: 0 0 14px rgba(67, 201, 71, 0.7);
+  opacity: 0.5;
+  box-shadow: 0 0 18px rgba(67, 201, 71, 0.6);
 }
 
 .allex-hint-dot::before {
   content: "";
   position: absolute;
-  inset: -5px;
+  inset: -7px;
   border-radius: 50%;
   border: 2px solid var(--accent-green);
 }
@@ -9115,32 +9118,26 @@ img {
 }
 
 @keyframes allex-hint-pulse {
-  0% { transform: scale(0.6); opacity: 0.85; }
-  100% { transform: scale(2.1); opacity: 0; }
+  0% { transform: scale(0.55); opacity: 0.7; }
+  100% { transform: scale(2.4); opacity: 0; }
 }
 
+/* Text only — no pill background. */
 .allex-hint-text {
-  padding: 8px 15px;
-  border: 1px solid rgba(67, 201, 71, 0.38);
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.92);
-  box-shadow: 0 10px 30px rgba(17, 23, 34, 0.12);
-  color: var(--text);
-  font-size: 0.92rem;
-  font-weight: 760;
+  color: var(--accent-strong);
+  font-size: 1.04rem;
+  font-weight: 820;
+  letter-spacing: 0.01em;
   white-space: nowrap;
-  backdrop-filter: blur(4px);
+  text-shadow:
+    0 1px 2px rgba(255, 255, 255, 0.92),
+    0 0 10px rgba(255, 255, 255, 0.72);
 }
 
 @media (max-width: 760px) {
+  /* ALLEX sits behind the full-width name card on mobile, so there is no
+     visible face to point at — hide the hint rather than float it over copy. */
   .allex-hint {
-    right: 50%;
-    top: auto;
-    bottom: 15vh;
-    transform: translate(50%, 10px);
-  }
-
-  .allex-hint.is-visible {
-    transform: translate(50%, 0);
+    display: none;
   }
 }

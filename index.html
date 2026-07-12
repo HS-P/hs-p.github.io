@@ -40,7 +40,7 @@ description: Personal academic homepage of Hansol Park.
   </div>
   <div class="allex-hint" data-allex-hint aria-hidden="true">
     <span class="allex-hint-dot"></span>
-    <span class="allex-hint-text">Click ALLEX</span>
+    <span class="allex-hint-text">Click!</span>
   </div>
   <div class="hero-copy hero-copy--lab hero-profile-panel namecard" data-typeseq>
     <img class="hero-avatar" src="{{ profile.image | relative_url }}" alt="{{ profile.name }} profile photo">
@@ -51,7 +51,7 @@ description: Personal academic homepage of Hansol Park.
       </h1>
       <p class="hero-role" data-type>{{ profile.role }}, Korea</p>
       <p class="affiliation" data-type>{{ profile.affiliation }}</p>
-      <p class="advisor" data-type>Advised by {{ profile.advisor }}</p>
+      <p class="advisor" data-type data-type-sync>Advised by {{ profile.advisor }}</p>
       <div class="keyword-row" data-type-reveal>
         {% for keyword in profile.keywords limit:4 %}
           <span>{{ keyword }}</span>
