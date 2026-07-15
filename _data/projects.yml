@@ -1,24 +1,3 @@
-- id: aws-physical-ai
-  detail_style: brief
-  detail_label: Research Brief
-  stage: "Graduate"
-  track: "Research Collaboration"
-  role: "Researcher"
-  title: "AWS / NVIDIA Physical AI Collaboration"
-  short_title: "AWS Physical AI"
-  subtitle: "Public collaboration track for robot learning research"
-  importance: 3
-  status: "Current"
-  year_group: "2026"
-  featured: true
-  tags: [Physical AI, Robot Learning, VLA, Dexterous Manipulation]
-  summary: "A public-facing research collaboration around physical AI, robot learning workflows, and manipulation-policy research."
-  public_note: "Detailed methods will be added after public release or clearance."
-  details:
-    - "Frames robot learning work around deployable physical AI systems."
-    - "Connects VLA-style policy research, manipulation workflows, and public research communication."
-    - "Keeps unreleased collaboration details separated from public portfolio content."
-
 - id: allex-dexterous-platform
   detail_style: platform
   detail_label: Platform Dossier
@@ -27,18 +6,44 @@
   role: "Robotics Software Engineer"
   title: "ALLEX Dexterous Manipulation Platform"
   short_title: "ALLEX Platform"
-  subtitle: "Dexterous hand software and robot learning infrastructure"
+  subtitle: "Dexterous hand software and robot-learning infrastructure"
   importance: 1
   status: "Current"
   year_group: "2026"
   featured: true
   image: /assets/img/allex/hero-allex.png
   tags: [ALLEX, Dexterous Hand, ROS 2, Robot Learning]
-  summary: "The main project track for ALLEX hand-arm software, control interfaces, data collection, and manipulation-policy deployment."
-  public_note: "Public demo material will be added after approved media is selected."
-  details:
-    - "Organizes hand control, ROS 2 interfaces, retargeting, and policy-facing robot software into a portfolio-ready project track."
-    - "Will collect public demos, diagrams, and technical notes as the platform material becomes shareable."
+  stack: [Python, ROS 2, Isaac Sim, Robot Learning]
+  summary: "The robot-software platform that connects ALLEX hand-arm control, simulation, demonstration collection, and learning-policy deployment."
+  public_note: "Only material cleared for public presentation is included."
+  what_i_did:
+    - "Developed and organized robot-facing software interfaces for ALLEX manipulation experiments."
+    - "Connected ROS 2 control and state interfaces with simulation, data collection, and policy evaluation workflows."
+    - "Used the platform as the deployment target for imitation-learning and physical-AI experiments."
+
+- id: allex-act-real-robot
+  detail_style: experiment
+  detail_label: Deployment Study
+  stage: "Graduate"
+  track: "Imitation Learning"
+  role: "Robot Learning Engineer"
+  title: "ACT Training and Real-Robot Deployment on ALLEX"
+  short_title: "ALLEX ACT"
+  subtitle: "Demonstration collection, ACT training, simulation validation, and real deployment"
+  importance: 2
+  status: "Current"
+  year_group: "2026"
+  featured: true
+  image: /assets/img/allex/hero-allex.png
+  tags: [ALLEX, ACT, Imitation Learning, LeRobot, Isaac Sim]
+  stack: [Python, ROS 2, LeRobot, ACT, Isaac Sim, PyTorch]
+  summary: "An end-to-end imitation-learning study for a 22-DoF ALLEX arm-hand system, from 50 Hz demonstrations to ACT training and real-robot task execution."
+  public_note: "The current result is a proof of concept; repeatability and success-rate evaluation remain future work."
+  what_i_did:
+    - "Collected and curated approximately 85 teleoperated demonstrations at 50 Hz for a 7-DoF arm and 15-DoF hand."
+    - "Converted raw demonstrations into a LeRobot dataset and trained an ACT policy for 1,000,000 steps on an RTX 5080."
+    - "Validated the learned policy in Isaac Sim through ROS 2 before moving to the physical robot."
+    - "Demonstrated a complete real-robot sequence that collected three objects and placed them in a box."
 
 - id: teleoperation-data-pipeline
   detail_style: pipeline
@@ -48,17 +53,41 @@
   role: "Systems Developer"
   title: "Teleoperation and Robot Learning Data Pipeline"
   short_title: "Teleop Pipeline"
-  subtitle: "Quest/vision-based teleoperation, dataset logging, and policy workflow support"
-  importance: 2
+  subtitle: "Master-device interfaces and demonstration-data workflow support"
+  importance: 3
   status: "Current"
   year_group: "2026"
   featured: true
-  tags: [Teleoperation, Robot Learning, Dataset Logging, ROS 2, Policy Deployment]
-  summary: "A systems track for collecting demonstrations, monitoring robot state, and preparing data for learning-based manipulation workflows."
-  public_note: "Representative media will be added after the final public setup is selected."
-  details:
-    - "Connects teleoperation, camera/video streams, robot state topics, and dataset logging workflows."
-    - "Supports future public writeups around demonstration collection and policy deployment."
+  image: /assets/img/topics/topic-teleoperation.png
+  tags: [Teleoperation, Robot Learning, Dataset Logging, ROS 2]
+  stack: [ROS 2, Python, Isaac Sim]
+  summary: "A compact public overview of the interfaces used to operate ALLEX, observe robot state, and prepare demonstrations for learning experiments."
+  public_note: "Detailed hardware specifications and internal control implementation are intentionally omitted."
+  what_i_did:
+    - "Iterated on a 7-DoF master-device interface and operator workflow for ALLEX-oriented teleoperation."
+    - "Connected ROS 2 state streams, live robot visualization, and simulation/real-robot validation paths."
+    - "Supported retargeting and dataset logging for downstream imitation-learning experiments."
+
+- id: aws-physical-ai
+  detail_style: brief
+  detail_label: Research Brief
+  stage: "Graduate"
+  track: "Research Collaboration"
+  role: "Researcher"
+  title: "AWS / NVIDIA Physical AI Collaboration"
+  short_title: "AWS Physical AI"
+  subtitle: "Public collaboration track for deployable robot-learning research"
+  importance: 4
+  status: "Current"
+  year_group: "2026"
+  featured: true
+  tags: [Physical AI, Robot Learning, VLA, Dexterous Manipulation]
+  summary: "A public-facing research direction connecting multimodal robot data, manipulation-policy learning, and deployment on physical robot platforms."
+  public_note: "Unreleased architecture, partner information, and experimental details are excluded until public clearance."
+  what_i_did:
+    - "Framed data and learning workflows around deployable physical-AI systems."
+    - "Connected manipulation-data collection with imitation-learning, reinforcement-learning, and VLA-oriented research directions."
+    - "Maintained a clear boundary between public research communication and unreleased collaboration material."
 
 - id: redshow-sysid-rma
   detail_style: experiment
@@ -68,18 +97,73 @@
   role: "RL Researcher / Presenter"
   title: "RedShow SYSID-A-RMA Sim-to-Real Project"
   short_title: "RedShow RMA"
-  subtitle: "Reinforcement learning method for robust sim-to-real deployment"
-  importance: 4
+  subtitle: "System identification and adaptation for a wheel-legged robot"
+  importance: 5
   status: "Past"
   year_group: "2025"
   youtube: "RLcMXT-4FUA"
   tags: [Reinforcement Learning, Sim-to-Real, System Identification, IsaacLab]
-  summary: "An undergraduate research prototype on improving sim-to-real performance by combining system identification with an A-RMA-style reinforcement learning pipeline."
-  public_note: "Poster/PDF material exists locally; representative web media is pending."
-  details:
-    - "Focused on reducing domain gap while avoiding overly conservative domain randomization."
-    - "Used encoder and IMU feedback, policy-rate control, and adaptation concepts for robust deployment."
-    - "Presented as a team prototype with Hansol Park, Hyeokjo Kwon, and Seongwoo Bae."
+  stack: [Python, IsaacLab, RSL-RL, OpenCR, CAN, RS-485]
+  summary: "A wheel-legged robot project that combined system identification with an A-RMA-style adaptation pipeline to reduce the simulation-to-reality gap."
+  public_note: "Reported results are based on the project presentation and physical prototype demonstration; a larger quantitative evaluation was not conducted."
+  what_i_did:
+    - "Built a reinforcement-learning workflow for a six-motor wheel-legged robot with position-controlled legs and velocity-controlled wheels."
+    - "Combined identified physical parameters with an adaptation module instead of relying only on broad domain randomization."
+    - "Integrated encoder and IMU feedback at 200 Hz with a 50 Hz policy and a 30 Hz adaptation module."
+    - "Deployed through OpenCR, RS-485 leg communication, and CAN wheel communication, and demonstrated physical obstacle traversal."
+    - "Presented the team prototype with Hyeokjo Kwon and Seongwoo Bae."
+  videos:
+    - title: "Two-wheel leg robot sim-to-real"
+      embed: "https://www.youtube-nocookie.com/embed/UuHs2mRhMNs"
+
+- id: ilrc-logistics-sorting
+  detail_style: integration
+  detail_label: Competition System
+  stage: "Graduate"
+  track: "Competition Robotics"
+  role: "Team KAISER Member"
+  title: "ILRC 2026 Logistics Robot Sorting"
+  short_title: "ILRC Sorting Robot"
+  subtitle: "Integrated control and vision-based logistics classification"
+  importance: 6
+  status: "Past"
+  year_group: "2026"
+  youtube: "GX1T9lVer3A"
+  tags: [Robotics, Computer Vision, Robot Control, System Integration]
+  stack: [ROS 2, Computer Vision, Robot Control]
+  summary: "Team KAISER's logistics sorting robot for the 2026 International Logistics Robot Competition, awarded first place and the Minister of Employment and Labor Award."
+  website: "https://www.koreatech.ac.kr/gallery.es?act=view&bid=0017&list_no=53359&mid=a10701010000"
+  demo: "https://www.youtube.com/watch?v=GX1T9lVer3A"
+  what_i_did:
+    - "Contributed as a Team KAISER member to integration and competition testing for the logistics sorting system."
+    - "Supported a workflow combining stable robot control with vision-based object classification."
+    - "Completed the competition run that received first place in the university Logistics Robot 2 sorting division."
+
+- id: digital-twin-tree-planting
+  detail_style: integration
+  detail_label: Simulation Project
+  stage: "Undergraduate"
+  track: "Digital Twin"
+  role: "Simulation & Robotics Developer"
+  title: "Digital Twin Tree-Planting System"
+  short_title: "Tree-Planting Twin"
+  subtitle: "Campus landscaping workflow with Isaac Sim and an Indy7 robot"
+  importance: 7
+  status: "Past"
+  year_group: "2025"
+  youtube: "VB5vlCer3c0"
+  tags: [Digital Twin, Isaac Sim, Path Planning, Robot Simulation]
+  stack: [Isaac Sim, ROS 2, Python, CAD, A*]
+  summary: "A digital-twin course project for campus landscaping, combining a CAD-based interface, terrain simulation, path planning, and robotic planting modules."
+  public_note: "The project established the simulation workflow; full autonomous planting and physical Indy7 deployment remained future work."
+  what_i_did:
+    - "Built a KOREATECH campus landscaping scenario with terrain, soil, and robot simulation."
+    - "Connected a CAD-oriented user interface with virtual tree placement and A* path planning."
+    - "Developed shovel, alignment, planting, and flower-bed simulation modules around a NeuroMeka Indy7 setup."
+    - "Defined follow-up work for obstacle perception and a complete physical planting sequence."
+  videos:
+    - title: "Isaac Sim physical simulation: tree planting"
+      embed: "https://www.youtube-nocookie.com/embed/NxsqzEvVpEo"
 
 - id: defense-robot
   detail_style: integration
@@ -91,7 +175,7 @@
   short_title: "Defense Robot"
   subtitle: "Competition robot system integration"
   image: /assets/img/projects/defense-robot.jpg
-  importance: 5
+  importance: 8
   status: "Past"
   year_group: "2024"
   tags: [ROS 2, Embedded, Camera, Robotics]
@@ -109,12 +193,11 @@
   title: "TurtleBot and ROS 2 Bring-up"
   short_title: "TurtleBot ROS2"
   subtitle: "K-Community robotics learning program"
-  importance: 6
+  importance: 9
   status: "Past"
   year_group: "2024"
   tags: [ROS 2, TurtleBot, OpenCR, Robotics Education]
   summary: "A structured robotics learning project covering Python, Arduino, ROS, OpenCR, TurtleBot bring-up, and team-based debugging."
-  public_note: "Representative media is pending."
   details:
     - "Recognized as an excellent team in the K-Community Learning Program."
     - "Helped build the robotics software foundation used in later competition and research projects."
@@ -129,7 +212,7 @@
   short_title: "Battle Robot"
   subtitle: "Mechanical and embedded robotics build"
   image: /assets/img/projects/battle-robot.jpg
-  importance: 7
+  importance: 10
   status: "Past"
   year_group: "2024"
   tags: [Mechatronics, Embedded, Fabrication]

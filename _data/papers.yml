@@ -1,9 +1,9 @@
-- title: "Physical AI for Dexterous Manipulation with Vision-Language-Action Policies"
+- title: "Physical AI for Dexterous Manipulation"
   authors: "Hansol Park and WIRobotics AI Team"
-  venue: "AWS / NVIDIA Physical AI collaboration note"
+  venue: "AWS / NVIDIA Physical AI Fellowship · research direction"
   year: 2026
-  status: "ongoing"
-  summary: "A public-facing research direction on physical AI and robot learning for manipulation. Detailed methods will be updated after public release."
+  status: "research in progress"
+  summary: "An ongoing research direction on multimodal robot data, manipulation-policy learning, and deployment. It is listed as work in progress rather than as a publication."
   links:
     - label: "Project"
       url: "/projects/aws-physical-ai/"
