@@ -9499,45 +9499,14 @@ img {
 
 /* ---------- Editorial project dossier ---------- */
 .project-detail-page {
-  --detail-accent: #299b3a;
-  --detail-wash: rgba(41, 155, 58, 0.075);
+  --detail-accent: #0c7a37;
+  --detail-wash: rgba(67, 201, 71, 0.075);
   position: relative;
   padding: 58px 0 128px;
 }
 
-.project-detail-page--platform {
-  --detail-accent: #269b36;
-  --detail-wash: rgba(38, 155, 54, 0.075);
-}
-
-.project-detail-page--pipeline {
-  --detail-accent: #168b84;
-  --detail-wash: rgba(22, 139, 132, 0.075);
-}
-
-.project-detail-page--brief {
-  --detail-accent: #8b6b2d;
-  --detail-wash: rgba(139, 107, 45, 0.075);
-}
-
-.project-detail-page--experiment {
-  --detail-accent: #b65346;
-  --detail-wash: rgba(182, 83, 70, 0.075);
-}
-
-.project-detail-page--integration {
-  --detail-accent: #50677e;
-  --detail-wash: rgba(80, 103, 126, 0.075);
-}
-
-.project-detail-page--learning {
-  --detail-accent: #6959a8;
-  --detail-wash: rgba(105, 89, 168, 0.075);
-}
-
-.project-detail-page--build {
-  --detail-accent: #a75f2d;
-  --detail-wash: rgba(167, 95, 45, 0.075);
+.sub-page:has(.project-detail-page) .bubble-toggle:focus-visible {
+  outline-color: rgba(67, 201, 71, 0.52);
 }
 
 .project-detail-page::before {
