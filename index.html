@@ -9,38 +9,40 @@ description: Personal academic homepage of Hansol Park.
 
 <section class="hero" id="about">
   <div class="hero-ghost-allex allex-nav" data-allex-nav>
-    <img src="{{ '/assets/img/allex/allex-official-hero-source.png' | relative_url }}" alt="" aria-hidden="true">
+    <div class="allex-art">
+      <img src="{{ '/assets/img/allex/allex-official-hero-source.png' | relative_url }}" alt="" aria-hidden="true">
+    </div>
   </div>
   <button class="allex-nav-trigger" type="button" aria-expanded="false" aria-label="Explore ALLEX topics" data-allex-toggle></button>
   <div class="allex-topics" aria-label="ALLEX topics" data-allex-links>
-    <a class="allex-topic" data-side="right" style="--rx: 430px; --ty: 135px; --run: 120px; --bend-x: 30px; --bend-y: 42px;" href="{{ '/projects/' | relative_url }}?topic=vla" aria-label="ACT / VLA">
+    <a class="allex-topic" data-side="right" data-anchor-x="58" data-anchor-y="7" style="--run: 104px; --bend-x: 24px; --bend-y: 32px;" href="{{ '/projects/' | relative_url }}?topic=vla" aria-label="ACT / VLA">
       <span class="topic-dot"></span>
       <span class="topic-line topic-line--horizontal"></span>
       <span class="topic-line topic-line--diagonal"></span>
       <span class="topic-flag"><span class="topic-bloom"></span><span class="topic-text">ACT / VLA</span></span>
     </a>
-    <a class="allex-topic" data-side="left" style="--rx: 555px; --ty: clamp(220px, 24vh, 260px); --run: -170px; --bend-x: -38px; --bend-y: 58px;" href="{{ '/projects/' | relative_url }}" aria-label="Computer Vision">
+    <a class="allex-topic" data-side="left" data-anchor-x="44" data-anchor-y="17" style="--run: -124px; --bend-x: -28px; --bend-y: 42px;" href="{{ '/projects/' | relative_url }}" aria-label="Computer Vision">
       <span class="topic-dot"></span>
       <span class="topic-line topic-line--horizontal"></span>
       <span class="topic-line topic-line--diagonal"></span>
       <span class="topic-flag"><span class="topic-bloom"></span><span class="topic-text">Computer Vision</span></span>
     </a>
-    <a class="allex-topic" data-side="right" style="--rx: 535px; --ty: 400px; --run: 190px; --bend-x: 30px; --bend-y: 36px;" href="{{ '/projects/' | relative_url }}" aria-label="RL">
+    <a class="allex-topic" data-side="right" data-anchor-x="47" data-anchor-y="29" style="--run: 138px; --bend-x: 24px; --bend-y: 28px;" href="{{ '/projects/' | relative_url }}" aria-label="RL">
       <span class="topic-dot"></span>
       <span class="topic-line topic-line--horizontal"></span>
       <span class="topic-line topic-line--diagonal"></span>
       <span class="topic-flag"><span class="topic-bloom"></span><span class="topic-text">RL</span></span>
     </a>
-    <a class="allex-topic" data-side="left" style="--rx: clamp(700px, 39vw, 770px); --ty: clamp(600px, 66vh, 720px); --run: -155px; --bend-x: -35px; --bend-y: 48px;" href="{{ '/projects/' | relative_url }}?topic=teleoperation" aria-label="Teleoperation">
+    <a class="allex-topic" data-side="left" data-anchor-x="24" data-anchor-y="53" style="--run: -112px; --bend-x: -26px; --bend-y: 34px;" href="{{ '/projects/' | relative_url }}?topic=teleoperation" aria-label="Teleoperation">
       <span class="topic-dot"></span>
       <span class="topic-line topic-line--horizontal"></span>
       <span class="topic-line topic-line--diagonal"></span>
       <span class="topic-flag"><span class="topic-bloom"></span><span class="topic-text">Teleoperation</span></span>
     </a>
   </div>
-  <div class="allex-hint" data-allex-hint aria-hidden="true">
+  <div class="allex-hint" data-allex-hint data-anchor-x="39" data-anchor-y="19" aria-hidden="true">
     <span class="allex-hint-dot"></span>
-    <span class="allex-hint-text">Click!</span>
+    <span class="allex-hint-text">Explore ALLEX</span>
   </div>
   <div class="hero-copy hero-copy--lab hero-profile-panel namecard" data-typeseq>
     <img class="hero-avatar" src="{{ profile.image | relative_url }}" alt="{{ profile.name }} profile photo">

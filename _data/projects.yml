@@ -1,4 +1,6 @@
 - id: aws-physical-ai
+  detail_style: brief
+  detail_label: Research Brief
   stage: "Graduate"
   track: "Research Collaboration"
   title: "AWS / NVIDIA Physical AI Collaboration"
@@ -17,6 +19,8 @@
     - "Keeps unreleased collaboration details separated from public portfolio content."
 
 - id: allex-dexterous-platform
+  detail_style: platform
+  detail_label: Platform Dossier
   stage: "Graduate"
   track: "Robot Platform"
   title: "ALLEX Dexterous Manipulation Platform"
@@ -35,6 +39,8 @@
     - "Will collect public demos, diagrams, and technical notes as the platform material becomes shareable."
 
 - id: teleoperation-data-pipeline
+  detail_style: pipeline
+  detail_label: Systems Pipeline
   stage: "Graduate"
   track: "Data & Deployment"
   title: "Teleoperation and Robot Learning Data Pipeline"
@@ -52,6 +58,8 @@
     - "Supports future public writeups around demonstration collection and policy deployment."
 
 - id: redshow-sysid-rma
+  detail_style: experiment
+  detail_label: Experiment Log
   stage: "Undergraduate"
   track: "Research Prototype"
   title: "RedShow SYSID-A-RMA Sim-to-Real Project"
@@ -74,6 +82,8 @@
     - "Presented as a team prototype with Hansol Park, Hyeokjo Kwon, and Seongwoo Bae."
 
 - id: defense-robot
+  detail_style: integration
+  detail_label: Integration Record
   stage: "Undergraduate"
   track: "Competition Platform"
   title: "Defense Robotics Competition Platform"
@@ -90,6 +100,8 @@
     - "Documented development notes and system bring-up in the original Sol's Diary archive."
 
 - id: turtlebot-ros2-learning
+  detail_style: learning
+  detail_label: Learning Track
   stage: "Undergraduate"
   track: "Learning Program"
   title: "TurtleBot and ROS 2 Bring-up"
@@ -106,6 +118,8 @@
     - "Helped build the robotics software foundation used in later competition and research projects."
 
 - id: battle-robot
+  detail_style: build
+  detail_label: Build Record
   stage: "Undergraduate"
   track: "Mechanical Build"
   title: "Battle Robot"

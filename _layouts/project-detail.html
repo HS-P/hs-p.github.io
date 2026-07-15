@@ -7,7 +7,10 @@ layout: default
 {% if project %}
 {% capture copy_block %}
     <div class="project-detail-copy">
-      <p class="project-detail-eyebrow">{{ project.track }}{% if project.year_group %} &middot; {{ project.year_group }}{% endif %}</p>
+      <p class="project-detail-eyebrow">
+        <span>{{ project.detail_label | default: 'Technical dossier' }}</span>
+        {{ project.track }}{% if project.year_group %} &middot; {{ project.year_group }}{% endif %}
+      </p>
       <h1>{{ project.short_title | default: project.title }}</h1>
       <p class="project-detail-fulltitle">{{ project.title }}</p>
       <p class="project-detail-summary">{{ project.summary }}</p>
@@ -19,7 +22,9 @@ layout: default
     </div>
 {% endcapture %}
 
-<article class="project-detail-page">
+<article class="project-detail-page project-detail-page--{{ project.detail_style | default: 'dossier' }}"
+  data-detail-style="{{ project.detail_style | default: 'dossier' }}"
+  data-detail-label="{{ project.detail_label | default: 'Technical dossier' }}">
   <a class="project-back-button project-detail-back" href="{{ '/projects/' | relative_url }}">
     <i class="fa-solid fa-arrow-left" aria-hidden="true"></i>
     Projects

@@ -1,4 +1,8 @@
 (function () {
+  const compactExperienceQuery = window.matchMedia("(max-width: 980px), (hover: none) and (pointer: coarse)");
+  const isCompactExperience = compactExperienceQuery.matches;
+  document.body.classList.toggle("is-compact-experience", isCompactExperience);
+
   const toggle = document.querySelector("[data-nav-toggle]");
   const links = document.querySelector("[data-nav-links]");
   if (toggle && links) {
@@ -60,16 +64,20 @@
       const link = event.target.closest("a");
       if (!link) return;
 
-      burst(link);
+      if (!isCompactExperience) burst(link);
 
       const url = new URL(link.getAttribute("href"), window.location.href);
       if (!url.hash || !samePath(url)) {
         if (!event.metaKey && !event.ctrlKey && !event.shiftKey && !event.altKey && !link.target) {
           event.preventDefault();
-          document.body.classList.add("page-exit");
-          window.setTimeout(() => {
+          if (isCompactExperience) {
             window.location.href = url.href;
-          }, 420);
+          } else {
+            document.body.classList.add("page-exit");
+            window.setTimeout(() => {
+              window.location.href = url.href;
+            }, 420);
+          }
         }
         return;
       }
@@ -228,25 +236,27 @@
       });
     }
 
-    window.addEventListener("wheel", (event) => {
-      if (isSnapping) {
-        const reverseToTop = event.deltaY < -8 && snapTarget === "activities";
-        const reverseToActivities = event.deltaY > 8 && snapTarget === "top";
-        event.preventDefault();
-        if (reverseToTop) snapTo("top");
-        if (reverseToActivities) snapTo("activities");
-        return;
-      }
-      if (event.deltaY > 8 && window.scrollY <= 90) {
-        event.preventDefault();
-        snapTo("activities");
-        return;
-      }
-      if (event.deltaY < -8 && atActivities() && homeHero) {
-        event.preventDefault();
-        snapTo("top");
-      }
-    }, { passive: false });
+    if (!isCompactExperience) {
+      window.addEventListener("wheel", (event) => {
+        if (isSnapping) {
+          const reverseToTop = event.deltaY < -8 && snapTarget === "activities";
+          const reverseToActivities = event.deltaY > 8 && snapTarget === "top";
+          event.preventDefault();
+          if (reverseToTop) snapTo("top");
+          if (reverseToActivities) snapTo("activities");
+          return;
+        }
+        if (event.deltaY > 8 && window.scrollY <= 90) {
+          event.preventDefault();
+          snapTo("activities");
+          return;
+        }
+        if (event.deltaY < -8 && atActivities() && homeHero) {
+          event.preventDefault();
+          snapTo("top");
+        }
+      }, { passive: false });
+    }
   }
 
   const projectBoard = document.querySelector("[data-project-board]");
@@ -263,13 +273,13 @@
   const hashCard = projectBoard && window.location.hash ? document.querySelector(window.location.hash) : null;
 
   if (projectBoard && projectIntro && !queryTopic && !(hashCard && hashCard.matches("[data-project-card]"))) {
-    const reduceProjectIntroMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const reduceProjectIntroMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches || isCompactExperience;
     projectBoard.classList.add("has-project-intro");
     projectIntro.inert = !reduceProjectIntroMotion;
     window.setTimeout(() => {
       projectBoard.classList.add("is-project-intro-complete");
       projectIntro.inert = false;
-    }, reduceProjectIntroMotion ? 0 : 6400);
+    }, reduceProjectIntroMotion ? 0 : 6200);
   }
 
   if (projectBoard && projectCards.length && yearButtons.length && projectIntro && projectYearView && projectYearTitle) {
@@ -532,7 +542,7 @@
   // Typewriter identity for the home name-card hero.
   const typeSeq = document.querySelector("[data-typeseq]");
   if (typeSeq) {
-    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches || isCompactExperience;
     const lines = Array.from(typeSeq.querySelectorAll("[data-type]"));
     if (lines.length && !reduceMotion) {
       typeSeq.classList.add("is-typing-ready");
@@ -599,12 +609,14 @@
 
   // Interactive ALLEX: wake on hover, reveal part-anchored topic callouts (home).
   const allexNav = document.querySelector("[data-allex-nav]");
-  if (allexNav) {
+  if (allexNav && !isCompactExperience) {
     const allexToggle = document.querySelector("[data-allex-toggle]");
     const allexTopicsEl = document.querySelector("[data-allex-links]");
     const allexTopics = allexTopicsEl ? Array.from(allexTopicsEl.querySelectorAll(".allex-topic")) : [];
     const reduceAllexMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     const allexHint = document.querySelector("[data-allex-hint]");
+    const allexImage = allexNav.querySelector("img");
+    const anchorRoot = allexNav.closest(".hero");
     let isOpen = false;
     let isHover = false;
     let parked = false;
@@ -631,6 +643,10 @@
       if (!label) return;
       label.dataset.fullText = label.textContent.trim();
       label.style.setProperty("--topic-text-width", `${Math.ceil(label.getBoundingClientRect().width)}px`);
+      const styles = getComputedStyle(topic);
+      topic.dataset.baseRun = String(parseFloat(styles.getPropertyValue("--run")) || 0);
+      topic.dataset.baseBendX = String(parseFloat(styles.getPropertyValue("--bend-x")) || 0);
+      topic.dataset.baseBendY = String(parseFloat(styles.getPropertyValue("--bend-y")) || 0);
     });
 
     function clearTopicTyping() {
@@ -657,34 +673,83 @@
           charIndex += 1;
           label.textContent = text.slice(0, charIndex);
           if (charIndex < text.length) {
-            topicTypingTimers.push(window.setTimeout(typeCharacter, 42));
+            topicTypingTimers.push(window.setTimeout(typeCharacter, 30));
           }
         }
 
-        topicTypingTimers.push(window.setTimeout(typeCharacter, 1050 + topicIndex * 360));
+        topicTypingTimers.push(window.setTimeout(typeCharacter, 920 + topicIndex * 320));
       });
     }
 
-    // Pin each callout to its ALLEX part and derive a horizontal run followed
-    // by a short diagonal bend into the label.
+    function renderedImageRect(image) {
+      const box = image.getBoundingClientRect();
+      const naturalRatio = image.naturalWidth && image.naturalHeight
+        ? image.naturalWidth / image.naturalHeight
+        : 855 / 1171;
+      let width = box.width;
+      let height = width / naturalRatio;
+      let left = box.left;
+      let top = box.bottom - height;
+
+      if (height > box.height) {
+        height = box.height;
+        width = height * naturalRatio;
+        left = box.right - width;
+        top = box.top;
+      }
+      return { left, top, width, height };
+    }
+
+    // Keep every annotation attached to the rendered PNG rather than to the
+    // viewport. This remains stable when a laptop's shorter height changes the
+    // contain-fit size of the robot.
     function layoutTopics() {
+      if (!allexImage || !anchorRoot) return;
+      const imageRect = renderedImageRect(allexImage);
+      const rootRect = anchorRoot.getBoundingClientRect();
+      const lineScale = Math.max(0.68, Math.min(1, imageRect.width / 960));
+
       allexTopics.forEach((t) => {
-        const cs = getComputedStyle(t);
-        const run = parseFloat(cs.getPropertyValue("--run")) || 0;
-        const bendX = parseFloat(cs.getPropertyValue("--bend-x")) || 0;
-        const bendY = parseFloat(cs.getPropertyValue("--bend-y")) || 0;
+        const anchorX = (parseFloat(t.dataset.anchorX) || 0) / 100;
+        const anchorY = (parseFloat(t.dataset.anchorY) || 0) / 100;
+        const run = (parseFloat(t.dataset.baseRun) || 0) * lineScale;
+        const bendX = (parseFloat(t.dataset.baseBendX) || 0) * lineScale;
+        const bendY = (parseFloat(t.dataset.baseBendY) || 0) * lineScale;
+        t.style.left = `${imageRect.left - rootRect.left + imageRect.width * anchorX}px`;
+        t.style.top = `${imageRect.top - rootRect.top + imageRect.height * anchorY}px`;
+        t.style.setProperty("--run", run + "px");
+        t.style.setProperty("--bend-x", bendX + "px");
+        t.style.setProperty("--bend-y", bendY + "px");
         t.style.setProperty("--run-length", Math.abs(run) + "px");
         t.style.setProperty("--run-angle", (run < 0 ? 180 : 0) + "deg");
         t.style.setProperty("--bend-length", Math.hypot(bendX, bendY) + "px");
         t.style.setProperty("--bend-angle", (Math.atan2(bendY, bendX) * 180 / Math.PI) + "deg");
         t.style.setProperty("--end-x", (run + bendX) + "px");
       });
+
+      if (allexHint) {
+        const hintX = (parseFloat(allexHint.dataset.anchorX) || 0) / 100;
+        const hintY = (parseFloat(allexHint.dataset.anchorY) || 0) / 100;
+        allexHint.style.left = `${imageRect.left - rootRect.left + imageRect.width * hintX}px`;
+        allexHint.style.top = `${imageRect.top - rootRect.top + imageRect.height * hintY}px`;
+      }
+
+      if (allexToggle) {
+        allexToggle.style.left = `${imageRect.left - rootRect.left}px`;
+        allexToggle.style.top = `${imageRect.top - rootRect.top}px`;
+        allexToggle.style.width = `${imageRect.width}px`;
+        allexToggle.style.height = `${imageRect.height}px`;
+      }
     }
     layoutTopics();
     window.addEventListener("resize", layoutTopics);
+    if (allexImage && !allexImage.complete) allexImage.addEventListener("load", layoutTopics, { once: true });
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(layoutTopics);
 
     function render() {
       allexNav.classList.toggle("is-awake", isOpen || isHover);
+      allexNav.classList.toggle("is-hovered", isHover && !isOpen);
+      allexNav.classList.toggle("is-open", isOpen);
       if (isOpen) hideHint();
       if (allexTopicsEl) allexTopicsEl.classList.toggle("is-open", isOpen);
       if (allexToggle) {
@@ -694,10 +759,20 @@
     }
 
     if (allexToggle) {
+      let pressTimer;
+      function pressAllex() {
+        window.clearTimeout(pressTimer);
+        allexNav.classList.add("is-pressed");
+        pressTimer = window.setTimeout(() => allexNav.classList.remove("is-pressed"), 220);
+      }
       allexToggle.addEventListener("mouseenter", () => { isHover = true; render(); });
       allexToggle.addEventListener("mouseleave", () => { isHover = false; render(); });
       allexToggle.addEventListener("focus", () => { isHover = true; render(); });
       allexToggle.addEventListener("blur", () => { isHover = false; render(); });
+      allexToggle.addEventListener("pointerdown", pressAllex);
+      allexToggle.addEventListener("keydown", (event) => {
+        if (event.key === "Enter" || event.key === " ") pressAllex();
+      });
       allexToggle.addEventListener("click", (event) => {
         event.stopPropagation();
         dismissHint();
@@ -743,7 +818,7 @@
     syncPark();
     window.addEventListener("scroll", syncPark, { passive: true });
 
-    // Reveal the "Click!" hint only once the home entrance animations finish.
+    // Reveal the quiet ALLEX exploration cue once the home entrance finishes.
     function armHint() {
       heroReady = true;
       showHint();
@@ -755,7 +830,7 @@
 
   // Auto-fit the project detail hero title (large h1) to a single line.
   const detailTitle = document.querySelector(".project-detail-copy h1");
-  if (detailTitle) {
+  if (detailTitle && !isCompactExperience) {
     function fitDetailTitle() {
       detailTitle.style.fontSize = "";
       if (!detailTitle.clientWidth) return;
