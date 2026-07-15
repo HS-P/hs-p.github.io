@@ -1,5 +1,5 @@
 (function () {
-  const compactExperienceQuery = window.matchMedia("(max-width: 980px), (hover: none) and (pointer: coarse)");
+  const compactExperienceQuery = window.matchMedia("(max-width: 980px)");
   const isCompactExperience = compactExperienceQuery.matches;
   document.body.classList.toggle("is-compact-experience", isCompactExperience);
 
@@ -279,7 +279,7 @@
     window.setTimeout(() => {
       projectBoard.classList.add("is-project-intro-complete");
       projectIntro.inert = false;
-    }, reduceProjectIntroMotion ? 0 : 6200);
+    }, reduceProjectIntroMotion ? 0 : 4800);
   }
 
   if (projectBoard && projectCards.length && yearButtons.length && projectIntro && projectYearView && projectYearTitle) {
@@ -336,7 +336,7 @@
         card.classList.toggle("is-selected", matches);
         card.classList.remove("is-muted");
         if (matches) {
-          card.style.setProperty("--card-delay", `${visibleCount * 420}ms`);
+          card.style.setProperty("--card-delay", `${visibleCount * 120}ms`);
           visibleCount += 1;
         } else {
           card.style.removeProperty("--card-delay");
@@ -423,7 +423,7 @@
       });
       hoverUnlockTimer = window.setTimeout(() => {
         projectBoard.classList.remove("is-hover-locked");
-      }, 1080 + Math.max(0, visibleCount - 1) * 420);
+      }, 760 + Math.max(0, visibleCount - 1) * 120);
     }
 
     function openTopic(topic, label, sourceButton) {
@@ -750,6 +750,7 @@
       allexNav.classList.toggle("is-awake", isOpen || isHover);
       allexNav.classList.toggle("is-hovered", isHover && !isOpen);
       allexNav.classList.toggle("is-open", isOpen);
+      document.body.classList.toggle("is-allex-open", isOpen);
       if (isOpen) hideHint();
       if (allexTopicsEl) allexTopicsEl.classList.toggle("is-open", isOpen);
       if (allexToggle) {
@@ -760,13 +761,35 @@
 
     if (allexToggle) {
       let pressTimer;
+      function updateAllexPointer(event) {
+        const rect = allexToggle.getBoundingClientRect();
+        if (!rect.width || !rect.height) return;
+        const x = Math.max(0, Math.min(1, (event.clientX - rect.left) / rect.width));
+        const y = Math.max(0, Math.min(1, (event.clientY - rect.top) / rect.height));
+        allexNav.style.setProperty("--allex-pointer-x", `${Math.round(x * 100)}%`);
+        allexNav.style.setProperty("--allex-pointer-y", `${Math.round(y * 100)}%`);
+        allexNav.style.setProperty("--allex-shift-x", `${((x - 0.5) * 10).toFixed(2)}px`);
+        allexNav.style.setProperty("--allex-shift-y", `${(-6 + (y - 0.5) * 8).toFixed(2)}px`);
+      }
+      function resetAllexPointer() {
+        allexNav.style.setProperty("--allex-pointer-x", "50%");
+        allexNav.style.setProperty("--allex-pointer-y", "46%");
+        allexNav.style.setProperty("--allex-shift-x", "0px");
+        allexNav.style.setProperty("--allex-shift-y", "-6px");
+      }
       function pressAllex() {
         window.clearTimeout(pressTimer);
         allexNav.classList.add("is-pressed");
         pressTimer = window.setTimeout(() => allexNav.classList.remove("is-pressed"), 220);
       }
-      allexToggle.addEventListener("mouseenter", () => { isHover = true; render(); });
-      allexToggle.addEventListener("mouseleave", () => { isHover = false; render(); });
+      resetAllexPointer();
+      allexToggle.addEventListener("pointerenter", () => { isHover = true; render(); });
+      allexToggle.addEventListener("pointermove", updateAllexPointer, { passive: true });
+      allexToggle.addEventListener("pointerleave", () => {
+        isHover = false;
+        resetAllexPointer();
+        render();
+      });
       allexToggle.addEventListener("focus", () => { isHover = true; render(); });
       allexToggle.addEventListener("blur", () => { isHover = false; render(); });
       allexToggle.addEventListener("pointerdown", pressAllex);
@@ -825,7 +848,41 @@
     }
     document.addEventListener("hero-typed", armHint);
     // Fallback in case the typing sequence never signals completion.
-    window.setTimeout(armHint, 6000);
+    window.setTimeout(armHint, 3200);
+  }
+
+  // Project detail motion: keep the hero sequential, then reveal each dossier
+  // section once as it enters the viewport. Content stays visible when motion
+  // is reduced or IntersectionObserver is unavailable.
+  const detailPage = document.querySelector(".project-detail-page");
+  if (detailPage) {
+    const reduceDetailMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const detailRevealTargets = Array.from(detailPage.querySelectorAll(
+      ".project-detail-media, .project-video-hero, .project-highlights, .project-detail-block, .project-media-board"
+    ));
+
+    if (!reduceDetailMotion && "IntersectionObserver" in window) {
+      detailRevealTargets.forEach((target) => {
+        target.classList.add("detail-reveal");
+        const staggeredChildren = target.querySelectorAll(
+          ".project-highlight, .project-block-head, .project-did-list > li, .project-facts-cell, .project-media-item"
+        );
+        staggeredChildren.forEach((child, index) => {
+          child.style.setProperty("--detail-order", index);
+        });
+      });
+
+      const detailObserver = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) return;
+          entry.target.classList.add("is-visible");
+          detailObserver.unobserve(entry.target);
+        });
+      }, { threshold: 0.12, rootMargin: "0px 0px -8% 0px" });
+
+      detailRevealTargets.forEach((target) => detailObserver.observe(target));
+      detailPage.classList.add("is-detail-motion-ready");
+    }
   }
 
   // Auto-fit the project detail hero title (large h1) to a single line.
