@@ -91,11 +91,12 @@ page_class: cv-editorial-page
   <h2>Awards & Recognition</h2>
   <div class="award-grid">
     {% for award in site.data.awards %}
-      <article class="award-card">
-        <span>{{ award.year }}</span>
+      <a class="award-card" href="{{ '/awards/' | append: award.id | append: '/' | relative_url }}" aria-label="Open {{ award.title }} gallery">
+        <span class="award-year">{{ award.year }}</span>
         <h3>{{ award.title }}</h3>
         <p class="venue">{{ award.organization }}</p>
-      </article>
+        <span class="award-card-cta">View gallery <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></span>
+      </a>
     {% endfor %}
   </div>
 </section>

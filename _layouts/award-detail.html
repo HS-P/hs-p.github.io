@@ -1,0 +1,91 @@
+---
+layout: default
+---
+
+{% assign award = site.data.awards | where: "id", page.award_id | first %}
+
+{% if award %}
+<article class="award-detail-page" data-award-kind="{{ award.category | downcase | replace: ' ', '-' }}">
+  <a class="award-detail-back" href="{{ '/experience/' | relative_url }}">
+    <i class="fa-solid fa-arrow-left" aria-hidden="true"></i>
+    Experience
+  </a>
+
+  <header class="award-detail-hero">
+    <p class="award-detail-eyebrow">
+      <span>{{ award.category | default: 'Recognition' }}</span>
+      {{ award.year }}
+    </p>
+    <h1>{{ award.title }}</h1>
+    <p class="award-detail-summary">{{ award.summary }}</p>
+
+    <dl class="award-detail-meta">
+      <div>
+        <dt>Recognition</dt>
+        <dd>{{ award.recognition | default: award.title }}</dd>
+      </div>
+      <div>
+        <dt>Organization</dt>
+        <dd>{{ award.organization }}</dd>
+      </div>
+      {% if award.role %}
+      <div>
+        <dt>Role</dt>
+        <dd>{{ award.role }}</dd>
+      </div>
+      {% endif %}
+    </dl>
+
+    {% if award.links %}
+    <div class="award-detail-links" aria-label="Award links">
+      {% for link in award.links %}
+        {% if link.url contains '://' %}
+          <a href="{{ link.url }}" target="_blank" rel="noopener">{{ link.label }}<i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i></a>
+        {% else %}
+          <a href="{{ link.url | relative_url }}">{{ link.label }}<i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a>
+        {% endif %}
+      {% endfor %}
+    </div>
+    {% endif %}
+  </header>
+
+  <section class="award-gallery-section">
+    <div class="award-gallery-heading">
+      <span>01</span>
+      <div>
+        <h2>Gallery</h2>
+        <p>Selected media and event context.</p>
+      </div>
+    </div>
+
+    {% if award.youtube %}
+    <div class="award-feature-video">
+      <iframe
+        src="https://www.youtube-nocookie.com/embed/{{ award.youtube }}"
+        title="{{ award.title }} video"
+        loading="lazy"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+        allowfullscreen></iframe>
+    </div>
+    {% endif %}
+
+    {% if award.gallery %}
+    <div class="award-gallery-grid{% if award.gallery.size == 1 %} award-gallery-grid--single{% endif %}">
+      {% for item in award.gallery %}
+      <figure class="award-gallery-item award-gallery-item--{{ item.fit | default: 'cover' }}">
+        <img src="{{ item.src | relative_url }}" alt="{{ item.alt | default: award.title }}" loading="lazy">
+        {% if item.caption %}<figcaption>{{ item.caption }}</figcaption>{% endif %}
+      </figure>
+      {% endfor %}
+    </div>
+    {% endif %}
+  </section>
+</article>
+{% else %}
+<article class="prose-page">
+  <header class="page-title">
+    <h1>Award Not Found</h1>
+    <p>The award id for this page does not match an entry in <code>_data/awards.yml</code>.</p>
+  </header>
+</article>
+{% endif %}

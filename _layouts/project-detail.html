@@ -13,12 +13,23 @@ layout: default
       </p>
       <h1>{{ project.short_title | default: project.title }}</h1>
       <p class="project-detail-fulltitle">{{ project.title }}</p>
+      <dl class="project-hero-meta">
+        <div>
+          <dt>Work</dt>
+          <dd>{{ project.subtitle | default: project.summary }}</dd>
+        </div>
+        <div>
+          <dt>Role</dt>
+          <dd>{{ project.role | default: project.track }}</dd>
+        </div>
+        <div>
+          <dt>Topics</dt>
+          <dd class="project-hero-topics">
+            {% for tag in project.tags %}<span>{{ tag }}</span>{% endfor %}
+          </dd>
+        </div>
+      </dl>
       <p class="project-detail-summary">{{ project.summary }}</p>
-      <div class="tag-row">
-        {% for tag in project.tags %}
-          <a href="{{ '/projects/' | relative_url }}?topic={{ tag | downcase | replace: ' ', '%20' }}">{{ tag }}</a>
-        {% endfor %}
-      </div>
     </div>
 {% endcapture %}
 
@@ -77,7 +88,7 @@ layout: default
   <section class="project-detail-block project-facts-block">
     <div class="project-block-head">
       <span class="project-block-index">02</span>
-      <h2>Topics &middot; Stack &middot; Code</h2>
+      <h2>Topics &middot; Project Details</h2>
     </div>
     <div class="project-facts-grid">
       <div class="project-facts-cell">
