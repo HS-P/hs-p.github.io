@@ -715,16 +715,20 @@
         const run = (parseFloat(t.dataset.baseRun) || 0) * lineScale;
         const bendX = (parseFloat(t.dataset.baseBendX) || 0) * lineScale;
         const bendY = (parseFloat(t.dataset.baseBendY) || 0) * lineScale;
+        const runLength = Math.abs(run);
+        const bendLength = Math.hypot(bendX, bendY);
         t.style.left = `${imageRect.left - rootRect.left + imageRect.width * anchorX}px`;
         t.style.top = `${imageRect.top - rootRect.top + imageRect.height * anchorY}px`;
         t.style.setProperty("--run", run + "px");
         t.style.setProperty("--bend-x", bendX + "px");
         t.style.setProperty("--bend-y", bendY + "px");
-        t.style.setProperty("--run-length", Math.abs(run) + "px");
+        t.style.setProperty("--run-length", runLength + "px");
         t.style.setProperty("--run-angle", (run < 0 ? 180 : 0) + "deg");
-        t.style.setProperty("--bend-length", Math.hypot(bendX, bendY) + "px");
+        t.style.setProperty("--bend-length", bendLength + "px");
         t.style.setProperty("--bend-angle", (Math.atan2(bendY, bendX) * 180 / Math.PI) + "deg");
         t.style.setProperty("--end-x", (run + bendX) + "px");
+        t.style.setProperty("--connector-length", (runLength + bendLength) + "px");
+        t.style.setProperty("--connector-bend-offset", -runLength + "px");
       });
 
       if (allexHint) {
@@ -799,6 +803,7 @@
       allexToggle.addEventListener("click", (event) => {
         event.stopPropagation();
         dismissHint();
+        allexNav.classList.remove("is-pressed");
         isOpen = !isOpen;
         if (isOpen) typeTopicLabels();
         else clearTopicTyping();
@@ -858,14 +863,14 @@
   if (detailPage) {
     const reduceDetailMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     const detailRevealTargets = Array.from(detailPage.querySelectorAll(
-      ".project-detail-media, .project-video-hero, .project-highlights, .project-detail-block, .project-media-board"
+      ".project-detail-media, .project-video-hero, .project-detail-block, .project-media-board"
     ));
 
     if (!reduceDetailMotion && "IntersectionObserver" in window) {
       detailRevealTargets.forEach((target) => {
         target.classList.add("detail-reveal");
         const staggeredChildren = target.querySelectorAll(
-          ".project-highlight, .project-block-head, .project-did-list > li, .project-facts-cell, .project-media-item"
+          ".project-block-head, .project-did-list > li, .project-facts-cell, .project-media-item"
         );
         staggeredChildren.forEach((child, index) => {
           child.style.setProperty("--detail-order", index);

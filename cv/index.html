@@ -2,6 +2,7 @@
 layout: page
 title: CV
 description: Academic profile summary.
+page_class: cv-editorial-page
 ---
 
 {% assign profile = site.data.profile %}
@@ -17,7 +18,7 @@ description: Academic profile summary.
     dexterous manipulation, robot learning, physical AI systems, and sim-to-real robot software.
   </p>
   <div class="link-row inline">
-    <a href="mailto:{{ profile.email }}"><i class="fa-solid fa-envelope"></i>{{ profile.email }}</a>
+    <a href="mailto:{{ profile.email }}"><i class="fa-solid fa-envelope"></i><span>{{ profile.email }}</span></a>
     <a href="{{ profile.github }}" target="_blank" rel="noopener"><i class="fa-brands fa-github"></i>GitHub</a>
     <a href="{{ profile.linkedin }}" target="_blank" rel="noopener"><i class="fa-brands fa-linkedin"></i>LinkedIn</a>
   </div>
@@ -75,7 +76,7 @@ description: Academic profile summary.
   <div class="timeline compact-timeline">
     {% for item in site.data.experience %}
       <article class="timeline-item">
-        <div class="timeline-date">{{ item.period }}</div>
+        <div class="timeline-date{% if item.period == 'Current' %} timeline-date--current{% endif %}">{{ item.period }}</div>
         <div class="timeline-body">
           <h3>{{ item.role }}</h3>
           <p class="venue">{{ item.organization }} · {{ item.location }}</p>

@@ -2,7 +2,7 @@
 layout: default
 ---
 
-<article class="prose-page">
+<article class="prose-page{% if page.page_class %} {{ page.page_class }}{% endif %}">
   <header class="page-title">
     <h1>{{ page.title }}</h1>
     {% if page.description %}

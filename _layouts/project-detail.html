@@ -9,7 +9,7 @@ layout: default
     <div class="project-detail-copy">
       <p class="project-detail-eyebrow">
         <span>{{ project.detail_label | default: 'Technical dossier' }}</span>
-        {{ project.track }}{% if project.year_group %} &middot; {{ project.year_group }}{% endif %}
+        {{ project.track | escape }}{% if project.year_group %} &middot; {{ project.year_group }}{% endif %}
       </p>
       <h1>{{ project.short_title | default: project.title }}</h1>
       <p class="project-detail-fulltitle">{{ project.title }}</p>
@@ -51,36 +51,27 @@ layout: default
     <header class="project-detail-hero project-detail-hero--text">{{ copy_block }}</header>
   {% endif %}
 
-  {% if project.highlights %}
-    <section class="project-highlights" aria-label="Key highlights">
-      {% for item in project.highlights %}
-        <div class="project-highlight">
-          <span>Highlight {{ forloop.index }}</span>
-          <p>{{ item }}</p>
-        </div>
-      {% endfor %}
-    </section>
-  {% endif %}
-
   <section class="project-detail-block project-did-block">
     <div class="project-block-head">
       <span class="project-block-index">01</span>
       <h2>What I Did</h2>
     </div>
-    {% assign contributions = project.what_i_did | default: project.details %}
-    {% if contributions %}
-      <ol class="project-did-list">
-        {% for item in contributions %}
-          <li>{{ item }}</li>
-        {% endfor %}
-      </ol>
-    {% else %}
-      <p class="project-detail-note">Contribution notes will be added as public material is selected.</p>
-    {% endif %}
-    {% if project.public_note %}
-      <p class="project-detail-note">{{ project.public_note }}</p>
-    {% endif %}
-    {{ content }}
+    <div class="project-did-body">
+      {% assign contributions = project.what_i_did | default: project.details %}
+      {% if contributions %}
+        <ol class="project-did-list">
+          {% for item in contributions %}
+            <li>{{ item }}</li>
+          {% endfor %}
+        </ol>
+      {% else %}
+        <p class="project-detail-note">Contribution notes will be added as public material is selected.</p>
+      {% endif %}
+      {% if project.public_note %}
+        <p class="project-detail-note">{{ project.public_note }}</p>
+      {% endif %}
+      {{ content }}
+    </div>
   </section>
 
   <section class="project-detail-block project-facts-block">
@@ -110,7 +101,7 @@ layout: default
       <div class="project-facts-cell">
         <h3>Details</h3>
         <dl class="project-facts-dl">
-          <div><dt>Track</dt><dd>{{ project.track }}</dd></div>
+          <div><dt>Track</dt><dd>{{ project.track | escape }}</dd></div>
           <div><dt>Stage</dt><dd>{{ project.stage }}</dd></div>
           <div><dt>Year</dt><dd>{{ project.year_group }}</dd></div>
           <div><dt>Status</dt><dd>{{ project.status }}</dd></div>
