@@ -1,5 +1,7 @@
 (function () {
   const compactExperienceQuery = window.matchMedia("(max-width: 980px)");
+  const mobilePageQuery = window.matchMedia("(max-width: 760px)");
+  const reduceMobileMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   const isCompactExperience = compactExperienceQuery.matches;
   document.body.classList.toggle("is-compact-experience", isCompactExperience);
 
@@ -378,6 +380,7 @@
   if (projectBoard && projectCards.length && yearButtons.length && projectIntro && projectYearView && projectYearTitle) {
     let closeTimer;
     let hoverUnlockTimer;
+    let mobileFocusMotionVersion = 0;
     const state = {
       mode: "timeline",
       kind: "",
@@ -479,6 +482,13 @@
     }
 
     function fitVisibleTitles() {
+      if (mobilePageQuery.matches) {
+        projectCards.forEach((card) => {
+          const h2 = card.querySelector("h2");
+          if (h2) h2.style.fontSize = "";
+        });
+        return;
+      }
       projectCards.forEach((card) => {
         if (card.hidden) return;
         const h2 = card.querySelector("h2");
@@ -524,6 +534,14 @@
       const visibleCount = setCards(kind, value);
       projectYearTitle.textContent = label;
       projectYearView.hidden = false;
+      const focusMotionVersion = ++mobileFocusMotionVersion;
+      const animateMobileFocus = mobilePageQuery.matches
+        && !reduceMobileMotion
+        && !document.documentElement.classList.contains("mobile-entry-pending");
+      if (animateMobileFocus) {
+        projectYearView.classList.remove("is-mobile-focus-ready");
+        projectYearView.classList.add("is-mobile-focus-pending");
+      }
       state.kind = kind;
       state.value = value;
       setProjectDestinations(kind, value);
@@ -536,6 +554,18 @@
       window.requestAnimationFrame(() => {
         projectBoard.classList.add("is-year-settled");
         fitVisibleTitles();
+        if (animateMobileFocus) {
+          window.requestAnimationFrame(() => {
+            window.setTimeout(() => {
+              if (focusMotionVersion !== mobileFocusMotionVersion) return;
+              projectYearView.classList.add("is-mobile-focus-ready");
+              window.setTimeout(() => {
+                if (focusMotionVersion !== mobileFocusMotionVersion) return;
+                projectYearView.classList.remove("is-mobile-focus-pending", "is-mobile-focus-ready");
+              }, 560);
+            }, 140);
+          });
+        }
       });
       hoverUnlockTimer = window.setTimeout(() => {
         projectBoard.classList.remove("is-hover-locked");
@@ -557,9 +587,11 @@
 
     function closeYear(updateHistory) {
       window.clearTimeout(hoverUnlockTimer);
+      mobileFocusMotionVersion += 1;
       clearCardHover();
       projectBoard.classList.remove("is-year-settled", "is-year-open");
       projectBoard.classList.remove("is-hover-locked");
+      projectYearView.classList.remove("is-mobile-focus-pending", "is-mobile-focus-ready");
       projectBoard.removeAttribute("data-project-focus");
       projectBoard.removeAttribute("data-project-kind");
       state.kind = "";
@@ -1078,7 +1110,7 @@
       ".project-detail-media, .project-video-hero, .project-detail-block, .project-media-board, .project-detail-return"
     ));
 
-    if (!reduceDetailMotion && "IntersectionObserver" in window) {
+    if (!reduceDetailMotion && !mobilePageQuery.matches && "IntersectionObserver" in window) {
       detailRevealTargets.forEach((target) => {
         target.classList.add("detail-reveal");
         const staggeredChildren = target.querySelectorAll(
@@ -1149,41 +1181,56 @@
     window.addEventListener("resize", fitDetailTitle);
   }
 
-  // Mobile uses a restrained editorial reveal instead of desktop hover,
-  // cursor, and long stagger effects. Content stays visible without JS.
-  const mobileRevealQuery = window.matchMedia("(max-width: 760px) and (prefers-reduced-motion: no-preference)");
-  if (mobileRevealQuery.matches && "IntersectionObserver" in window) {
-    const mobileRevealTargets = Array.from(document.querySelectorAll([
-      ".home-page .hero-profile-panel",
-      ".home-page .hero-ghost-allex",
-      ".home-page .activities-heading",
-      ".home-page .video-card",
-      ".project-timeline-page .project-intro",
-      ".project-timeline-page .project-node",
-      ".project-detail-page .project-detail-hero",
-      ".project-detail-page .project-detail-block",
-      ".project-detail-page .project-media-board",
-      ".project-detail-page .project-detail-return",
-      ".prose-page > .page-title",
-      ".prose-page > .cv-block",
-      ".award-detail-page .award-detail-hero",
-      ".award-detail-page .award-gallery-heading",
-      ".award-detail-page .award-feature-video",
-      ".award-detail-page .award-gallery-item",
-      ".award-detail-page .award-detail-return"
-    ].join(",")));
+  // Mobile enters as one stable editorial surface. Wait briefly for the fonts
+  // and eager above-the-fold images that can affect layout, then reveal the
+  // complete page on a single compositor-friendly clock. Lazy media below the
+  // fold (including YouTube) must never hold the first screen hostage.
+  const mobileEntryRoot = document.documentElement;
 
-    const mobileRevealObserver = new IntersectionObserver((entries) => {
-      entries.forEach((entry) => {
-        if (!entry.isIntersecting) return;
-        entry.target.classList.add("is-mobile-visible");
-        mobileRevealObserver.unobserve(entry.target);
+  function finishMobileEntry(immediate) {
+    if (!mobileEntryRoot.classList.contains("mobile-entry-pending")) return;
+    window.clearTimeout(window.__mobileEntryFallback);
+
+    if (immediate) {
+      mobileEntryRoot.classList.remove("mobile-entry-pending", "mobile-entry-ready");
+      return;
+    }
+
+    mobileEntryRoot.classList.add("mobile-entry-ready");
+    window.setTimeout(() => {
+      mobileEntryRoot.classList.remove("mobile-entry-pending", "mobile-entry-ready");
+    }, 680);
+  }
+
+  if (mobilePageQuery.matches && !reduceMobileMotion && mobileEntryRoot.classList.contains("mobile-entry-pending")) {
+    const delay = (duration) => new Promise((resolve) => window.setTimeout(resolve, duration));
+    const criticalImages = Array.from(document.querySelectorAll(".page-shell img:not([loading='lazy'])"))
+      .filter((image) => image.getBoundingClientRect().top < window.innerHeight * 1.25);
+    const imageReady = criticalImages.map((image) => {
+      if (image.complete) {
+        return typeof image.decode === "function" ? image.decode().catch(() => {}) : Promise.resolve();
+      }
+      return new Promise((resolve) => {
+        image.addEventListener("load", resolve, { once: true });
+        image.addEventListener("error", resolve, { once: true });
       });
-    }, { threshold: 0.08, rootMargin: "0px 0px -4% 0px" });
-
-    mobileRevealTargets.forEach((target) => {
-      target.classList.add("mobile-reveal");
-      mobileRevealObserver.observe(target);
     });
+    const fontReady = document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve();
+    const resourcesReady = Promise.allSettled([fontReady, ...imageReady]);
+
+    Promise.all([
+      delay(150),
+      Promise.race([resourcesReady, delay(450)])
+    ]).then(() => {
+      window.requestAnimationFrame(() => {
+        window.requestAnimationFrame(() => finishMobileEntry(false));
+      });
+    });
+
+    window.addEventListener("pageshow", (event) => {
+      if (event.persisted) finishMobileEntry(true);
+    });
+  } else if (mobileEntryRoot.classList.contains("mobile-entry-pending")) {
+    finishMobileEntry(true);
   }
 })();

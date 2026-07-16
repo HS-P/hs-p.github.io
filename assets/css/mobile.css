@@ -68,6 +68,27 @@ body:has(.experience-editorial-page) .page-shell {
   max-width: none;
   margin: 0;
   padding: 30px var(--mobile-gutter) 72px;
+  opacity: 1;
+  transform: translate3d(0, 0, 0);
+}
+
+/* Arm this class in <head> so no already-painted child is dimmed after JS.
+   The entire laid-out page then enters once, without blur or section stagger. */
+html.mobile-entry-pending .page-shell {
+  opacity: 0;
+  pointer-events: none;
+  transform: translate3d(0, 8px, 0);
+  transition: none !important;
+  will-change: opacity, transform;
+}
+
+html.mobile-entry-pending.mobile-entry-ready .page-shell {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translate3d(0, 0, 0);
+  transition:
+    opacity 500ms ease,
+    transform 580ms cubic-bezier(0.22, 1, 0.36, 1) !important;
 }
 
 .home-page .page-shell {
@@ -647,6 +668,24 @@ body.sub-page .site-header {
   color: var(--mobile-text);
   font-size: clamp(3.2rem, 15vw, 4rem);
   line-height: 0.9;
+  animation: none !important;
+  opacity: 1;
+  transform: none;
+  filter: none;
+}
+
+.project-timeline-page .project-focus-view.is-mobile-focus-pending {
+  opacity: 0;
+  transform: translate3d(0, 8px, 0);
+  transition: none;
+}
+
+.project-timeline-page .project-focus-view.is-mobile-focus-pending.is-mobile-focus-ready {
+  opacity: 1;
+  transform: translate3d(0, 0, 0);
+  transition:
+    opacity 440ms ease,
+    transform 500ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .project-timeline-page .project-node-grid,
@@ -899,6 +938,13 @@ body.sub-page .site-header {
   transition: none;
 }
 
+.project-detail-page.is-detail-motion-ready .project-detail-copy > * {
+  opacity: 1;
+  transform: none;
+  filter: none;
+  animation: none !important;
+}
+
 .project-detail-return {
   margin-top: 58px;
   border-top-color: var(--mobile-line);
@@ -934,6 +980,19 @@ body.sub-page .site-header {
   background: transparent;
   box-shadow: none;
   color: var(--mobile-text);
+}
+
+/* Desktop's nested page-soft-drop animation uses blur on every block. On a
+   phone that competes with the page entry and can create dozens of layers. */
+.sub-page .prose-page,
+.sub-page .post-page,
+.sub-page .blog-row,
+.sub-page .cv-block,
+.sub-page .project-group {
+  opacity: 1;
+  transform: none;
+  filter: none;
+  animation: none !important;
 }
 
 .blog-intro {
@@ -1437,17 +1496,6 @@ body.sub-page .site-header {
   display: none;
 }
 
-.mobile-reveal {
-  opacity: 0.82;
-  transform: translateY(8px);
-  transition: opacity 420ms ease, transform 480ms cubic-bezier(0.16, 0.86, 0.2, 1);
-}
-
-.mobile-reveal.is-mobile-visible {
-  opacity: 1;
-  transform: none;
-}
-
 @media (max-width: 370px) {
   .award-detail-links {
     grid-template-columns: minmax(0, 1fr);
@@ -1473,9 +1521,13 @@ body.sub-page .site-header {
     transition-duration: 0.01ms !important;
   }
 
-  .mobile-reveal,
-  .mobile-reveal.is-mobile-visible {
+  html.mobile-entry-pending .page-shell,
+  html.mobile-entry-pending.mobile-entry-ready .page-shell,
+  .project-timeline-page .project-focus-view.is-mobile-focus-pending,
+  .project-timeline-page .project-focus-view.is-mobile-focus-pending.is-mobile-focus-ready {
     opacity: 1;
+    pointer-events: auto;
     transform: none;
+    transition: none !important;
   }
 }
