@@ -1007,8 +1007,8 @@
   // is reduced or IntersectionObserver is unavailable.
   const detailPage = document.querySelector(".project-detail-page");
   if (detailPage) {
-    const detailBack = detailPage.querySelector("[data-project-detail-back]");
-    if (detailBack) {
+    const detailBackLinks = Array.from(detailPage.querySelectorAll("[data-project-detail-back]"));
+    if (detailBackLinks.length) {
       const params = new URLSearchParams(window.location.search);
       const returnKind = params.get("from") || "";
       const returnFocus = params.get("focus") || "";
@@ -1019,25 +1019,26 @@
       const validTopic = returnKind === "topic" && projectTopicTargets(returnTopic).some((topic) => detailTopics.includes(topic));
 
       if (validYear || validTopic) {
-        const backUrl = new URL(detailBack.href, window.location.href);
-        backUrl.search = "";
-        backUrl.hash = "";
-        backUrl.searchParams.set(validYear ? "year" : "topic", validYear ? returnFocus : returnTopic);
-        detailBack.href = backUrl.href;
+        const focusLabel = validYear ? returnFocus : formatProjectTopicLabel(returnTopic);
+        detailBackLinks.forEach((detailBack) => {
+          const backUrl = new URL(detailBack.href, window.location.href);
+          backUrl.search = "";
+          backUrl.hash = "";
+          backUrl.searchParams.set(validYear ? "year" : "topic", validYear ? returnFocus : returnTopic);
+          detailBack.href = backUrl.href;
 
-        const detailBackLabel = detailBack.querySelector("[data-project-detail-back-label]");
-        if (detailBackLabel) {
-          const focusLabel = validYear
-            ? returnFocus
-            : formatProjectTopicLabel(returnTopic);
-          detailBackLabel.textContent = `Back to ${focusLabel}`;
-        }
+          const detailBackLabel = detailBack.querySelector("[data-project-detail-back-label]");
+          if (detailBackLabel) {
+            const labelPrefix = detailBack.closest(".project-detail-return") ? "More from" : "Back to";
+            detailBackLabel.textContent = `${labelPrefix} ${focusLabel}`;
+          }
+        });
       }
     }
 
     const reduceDetailMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     const detailRevealTargets = Array.from(detailPage.querySelectorAll(
-      ".project-detail-media, .project-video-hero, .project-detail-block, .project-media-board"
+      ".project-detail-media, .project-video-hero, .project-detail-block, .project-media-board, .project-detail-return"
     ));
 
     if (!reduceDetailMotion && "IntersectionObserver" in window) {
@@ -1062,6 +1063,26 @@
       detailRevealTargets.forEach((target) => detailObserver.observe(target));
       detailPage.classList.add("is-detail-motion-ready");
     }
+  }
+
+  // Keep award detail exits tied to the surface the visitor came from.
+  // Both CV and Experience intentionally share the same gallery layout.
+  const awardDetailPage = document.querySelector(".award-detail-page");
+  if (awardDetailPage) {
+    const source = new URLSearchParams(window.location.search).get("from") === "cv" ? "cv" : "experience";
+    const destination = source === "cv"
+      ? awardDetailPage.dataset.awardCvUrl
+      : awardDetailPage.dataset.awardExperienceUrl;
+    const sourceLabel = source === "cv" ? "CV" : "Experience";
+
+    awardDetailPage.querySelectorAll("[data-award-detail-back]").forEach((link) => {
+      link.href = new URL(destination, window.location.href).href;
+      const label = link.querySelector("[data-award-detail-back-label]");
+      if (label) {
+        const labelPrefix = link.closest(".award-detail-return") ? "More from" : "Back to";
+        label.textContent = `${labelPrefix} ${sourceLabel}`;
+      }
+    });
   }
 
   // Auto-fit the project detail hero title (large h1) to a single line.

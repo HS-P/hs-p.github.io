@@ -166,6 +166,15 @@ layout: default
       </div>
     </section>
   {% endif %}
+
+  <footer class="project-detail-return">
+    <a href="{{ '/projects/' | relative_url }}?year={{ project_return_year | uri_escape }}"
+      data-project-detail-back>
+      <span class="project-detail-return-kicker">Continue exploring</span>
+      <strong class="project-detail-return-title" data-project-detail-back-label>More from {{ project_return_label }}</strong>
+      <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
+    </a>
+  </footer>
 </article>
 {% else %}
 <article class="prose-page">

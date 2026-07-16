@@ -5,10 +5,13 @@ layout: default
 {% assign award = site.data.awards | where: "id", page.award_id | first %}
 
 {% if award %}
-<article class="award-detail-page" data-award-kind="{{ award.category | downcase | replace: ' ', '-' }}">
-  <a class="award-detail-back" href="{{ '/experience/' | relative_url }}">
+<article class="award-detail-page"
+  data-award-kind="{{ award.category | downcase | replace: ' ', '-' }}"
+  data-award-cv-url="{{ '/cv/' | relative_url }}"
+  data-award-experience-url="{{ '/experience/' | relative_url }}">
+  <a class="award-detail-back" href="{{ '/experience/' | relative_url }}" data-award-detail-back>
     <i class="fa-solid fa-arrow-left" aria-hidden="true"></i>
-    Experience
+    <span data-award-detail-back-label>Back to Experience</span>
   </a>
 
   <header class="award-detail-hero">
@@ -80,6 +83,14 @@ layout: default
     </div>
     {% endif %}
   </section>
+
+  <footer class="project-detail-return award-detail-return">
+    <a href="{{ '/experience/' | relative_url }}" data-award-detail-back>
+      <span class="project-detail-return-kicker">Continue exploring</span>
+      <strong class="project-detail-return-title" data-award-detail-back-label>More from Experience</strong>
+      <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
+    </a>
+  </footer>
 </article>
 {% else %}
 <article class="prose-page">
