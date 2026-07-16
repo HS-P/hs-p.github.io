@@ -12068,3 +12068,249 @@ body:has(.experience-editorial-page) .page-shell {
     transition: none !important;
   }
 }
+
+/* ---------- Project contribution rows: stable number / rule rhythm ---------- */
+.project-detail-page .project-did-block {
+  gap: 22px;
+}
+
+.project-detail-page .project-did-list {
+  display: grid;
+  gap: 0;
+}
+
+.project-detail-page .project-did-list li,
+.project-detail-page .project-did-list li + li {
+  display: grid;
+  grid-template-columns: 68px minmax(0, 1fr);
+  column-gap: 20px;
+  align-items: start;
+  min-height: 0;
+  padding: 20px 0;
+}
+
+.project-detail-page .project-did-list li:first-child {
+  padding-top: 0;
+}
+
+.project-detail-page .project-did-list li + li {
+  border-top: 1px solid rgba(17, 23, 34, 0.09);
+}
+
+.project-detail-page .project-did-list li::before,
+.project-detail-page .project-did-list li + li::before {
+  position: static;
+  inset: auto;
+  align-self: start;
+  color: rgba(12, 122, 55, 0.76);
+  font-size: clamp(2.75rem, 3.2vw, 3.45rem);
+  font-weight: 930;
+  line-height: 0.9;
+  letter-spacing: -0.055em;
+  transform: none;
+}
+
+.project-detail-page .project-did-copy {
+  min-width: 0;
+  align-self: start;
+}
+
+@media (max-width: 980px) {
+  .project-detail-page .project-did-list li,
+  .project-detail-page .project-did-list li + li {
+    grid-template-columns: 56px minmax(0, 1fr);
+    column-gap: 8px;
+    padding: 18px 0;
+  }
+
+  .project-detail-page .project-did-list li:first-child {
+    padding-top: 0;
+  }
+
+  .project-detail-page .project-did-list li::before,
+  .project-detail-page .project-did-list li + li::before {
+    font-size: clamp(2.35rem, 10.5vw, 2.75rem);
+  }
+}
+
+/* ---------- ALLEX annotations: larger reach and role-matched type ---------- */
+.home-page .topic-flag {
+  gap: 10px;
+}
+
+.home-page .topic-bloom {
+  width: var(--tail, 50px);
+}
+
+.home-page .topic-text {
+  font-family: inherit;
+  font-size: clamp(1.42rem, 1.35vw, 1.68rem);
+  font-weight: 730;
+  line-height: 1.08;
+  letter-spacing: normal;
+  text-transform: none;
+}
+
+@media (min-width: 981px) and (max-width: 1080px) {
+  .home-page .topic-text {
+    font-size: clamp(1.28rem, 2.1vw, 1.42rem);
+  }
+}
+
+/* A short line fan and clean wash carry a clicked ALLEX label into Projects. */
+.allex-route-transition {
+  --route-x: 50vw;
+  --route-y: 50vh;
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  overflow: hidden;
+  visibility: hidden;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.allex-route-transition::before,
+.allex-route-transition::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+}
+
+.allex-route-transition::before {
+  background: linear-gradient(
+    100deg,
+    rgba(251, 252, 254, 0.12) 0%,
+    rgba(67, 201, 71, 0.11) 46%,
+    rgba(251, 252, 254, 0.97) 56%,
+    #fbfcfe 100%
+  );
+  clip-path: inset(0 100% 0 0);
+}
+
+.allex-route-transition::after {
+  background: radial-gradient(
+    circle 90px at var(--route-x) var(--route-y),
+    rgba(67, 201, 71, 0.28),
+    rgba(67, 201, 71, 0.06) 42%,
+    transparent 72%
+  );
+  opacity: 0;
+  transform: scale(0.62);
+  transform-origin: var(--route-x) var(--route-y);
+}
+
+.allex-route-transition span {
+  position: absolute;
+  left: 0;
+  top: var(--route-y);
+  width: 100vw;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(67, 201, 71, 0.4), #43c947, rgba(67, 201, 71, 0.28), transparent);
+  box-shadow: 0 0 12px rgba(67, 201, 71, 0.24);
+  opacity: 0;
+  transform: scaleX(0);
+  transform-origin: var(--route-x) center;
+}
+
+.allex-route-transition span:nth-child(1) {
+  margin-top: -13px;
+}
+
+.allex-route-transition span:nth-child(3) {
+  margin-top: 13px;
+}
+
+.home-page.is-allex-routing .allex-route-transition {
+  visibility: visible;
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.home-page.is-allex-routing .allex-route-transition::before {
+  animation: allex-route-wash 560ms cubic-bezier(0.2, 0.78, 0.18, 1) both;
+}
+
+.home-page.is-allex-routing .allex-route-transition::after {
+  animation: allex-route-flare 420ms cubic-bezier(0.16, 0.86, 0.2, 1) both;
+}
+
+.home-page.is-allex-routing .allex-route-transition span {
+  animation: allex-route-streak 430ms cubic-bezier(0.16, 0.86, 0.2, 1) both;
+}
+
+.home-page.is-allex-routing .allex-route-transition span:nth-child(2) {
+  animation-delay: 34ms;
+}
+
+.home-page.is-allex-routing .allex-route-transition span:nth-child(3) {
+  animation-delay: 68ms;
+}
+
+.home-page.is-allex-routing .page-shell {
+  animation: allex-route-content 540ms cubic-bezier(0.2, 0.78, 0.18, 1) both;
+}
+
+.home-page .allex-topic[data-side="left"] {
+  --route-text-x: -22px;
+}
+
+.home-page .allex-topic[data-side="right"] {
+  --route-text-x: 22px;
+}
+
+.home-page .allex-topics.is-open .allex-topic.is-routing .topic-text {
+  color: var(--accent-green);
+  animation: allex-route-label 430ms cubic-bezier(0.16, 0.86, 0.2, 1) both;
+}
+
+.home-page .allex-topics.is-open .allex-topic.is-routing .topic-bloom {
+  animation: allex-route-bloom 400ms cubic-bezier(0.16, 0.86, 0.2, 1) both;
+}
+
+@keyframes allex-route-streak {
+  0% { opacity: 0; transform: scaleX(0); }
+  34% { opacity: 0.9; }
+  72% { opacity: 0.7; transform: scaleX(1); }
+  100% { opacity: 0; transform: scaleX(1); }
+}
+
+@keyframes allex-route-flare {
+  0% { opacity: 0; transform: scale(0.62); }
+  44% { opacity: 1; }
+  100% { opacity: 0; transform: scale(1.42); }
+}
+
+@keyframes allex-route-wash {
+  0%, 18% { clip-path: inset(0 100% 0 0); }
+  100% { clip-path: inset(0 0 0 0); }
+}
+
+@keyframes allex-route-content {
+  0% { opacity: 1; transform: translateX(0); filter: blur(0); }
+  100% { opacity: 0.16; transform: translateX(-14px); filter: blur(2px); }
+}
+
+@keyframes allex-route-label {
+  0% { opacity: 1; translate: 0 0; filter: none; }
+  58% { opacity: 1; }
+  100% { opacity: 0; translate: var(--route-text-x) -3px; filter: blur(2px) drop-shadow(0 0 10px rgba(67, 201, 71, 0.54)); }
+}
+
+@keyframes allex-route-bloom {
+  0% { opacity: 1; scale: 1; }
+  68% { opacity: 1; scale: 1.55 1; }
+  100% { opacity: 0; scale: 2.1 0.55; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .allex-route-transition {
+    display: none !important;
+  }
+
+  .home-page.is-allex-routing .page-shell,
+  .home-page .allex-topic.is-routing .topic-text,
+  .home-page .allex-topic.is-routing .topic-bloom {
+    animation: none !important;
+  }
+}

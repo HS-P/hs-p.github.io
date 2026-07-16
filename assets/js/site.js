@@ -259,6 +259,55 @@
     }
   }
 
+  const projectTopicAliases = {
+    "act-vla": ["act", "vla"],
+    "computer-vision": ["computer-vision"],
+    rl: ["reinforcement-learning"],
+  };
+
+  function normalizeProjectTopic(value) {
+    return String(value || "")
+      .trim()
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/^-+|-+$/g, "");
+  }
+
+  function projectTopicTargets(value) {
+    const topic = normalizeProjectTopic(value);
+    return projectTopicAliases[topic] || (topic ? [topic] : []);
+  }
+
+  function parseProjectTopics(value) {
+    return String(value || "")
+      .split(",")
+      .map(normalizeProjectTopic)
+      .filter(Boolean);
+  }
+
+  function formatProjectTopicLabel(value) {
+    const topic = normalizeProjectTopic(value);
+    if (topic === "act-vla") return "ACT / VLA";
+    return topic
+      .split("-")
+      .filter(Boolean)
+      .map((word) => {
+        const upper = word.toUpperCase();
+        return upper.length <= 3 ? upper : upper.charAt(0) + upper.slice(1).toLowerCase();
+      })
+      .join(" ");
+  }
+
+  function projectElementFromHash() {
+    if (!window.location.hash) return null;
+    try {
+      const element = document.getElementById(decodeURIComponent(window.location.hash.slice(1)));
+      return element && element.matches("[data-project-card]") ? element : null;
+    } catch (_error) {
+      return null;
+    }
+  }
+
   const projectBoard = document.querySelector("[data-project-board]");
   const projectCards = Array.from(document.querySelectorAll("[data-project-card]"));
   const yearButtons = Array.from(document.querySelectorAll("[data-project-year]"));
@@ -269,10 +318,17 @@
   const projectYearTitle = document.querySelector("[data-project-year-title]");
   const projectBack = document.querySelector("[data-project-back]");
   const projectToggle = document.querySelector("[data-project-toggle]");
-  const queryTopic = projectBoard ? new URLSearchParams(window.location.search).get("topic") : "";
-  const hashCard = projectBoard && window.location.hash ? document.querySelector(window.location.hash) : null;
+  const projectQuery = projectBoard ? new URLSearchParams(window.location.search) : null;
+  const queryTopic = projectQuery ? normalizeProjectTopic(projectQuery.get("topic")) : "";
+  const queryYear = projectQuery ? projectQuery.get("year") || "" : "";
+  const hashCard = projectBoard ? projectElementFromHash() : null;
+  const hasQueryTopic = queryTopic && projectCards.some((card) => {
+    const cardTopics = parseProjectTopics(card.dataset.topics);
+    return projectTopicTargets(queryTopic).some((target) => cardTopics.includes(target));
+  });
+  const hasQueryYear = queryYear && yearButtons.some((button) => button.dataset.projectYear === queryYear);
 
-  if (projectBoard && projectIntro && !queryTopic && !(hashCard && hashCard.matches("[data-project-card]"))) {
+  if (projectBoard && projectIntro && !hasQueryTopic && !hasQueryYear && !hashCard) {
     const reduceProjectIntroMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches || isCompactExperience;
     projectBoard.classList.add("has-project-intro");
     projectIntro.inert = !reduceProjectIntroMotion;
@@ -295,15 +351,35 @@
       topicButtons.map((button) => [button.dataset.projectTopic, button.textContent.trim()])
     );
 
-    function formatTopicLabel(value) {
-      return (value || "")
-        .split(/[\s-]+/)
-        .filter(Boolean)
-        .map((word) => {
-          const upper = word.toUpperCase();
-          return upper.length <= 3 ? upper : upper.charAt(0) + upper.slice(1).toLowerCase();
-        })
-        .join(" ");
+    function projectFocusUrl(kind, value) {
+      const url = new URL(window.location.href);
+      url.search = "";
+      url.hash = "";
+      if (kind === "year" && value) url.searchParams.set("year", value);
+      if (kind === "topic" && value) url.searchParams.set("topic", value);
+      return url;
+    }
+
+    function updateProjectHistory(kind, value, replace) {
+      const url = projectFocusUrl(kind, value);
+      const currentUrl = new URL(window.location.href);
+      if (currentUrl.pathname === url.pathname && currentUrl.search === url.search && currentUrl.hash === url.hash) return;
+      const method = replace ? "replaceState" : "pushState";
+      window.history[method]({ projectKind: kind, projectFocus: value }, "", url);
+    }
+
+    function setProjectDestinations(kind, value) {
+      projectCards.forEach((card) => {
+        const destination = new URL(card.dataset.projectUrl, window.location.href);
+        destination.search = "";
+        if (kind && value) {
+          destination.searchParams.set("from", kind);
+          destination.searchParams.set("focus", value);
+        }
+        card.dataset.projectDestination = destination.href;
+        const link = card.querySelector(".project-node-link");
+        if (link) link.href = destination.href;
+      });
     }
 
     function sortCards() {
@@ -325,7 +401,8 @@
     }
 
     function matchesTopic(card, topic) {
-      return (card.dataset.topics || "").includes(topic);
+      const cardTopics = parseProjectTopics(card.dataset.topics);
+      return projectTopicTargets(topic).some((target) => cardTopics.includes(target));
     }
 
     function setCards(kind, value) {
@@ -403,7 +480,7 @@
       window.setTimeout(() => button.classList.remove("is-pressed"), 540);
     }
 
-    function openFocus(kind, value, label, sourceButton) {
+    function openFocus(kind, value, label, sourceButton, updateHistory) {
       window.clearTimeout(closeTimer);
       window.clearTimeout(hoverUnlockTimer);
       clearCardHover();
@@ -412,11 +489,13 @@
       projectYearView.hidden = false;
       state.kind = kind;
       state.value = value;
+      setProjectDestinations(kind, value);
       projectBoard.dataset.projectFocus = value;
       projectBoard.dataset.projectKind = kind;
       projectBoard.classList.add("is-year-open", "is-hover-locked");
       setActive(kind, value);
       pulseButton(sourceButton);
+      if (updateHistory) updateProjectHistory(kind, value);
       window.requestAnimationFrame(() => {
         projectBoard.classList.add("is-year-settled");
         fitVisibleTitles();
@@ -426,13 +505,20 @@
       }, 760 + Math.max(0, visibleCount - 1) * 120);
     }
 
-    function openTopic(topic, label, sourceButton) {
-      if (!topic) return;
+    function openTopic(topic, label, sourceButton, updateHistory) {
+      const normalizedTopic = normalizeProjectTopic(topic);
+      if (!normalizedTopic) return;
       setMode("topic");
-      openFocus("topic", topic, label || topicLabels.get(topic) || formatTopicLabel(topic), sourceButton);
+      openFocus(
+        "topic",
+        normalizedTopic,
+        label || topicLabels.get(normalizedTopic) || formatProjectTopicLabel(normalizedTopic),
+        sourceButton,
+        updateHistory
+      );
     }
 
-    function closeYear() {
+    function closeYear(updateHistory) {
       window.clearTimeout(hoverUnlockTimer);
       clearCardHover();
       projectBoard.classList.remove("is-year-settled", "is-year-open");
@@ -441,7 +527,9 @@
       projectBoard.removeAttribute("data-project-kind");
       state.kind = "";
       state.value = "";
+      setProjectDestinations("", "");
       setActive("", "");
+      if (updateHistory) updateProjectHistory("", "");
       closeTimer = window.setTimeout(() => {
         projectYearView.hidden = true;
         projectCards.forEach((card) => {
@@ -462,7 +550,7 @@
       button.addEventListener("click", () => {
         const year = button.dataset.projectYear || "";
         const label = button.dataset.projectYearLabel || button.textContent.trim();
-        openFocus("year", year, label, button);
+        openFocus("year", year, label, button, true);
       });
     });
 
@@ -470,12 +558,12 @@
       button.setAttribute("aria-pressed", "false");
       button.addEventListener("click", () => {
         const topic = button.dataset.projectTopic || "";
-        openTopic(topic, topicLabels.get(topic) || button.textContent.trim(), button);
+        openTopic(topic, topicLabels.get(topic) || button.textContent.trim(), button, true);
       });
     });
 
     if (projectBack) {
-      projectBack.addEventListener("click", closeYear);
+      projectBack.addEventListener("click", () => closeYear(true));
     }
 
     if (projectToggle) {
@@ -494,17 +582,19 @@
         if (tag) {
           event.preventDefault();
           event.stopPropagation();
-          openTopic(tag.dataset.projectTag || "", tag.textContent.trim(), tag);
+          openTopic(tag.dataset.projectTag || "", tag.textContent.trim(), tag, true);
           return;
         }
         if (event.target.closest("a, button, summary, details")) return;
-        if (projectUrl) window.location.href = projectUrl;
+        const destination = card.dataset.projectDestination || projectUrl;
+        if (destination) window.location.href = destination;
       });
       card.addEventListener("keydown", (event) => {
         if (event.key !== "Enter" && event.key !== " ") return;
         if (event.target.closest("a, button, summary, details")) return;
         event.preventDefault();
-        if (projectUrl) window.location.href = projectUrl;
+        const destination = card.dataset.projectDestination || projectUrl;
+        if (destination) window.location.href = destination;
       });
       card.addEventListener("mouseenter", () => {
         if (projectBoard.classList.contains("is-hover-locked")) return;
@@ -526,17 +616,36 @@
       });
     });
 
+    function restoreProjectState() {
+      const params = new URLSearchParams(window.location.search);
+      const topic = normalizeProjectTopic(params.get("topic"));
+      const year = params.get("year") || "";
+      const yearButton = yearButtons.find((button) => button.dataset.projectYear === year);
+      const topicExists = topic && projectCards.some((card) => matchesTopic(card, topic));
+      const currentHashCard = projectElementFromHash();
+
+      if (topicExists) {
+        updateProjectHistory("topic", topic, true);
+        openTopic(topic, topicLabels.get(topic) || formatProjectTopicLabel(topic), null, false);
+      } else if (year && yearButton) {
+        updateProjectHistory("year", year, true);
+        setMode("timeline");
+        openFocus("year", year, yearButton.dataset.projectYearLabel || year, null, false);
+      } else if (currentHashCard) {
+        updateProjectHistory("year", currentHashCard.dataset.year || "", true);
+        setMode("timeline");
+        openFocus("year", currentHashCard.dataset.year || "", currentHashCard.dataset.year || "Projects", null, false);
+      } else {
+        updateProjectHistory("", "", true);
+        setMode("timeline");
+        closeYear(false);
+      }
+    }
+
     sortCards();
     window.addEventListener("resize", fitVisibleTitles);
-    if (queryTopic) {
-      openTopic(queryTopic.toLowerCase(), formatTopicLabel(queryTopic));
-    } else if (hashCard && hashCard.matches("[data-project-card]")) {
-      setMode("timeline");
-      openFocus("year", hashCard.dataset.year || "", hashCard.dataset.year || "Projects");
-    } else {
-      setMode("timeline");
-      closeYear();
-    }
+    window.addEventListener("popstate", restoreProjectState);
+    restoreProjectState();
   }
 
   // Typewriter identity for the home name-card hero.
@@ -613,8 +722,9 @@
     const allexToggle = document.querySelector("[data-allex-toggle]");
     const allexTopicsEl = document.querySelector("[data-allex-links]");
     const allexTopics = allexTopicsEl ? Array.from(allexTopicsEl.querySelectorAll(".allex-topic")) : [];
-    const reduceAllexMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const allexMotionPreference = window.matchMedia("(prefers-reduced-motion: reduce)");
     const allexHint = document.querySelector("[data-allex-hint]");
+    const allexRouteTransition = document.querySelector("[data-allex-route-transition]");
     const allexImage = allexNav.querySelector("img");
     const anchorRoot = allexNav.closest(".hero");
     let isOpen = false;
@@ -622,6 +732,8 @@
     let parked = false;
     let hintDismissed = false;
     let heroReady = false;
+    let isRouting = false;
+    let routeTimer;
 
     function showHint() {
       if (allexHint && heroReady && !hintDismissed && !parked && !isOpen) {
@@ -655,7 +767,7 @@
 
     function typeTopicLabels() {
       clearTopicTyping();
-      if (reduceAllexMotion) {
+      if (allexMotionPreference.matches) {
         allexTopics.forEach((topic) => {
           const label = topic.querySelector(".topic-text");
           if (label) label.textContent = label.dataset.fullText || "";
@@ -811,6 +923,40 @@
       });
     }
 
+    if (allexTopicsEl) {
+      function resetAllexRoute() {
+        window.clearTimeout(routeTimer);
+        isRouting = false;
+        document.body.classList.remove("is-allex-routing");
+        allexTopics.forEach((topic) => topic.classList.remove("is-routing"));
+      }
+
+      allexTopicsEl.addEventListener("click", (event) => {
+        const link = event.target.closest(".allex-topic");
+        if (!link || isRouting) return;
+        if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || link.target || link.hasAttribute("download")) return;
+
+        const destination = new URL(link.href, window.location.href);
+        if (destination.origin !== window.location.origin) return;
+        if (allexMotionPreference.matches) return;
+
+        event.preventDefault();
+        isRouting = true;
+        const flagRect = link.querySelector(".topic-flag").getBoundingClientRect();
+        if (allexRouteTransition) {
+          allexRouteTransition.style.setProperty("--route-x", `${flagRect.left + flagRect.width / 2}px`);
+          allexRouteTransition.style.setProperty("--route-y", `${flagRect.top + flagRect.height / 2}px`);
+        }
+        link.classList.add("is-routing");
+        document.body.classList.add("is-allex-routing");
+        routeTimer = window.setTimeout(() => window.location.assign(destination.href), 540);
+      });
+
+      window.addEventListener("pageshow", (event) => {
+        if (event.persisted) resetAllexRoute();
+      });
+    }
+
     document.addEventListener("click", (event) => {
       const insideUI =
         (allexToggle && allexToggle.contains(event.target)) ||
@@ -861,6 +1007,34 @@
   // is reduced or IntersectionObserver is unavailable.
   const detailPage = document.querySelector(".project-detail-page");
   if (detailPage) {
+    const detailBack = detailPage.querySelector("[data-project-detail-back]");
+    if (detailBack) {
+      const params = new URLSearchParams(window.location.search);
+      const returnKind = params.get("from") || "";
+      const returnFocus = params.get("focus") || "";
+      const returnTopic = normalizeProjectTopic(returnFocus);
+      const detailYear = detailPage.dataset.projectYear || "";
+      const detailTopics = parseProjectTopics(detailPage.dataset.projectTopics);
+      const validYear = returnKind === "year" && returnFocus === detailYear;
+      const validTopic = returnKind === "topic" && projectTopicTargets(returnTopic).some((topic) => detailTopics.includes(topic));
+
+      if (validYear || validTopic) {
+        const backUrl = new URL(detailBack.href, window.location.href);
+        backUrl.search = "";
+        backUrl.hash = "";
+        backUrl.searchParams.set(validYear ? "year" : "topic", validYear ? returnFocus : returnTopic);
+        detailBack.href = backUrl.href;
+
+        const detailBackLabel = detailBack.querySelector("[data-project-detail-back-label]");
+        if (detailBackLabel) {
+          const focusLabel = validYear
+            ? returnFocus
+            : formatProjectTopicLabel(returnTopic);
+          detailBackLabel.textContent = `Back to ${focusLabel}`;
+        }
+      }
+    }
+
     const reduceDetailMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     const detailRevealTargets = Array.from(detailPage.querySelectorAll(
       ".project-detail-media, .project-video-hero, .project-detail-block, .project-media-board"

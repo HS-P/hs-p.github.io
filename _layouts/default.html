@@ -23,6 +23,11 @@
     <main class="page-shell{% if page.url == '/projects/' or page.layout == 'project-detail' or page.layout == 'award-detail' %} page-shell--wide{% endif %}">
       {{ content }}
     </main>
+    {% if page.url == '/' %}
+      <div class="allex-route-transition" data-allex-route-transition aria-hidden="true">
+        <span></span><span></span><span></span>
+      </div>
+    {% endif %}
     {% include orb-nav.html %}
     {% include site-footer.html %}
     <script src="{{ '/assets/js/site.js' | relative_url }}"></script>
