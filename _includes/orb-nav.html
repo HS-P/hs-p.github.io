@@ -1,11 +1,11 @@
 <nav class="bubble-nav" aria-label="Floating navigation" data-bubble-nav>
-  <button class="bubble-toggle" type="button" aria-label="Open floating navigation" aria-expanded="false" data-bubble-toggle>
+  <button class="bubble-toggle" type="button" aria-label="Open floating navigation" aria-expanded="false" aria-controls="site-bubble-links" data-bubble-toggle>
     <i class="fa-solid fa-bars-staggered" aria-hidden="true"></i>
   </button>
-  <div class="bubble-links">
-    <a class="bubble-link" href="{{ '/research/' | relative_url }}"><span class="bubble-label">Research</span></a>
-    <a class="bubble-link" href="{{ '/projects/' | relative_url }}"><span class="bubble-label">Projects</span></a>
-    <a class="bubble-link" href="{{ '/experience/' | relative_url }}"><span class="bubble-label">Experience</span></a>
-    <a class="bubble-link" href="{{ '/cv/' | relative_url }}"><span class="bubble-label">CV</span></a>
+  <div class="bubble-links" id="site-bubble-links" inert>
+    <a class="bubble-link" href="{{ '/research/' | relative_url }}"{% if page.url == '/research/' %} aria-current="page"{% endif %}><span class="bubble-label">Research</span></a>
+    <a class="bubble-link" href="{{ '/projects/' | relative_url }}"{% if page.url contains '/projects/' %} aria-current="page"{% endif %}><span class="bubble-label">Projects</span></a>
+    <a class="bubble-link" href="{{ '/experience/' | relative_url }}"{% if page.url == '/experience/' %} aria-current="page"{% endif %}><span class="bubble-label">Experience</span></a>
+    <a class="bubble-link" href="{{ '/cv/' | relative_url }}"{% if page.url == '/cv/' %} aria-current="page"{% endif %}><span class="bubble-label">CV</span></a>
   </div>
 </nav>

@@ -51,6 +51,10 @@ img {
   max-width: 100%;
 }
 
+.hero-mobile-intro {
+  display: none;
+}
+
 .site-header {
   position: sticky;
   top: 0;

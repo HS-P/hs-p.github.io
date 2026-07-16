@@ -32,14 +32,35 @@
 
   if (bubbleNav) {
     const bubbleToggle = bubbleNav.querySelector("[data-bubble-toggle]");
+    const bubbleLinks = bubbleNav.querySelector(".bubble-links");
+    const bubbleInertRegions = [
+      document.querySelector(".site-header"),
+      document.querySelector("main"),
+      document.querySelector(".site-footer")
+    ].filter(Boolean);
 
     function setBubbleNav(open) {
       bubbleNav.classList.toggle("is-open", open);
+      if (bubbleLinks) bubbleLinks.inert = !open;
+      if (isCompactExperience) {
+        document.documentElement.classList.toggle("is-mobile-nav-open", open);
+        document.body.classList.toggle("is-mobile-nav-open", open);
+        bubbleInertRegions.forEach((region) => {
+          region.inert = open;
+        });
+      }
       if (bubbleToggle) {
         bubbleToggle.setAttribute("aria-expanded", String(open));
         bubbleToggle.setAttribute("aria-label", open ? "Close floating navigation" : "Open floating navigation");
       }
+      if (open && isCompactExperience && bubbleLinks) {
+        window.requestAnimationFrame(() => {
+          bubbleLinks.querySelector("a")?.focus({ preventScroll: true });
+        });
+      }
     }
+
+    setBubbleNav(false);
 
     if (bubbleToggle) {
       bubbleToggle.addEventListener("click", (event) => {
@@ -56,7 +77,23 @@
 
     document.addEventListener("keydown", (event) => {
       if (event.key === "Escape") {
+        const wasOpen = bubbleNav.classList.contains("is-open");
         setBubbleNav(false);
+        if (wasOpen && bubbleToggle) bubbleToggle.focus();
+      }
+    });
+
+    bubbleNav.addEventListener("keydown", (event) => {
+      if (event.key !== "Tab" || !isCompactExperience || !bubbleNav.classList.contains("is-open")) return;
+      const focusable = [bubbleToggle, ...bubbleNav.querySelectorAll(".bubble-link")].filter(Boolean);
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
       }
     });
 
@@ -1074,6 +1111,11 @@
       ? awardDetailPage.dataset.awardCvUrl
       : awardDetailPage.dataset.awardExperienceUrl;
     const sourceLabel = source === "cv" ? "CV" : "Experience";
+    const destinationPath = new URL(destination, window.location.href).pathname;
+    const sourceNavLink = Array.from(document.querySelectorAll(".bubble-link")).find((link) => {
+      return new URL(link.href, window.location.href).pathname === destinationPath;
+    });
+    if (sourceNavLink) sourceNavLink.setAttribute("aria-current", "page");
 
     awardDetailPage.querySelectorAll("[data-award-detail-back]").forEach((link) => {
       link.href = new URL(destination, window.location.href).href;
@@ -1105,5 +1147,43 @@
       document.fonts.ready.then(fitDetailTitle);
     }
     window.addEventListener("resize", fitDetailTitle);
+  }
+
+  // Mobile uses a restrained editorial reveal instead of desktop hover,
+  // cursor, and long stagger effects. Content stays visible without JS.
+  const mobileRevealQuery = window.matchMedia("(max-width: 760px) and (prefers-reduced-motion: no-preference)");
+  if (mobileRevealQuery.matches && "IntersectionObserver" in window) {
+    const mobileRevealTargets = Array.from(document.querySelectorAll([
+      ".home-page .hero-profile-panel",
+      ".home-page .hero-ghost-allex",
+      ".home-page .activities-heading",
+      ".home-page .video-card",
+      ".project-timeline-page .project-intro",
+      ".project-timeline-page .project-node",
+      ".project-detail-page .project-detail-hero",
+      ".project-detail-page .project-detail-block",
+      ".project-detail-page .project-media-board",
+      ".project-detail-page .project-detail-return",
+      ".prose-page > .page-title",
+      ".prose-page > .cv-block",
+      ".award-detail-page .award-detail-hero",
+      ".award-detail-page .award-gallery-heading",
+      ".award-detail-page .award-feature-video",
+      ".award-detail-page .award-gallery-item",
+      ".award-detail-page .award-detail-return"
+    ].join(",")));
+
+    const mobileRevealObserver = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (!entry.isIntersecting) return;
+        entry.target.classList.add("is-mobile-visible");
+        mobileRevealObserver.unobserve(entry.target);
+      });
+    }, { threshold: 0.08, rootMargin: "0px 0px -4% 0px" });
+
+    mobileRevealTargets.forEach((target) => {
+      target.classList.add("mobile-reveal");
+      mobileRevealObserver.observe(target);
+    });
   }
 })();
