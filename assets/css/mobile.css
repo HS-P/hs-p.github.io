@@ -74,7 +74,8 @@ body:has(.experience-editorial-page) .page-shell {
 
 /* Arm this class in <head> so no already-painted child is dimmed after JS.
    The entire laid-out page then enters once, without blur or section stagger. */
-html.mobile-entry-pending .page-shell {
+html.page-entry-pending .page-shell {
+  visibility: visible;
   opacity: 0;
   pointer-events: none;
   transform: translate3d(0, 8px, 0);
@@ -82,7 +83,7 @@ html.mobile-entry-pending .page-shell {
   will-change: opacity, transform;
 }
 
-html.mobile-entry-pending.mobile-entry-ready .page-shell {
+html.page-entry-pending.page-entry-ready .page-shell {
   opacity: 1;
   pointer-events: auto;
   transform: translate3d(0, 0, 0);
@@ -1521,8 +1522,8 @@ body.sub-page .site-header {
     transition-duration: 0.01ms !important;
   }
 
-  html.mobile-entry-pending .page-shell,
-  html.mobile-entry-pending.mobile-entry-ready .page-shell,
+  html.page-entry-pending .page-shell,
+  html.page-entry-pending.page-entry-ready .page-shell,
   .project-timeline-page .project-focus-view.is-mobile-focus-pending,
   .project-timeline-page .project-focus-view.is-mobile-focus-pending.is-mobile-focus-ready {
     opacity: 1;

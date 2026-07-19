@@ -744,6 +744,33 @@ img {
   transition: opacity 180ms ease, transform 180ms ease;
 }
 
+/* Arm motion before the first paint, then release every CSS clock only after
+   above-the-fold media has had a chance to decode. Desktop keeps its native
+   section choreography; mobile adds a single surface reveal in mobile.css. */
+@media (prefers-reduced-motion: no-preference) {
+  html.page-entry-pending .page-shell {
+    visibility: hidden;
+  }
+
+  html.page-entry-pending.page-entry-ready .page-shell {
+    visibility: visible;
+  }
+
+  html.page-entry-pending .page-shell,
+  html.page-entry-pending .page-shell *,
+  html.page-entry-pending .page-shell *::before,
+  html.page-entry-pending .page-shell *::after {
+    animation-play-state: paused !important;
+  }
+
+  html.page-entry-pending.page-entry-ready .page-shell,
+  html.page-entry-pending.page-entry-ready .page-shell *,
+  html.page-entry-pending.page-entry-ready .page-shell *::before,
+  html.page-entry-pending.page-entry-ready .page-shell *::after {
+    animation-play-state: running !important;
+  }
+}
+
 .home-page .page-shell {
   width: min(1320px, calc(100% - 40px));
 }
@@ -785,6 +812,15 @@ img {
 
 .sub-page .cv-block:nth-of-type(n + 5) {
   animation-delay: 560ms;
+}
+
+/* The prose surface already enters as one unit. Replaying the same blur on
+   every CV section or blog row multiplies paint work without adding clarity. */
+.sub-page .prose-page :is(.blog-row, .cv-block, .project-group) {
+  opacity: 1;
+  transform: none;
+  filter: none;
+  animation: none;
 }
 
 .hero {
@@ -2860,16 +2896,13 @@ img {
   0% {
     opacity: 0;
     transform: translate3d(0, -26px, 0);
-    filter: blur(8px);
   }
   58% {
     opacity: 0.82;
-    filter: blur(2px);
   }
   100% {
     opacity: 1;
     transform: translate3d(0, 0, 0);
-    filter: blur(0);
   }
 }
 
@@ -2877,16 +2910,13 @@ img {
   0% {
     opacity: 0;
     transform: translate3d(-52px, 0, 0);
-    filter: blur(9px);
   }
   62% {
     opacity: 0.86;
-    filter: blur(2px);
   }
   100% {
     opacity: 1;
     transform: translate3d(0, 0, 0);
-    filter: blur(0);
   }
 }
 
@@ -2905,17 +2935,14 @@ img {
   0% {
     opacity: 0;
     transform: translateX(-42px) scale(0.92);
-    filter: blur(6px);
   }
   64% {
     opacity: 0.9;
     transform: translateX(8px) scale(1.02);
-    filter: blur(1px);
   }
   100% {
     opacity: 1;
     transform: translateX(0) scale(1);
-    filter: blur(0);
   }
 }
 
@@ -2923,17 +2950,14 @@ img {
   0% {
     opacity: 0;
     transform: translate3d(-28px, 0, 0) scale(0.94);
-    filter: blur(5px);
   }
   62% {
     opacity: 0.86;
     transform: translate3d(7px, 0, 0) scale(1.02);
-    filter: blur(1px);
   }
   100% {
     opacity: 0.72;
     transform: translate3d(0, 0, 0) scale(1);
-    filter: blur(0);
   }
 }
 
@@ -2965,17 +2989,14 @@ img {
   0% {
     opacity: 0;
     transform: translate3d(96px, 0, 0) scale(0.96);
-    filter: blur(10px);
   }
   62% {
     opacity: 0.96;
     transform: translate3d(-10px, 0, 0) scale(1.01);
-    filter: blur(1px);
   }
   100% {
     opacity: 1;
     transform: translate3d(0, 0, 0) scale(1);
-    filter: blur(0);
   }
 }
 
@@ -4678,12 +4699,10 @@ body.sub-page:has(.project-timeline-page.is-year-open)::before {
   0% {
     opacity: 0;
     transform: translate3d(0, -36px, 0);
-    filter: blur(12px);
   }
   100% {
     opacity: 1;
     transform: translate3d(0, 0, 0);
-    filter: blur(0);
   }
 }
 
@@ -4691,17 +4710,14 @@ body.sub-page:has(.project-timeline-page.is-year-open)::before {
   0% {
     opacity: 0;
     transform: translate3d(54px, 22px, 0) scale(0.96);
-    filter: blur(10px);
   }
   66% {
     opacity: 1;
     transform: translate3d(-5px, 0, 0) scale(1.01);
-    filter: blur(0);
   }
   100% {
     opacity: 1;
     transform: translate3d(0, 0, 0) scale(1);
-    filter: blur(0);
   }
 }
 
@@ -5491,12 +5507,10 @@ body.sub-page:has(.project-timeline-page.is-year-open)::before {
   0% {
     opacity: 0;
     transform: translate3d(-64px, 18px, 0) scale(0.94);
-    filter: blur(12px);
   }
   100% {
     opacity: 1;
     transform: translate3d(0, 0, 0) scale(1);
-    filter: blur(0);
   }
 }
 
@@ -6001,17 +6015,14 @@ body.sub-page:has(.project-timeline-page.is-year-open)::before {
   0% {
     opacity: 0;
     transform: translate3d(-220px, 44px, 0) scale(0.74);
-    filter: blur(14px);
   }
   68% {
     opacity: 1;
     transform: translate3d(12px, -4px, 0) scale(1.03);
-    filter: blur(0);
   }
   100% {
     opacity: 1;
     transform: translate3d(0, 0, 0) scale(1);
-    filter: blur(0);
   }
 }
 
@@ -6175,7 +6186,7 @@ body.sub-page:has(.project-timeline-page.is-year-open)::before {
   inset: 0;
   z-index: 0;
   pointer-events: none;
-  background-image: url("/assets/img/allex/hero-allex.png");
+  background-image: url("/assets/img/allex/hero-allex.webp");
   background-repeat: no-repeat;
   background-position: center bottom;
   background-size: min(62vw, 960px) auto;
@@ -6643,6 +6654,7 @@ body.sub-page:has(.project-timeline-page.is-year-open)::before {
 }
 
 .video-frame {
+  position: relative;
   background: rgba(17, 23, 34, 0.08);
 }
 
@@ -6651,6 +6663,25 @@ body.sub-page:has(.project-timeline-page.is-year-open)::before {
   width: 100%;
   aspect-ratio: 16 / 9;
   border: 0;
+}
+
+.video-fallback {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: 18px;
+  background: linear-gradient(135deg, rgba(17, 23, 34, 0.92), rgba(31, 51, 67, 0.86));
+  color: #fff;
+  font-size: 0.82rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-decoration: none;
+  text-transform: uppercase;
+}
+
+.video-frame iframe:not([data-video-src]) + .video-fallback {
+  display: none;
 }
 
 .video-copy {
@@ -6753,17 +6784,14 @@ body.sub-page:has(.project-timeline-page.is-year-open)::before {
   0% {
     opacity: 0;
     transform: translate3d(-26px, 18px, 0) scale(0.9);
-    filter: blur(12px);
   }
   66% {
     opacity: 1;
     transform: translate3d(5px, -2px, 0) scale(1.04);
-    filter: blur(0);
   }
   100% {
     opacity: 1;
     transform: translate3d(0, 0, 0) scale(1);
-    filter: blur(0);
   }
 }
 
@@ -7750,7 +7778,7 @@ body.sub-page:has(.project-timeline-page.is-year-open)::before {
 }
 
 .project-topic-panel button {
-  --topic-image: url("/assets/img/posts/urdf5.png");
+  --topic-image: url("/assets/img/topics/topic-vla.webp");
   position: relative;
   min-height: 158px;
   overflow: hidden;
@@ -7771,15 +7799,15 @@ body.sub-page:has(.project-timeline-page.is-year-open)::before {
 }
 
 .project-topic-panel button[data-project-topic="allex"] {
-  --topic-image: url("/assets/img/allex/allex-official-hero-source.png");
+  --topic-image: url("/assets/img/allex/allex-official-hero-source.webp");
 }
 
 .project-topic-panel button[data-project-topic="teleoperation"] {
-  --topic-image: url("/assets/img/posts/mrc006.png");
+  --topic-image: url("/assets/img/topics/topic-teleoperation.webp");
 }
 
 .project-topic-panel button[data-project-topic="vla"] {
-  --topic-image: url("/assets/img/posts/urdf5.png");
+  --topic-image: url("/assets/img/topics/topic-vla.webp");
 }
 
 .project-topic-panel button span {
@@ -7908,7 +7936,7 @@ body.sub-page:has(.project-timeline-page.is-year-open)::before {
 }
 
 .project-axis-stage .project-topic-panel button {
-  --topic-image: url("/assets/img/topics/topic-vla.png");
+  --topic-image: url("/assets/img/topics/topic-vla.webp");
   --topic-position: center;
   height: clamp(310px, 38vh, 390px) !important;
   min-height: clamp(310px, 38vh, 390px) !important;
@@ -7929,17 +7957,17 @@ body.sub-page:has(.project-timeline-page.is-year-open)::before {
 }
 
 .project-axis-stage .project-topic-panel button[data-project-topic="allex"] {
-  --topic-image: url("/assets/img/topics/topic-allex.png");
+  --topic-image: url("/assets/img/allex/allex-official-hero-source.webp");
   --topic-position: 58% center;
 }
 
 .project-axis-stage .project-topic-panel button[data-project-topic="teleoperation"] {
-  --topic-image: url("/assets/img/topics/topic-teleoperation.png");
+  --topic-image: url("/assets/img/topics/topic-teleoperation.webp");
   --topic-position: 44% center;
 }
 
 .project-axis-stage .project-topic-panel button[data-project-topic="vla"] {
-  --topic-image: url("/assets/img/topics/topic-vla.png");
+  --topic-image: url("/assets/img/topics/topic-vla.webp");
   --topic-position: center;
 }
 
@@ -7959,9 +7987,7 @@ body.sub-page:has(.project-timeline-page.is-year-open)::before {
   position: absolute;
   inset: 0;
   z-index: 1;
-  background:
-    linear-gradient(120deg, rgba(255, 255, 255, 0.82), rgba(255, 255, 255, 0.22) 44%, rgba(67, 201, 71, 0.12)),
-    var(--topic-image) var(--topic-position) / cover no-repeat !important;
+  background: linear-gradient(120deg, rgba(255, 255, 255, 0.82), rgba(255, 255, 255, 0.22) 44%, rgba(67, 201, 71, 0.12)) !important;
   clip-path: polygon(4% 0, 100% 8%, 95% 100%, 0 91%);
   opacity: 0.78 !important;
   filter: saturate(0.92) contrast(1.04);
@@ -7972,6 +7998,12 @@ body.sub-page:has(.project-timeline-page.is-year-open)::before {
     filter 540ms ease,
     transform 760ms cubic-bezier(0.16, 0.98, 0.2, 1),
     clip-path 760ms cubic-bezier(0.16, 0.98, 0.2, 1);
+}
+
+.project-timeline-page.topic-media-ready .project-axis-stage .project-topic-panel button::before {
+  background:
+    linear-gradient(120deg, rgba(255, 255, 255, 0.82), rgba(255, 255, 255, 0.22) 44%, rgba(67, 201, 71, 0.12)),
+    var(--topic-image) var(--topic-position) / cover no-repeat !important;
 }
 
 .project-axis-stage .project-topic-panel button::after {
@@ -8043,7 +8075,6 @@ body.sub-page:has(.project-timeline-page.is-year-open)::before {
   from {
     opacity: 0;
     transform: translate3d(0, 120px, 0) scale(0.92);
-    filter: blur(18px) saturate(0.6);
   }
 
   62% {
@@ -8053,7 +8084,6 @@ body.sub-page:has(.project-timeline-page.is-year-open)::before {
   to {
     opacity: 1;
     transform: translate3d(0, 0, 0) scale(1);
-    filter: blur(0) saturate(1);
   }
 }
 
@@ -8093,7 +8123,7 @@ body.sub-page:has(.project-timeline-page.is-year-open)::before {
 }
 
 .project-axis-stage .project-topic-panel button[data-project-topic="allex"] {
-  --topic-image: url("/assets/img/allex/allex-official-hero-source.png");
+  --topic-image: url("/assets/img/allex/allex-official-hero-source.webp");
   --topic-position: 58% center;
 }
 
@@ -8646,14 +8676,20 @@ body.sub-page:has(.project-timeline-page.is-year-open)::before {
   inset: 58px 0 0;
   z-index: 0;
   pointer-events: none;
-  background-image: url("/assets/img/allex/hero-allex.png");
+  background-image: url("/assets/img/allex/hero-allex.webp");
   background-repeat: no-repeat;
   background-position: center bottom;
   background-size: min(46.5vw, 720px) auto;
   opacity: 0;
   filter: grayscale(0.08) drop-shadow(0 36px 68px rgba(17, 23, 34, 0.12));
   transform-origin: center bottom;
-  animation: project-allex-curtain 2310ms ease-in-out both;
+  animation: project-allex-curtain 900ms ease-in-out both;
+}
+
+html.page-entry-assets-late .project-timeline-page.has-project-intro .project-intro::before {
+  opacity: 0.055;
+  transform: scale(1.3333);
+  animation: none;
 }
 
 .project-timeline-page.has-project-intro .project-intro > * {
@@ -8670,44 +8706,44 @@ body.sub-page:has(.project-timeline-page.is-year-open)::before {
   color: var(--accent-green);
   clip-path: inset(0 100% 0 0);
   animation:
-    project-title-write 870ms steps(7, end) 550ms both,
-    project-title-ink 620ms ease 1540ms both;
+    project-title-write 520ms steps(7, end) 220ms both,
+    project-title-ink 320ms ease 700ms both;
 }
 
 .project-timeline-page.has-project-intro .project-intro-copy {
-  animation: project-support-in 470ms cubic-bezier(0.2, 0.82, 0.2, 1) 2310ms backwards;
+  animation: project-support-in 360ms cubic-bezier(0.2, 0.82, 0.2, 1) 900ms backwards;
 }
 
 .project-timeline-page.has-project-intro .project-mode-toggle {
-  animation: project-support-in 500ms cubic-bezier(0.2, 0.82, 0.2, 1) 2500ms backwards;
+  animation: project-support-in 380ms cubic-bezier(0.2, 0.82, 0.2, 1) 1020ms backwards;
 }
 
 .project-timeline-page.has-project-intro .project-axis-stage {
-  animation: project-support-in 520ms cubic-bezier(0.2, 0.82, 0.2, 1) 2690ms backwards;
+  animation: project-support-in 400ms cubic-bezier(0.2, 0.82, 0.2, 1) 1120ms backwards;
 }
 
 .project-timeline-page.has-project-intro .year-timeline-line {
-  animation: project-timeline-draw 760ms cubic-bezier(0.16, 0.86, 0.2, 1) 2810ms backwards;
+  animation: project-timeline-draw 480ms cubic-bezier(0.16, 0.86, 0.2, 1) 1240ms backwards;
 }
 
 .project-timeline-page.has-project-intro .year-timeline button {
-  animation: project-year-arrive 650ms cubic-bezier(0.16, 0.9, 0.2, 1) var(--project-intro-year-delay) backwards;
+  animation: project-year-arrive 380ms cubic-bezier(0.16, 0.9, 0.2, 1) var(--project-intro-year-delay) backwards;
 }
 
 .project-timeline-page.has-project-intro .year-timeline button[data-project-year="before"] {
-  --project-intro-year-delay: 3000ms;
+  --project-intro-year-delay: 1230ms;
 }
 
 .project-timeline-page.has-project-intro .year-timeline button[data-project-year="2024"] {
-  --project-intro-year-delay: 3320ms;
+  --project-intro-year-delay: 1320ms;
 }
 
 .project-timeline-page.has-project-intro .year-timeline button[data-project-year="2025"] {
-  --project-intro-year-delay: 3650ms;
+  --project-intro-year-delay: 1410ms;
 }
 
 .project-timeline-page.has-project-intro .year-timeline button[data-project-year="2026"] {
-  --project-intro-year-delay: 3970ms;
+  --project-intro-year-delay: 1500ms;
 }
 
 .project-timeline-page.has-project-intro:not(.is-project-intro-complete) .project-mode-toggle,
@@ -8724,8 +8760,7 @@ body.sub-page:has(.project-timeline-page.is-year-open)::before {
     opacity: 0.14;
   }
   20%, 24% {
-    /* Quick entrance (20% = 462ms), brief hold, then the fade/grow begins at
-       24% (554ms) — synced with the PROJECT title typing start. */
+    /* Quick entrance, brief hold, then fade into the resting watermark. */
     opacity: 1;
     transform: scale(1);
   }
@@ -8759,17 +8794,14 @@ body.sub-page:has(.project-timeline-page.is-year-open)::before {
   0% {
     opacity: 0;
     transform: translate3d(0, 28px, 0);
-    filter: blur(10px);
   }
   68% {
     opacity: 1;
     transform: translate3d(0, -3px, 0);
-    filter: blur(0);
   }
   100% {
     opacity: 1;
     transform: translate3d(0, 0, 0);
-    filter: blur(0);
   }
 }
 
@@ -8777,17 +8809,14 @@ body.sub-page:has(.project-timeline-page.is-year-open)::before {
   0% {
     opacity: 0;
     transform: scaleX(0);
-    filter: blur(5px);
   }
   70% {
     opacity: 1;
     transform: scaleX(1.035);
-    filter: blur(0);
   }
   100% {
     opacity: 1;
     transform: scaleX(1);
-    filter: blur(0);
   }
 }
 
@@ -8795,17 +8824,14 @@ body.sub-page:has(.project-timeline-page.is-year-open)::before {
   0% {
     opacity: 0;
     transform: translate3d(0, -32px, 0) scale(0.86);
-    filter: blur(12px);
   }
   68% {
     opacity: 1;
     transform: translate3d(0, 5px, 0) scale(1.045);
-    filter: blur(0);
   }
   100% {
     opacity: 1;
     transform: translate3d(0, 0, 0) scale(1);
-    filter: blur(0);
   }
 }
 
@@ -12261,6 +12287,16 @@ body:has(.experience-editorial-page) .page-shell {
   .project-detail-page .project-did-list li + li::before {
     font-size: clamp(2.35rem, 10.5vw, 2.75rem);
   }
+}
+
+/* Project navigation stays compositor-friendly on slower GPUs. Opacity and
+   transform preserve the motion language without interpolating large blurs. */
+.project-timeline-page .project-intro > *,
+.project-timeline-page.is-year-open .project-intro,
+.project-timeline-page .project-focus-view,
+.project-timeline-page.is-topic-mode .project-axis-stage .year-timeline,
+.project-timeline-page .project-axis-stage .project-topic-panel {
+  filter: none;
 }
 
 /* ---------- ALLEX annotations: larger reach and role-matched type ---------- */

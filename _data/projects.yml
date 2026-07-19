@@ -11,7 +11,7 @@
   status: "Current"
   year_group: "2026"
   featured: true
-  image: /assets/img/allex/hero-allex.png
+  image: /assets/img/allex/hero-allex.webp
   tags: [ALLEX, Dexterous Hand, ROS 2, Robot Learning]
   stack: [Python, ROS 2, Isaac Sim, Robot Learning]
   summary: "The robot-software platform that connects ALLEX hand-arm control, simulation, demonstration collection, and learning-policy deployment."
@@ -34,7 +34,7 @@
   status: "Current"
   year_group: "2026"
   featured: true
-  image: /assets/img/allex/hero-allex.png
+  image: /assets/img/allex/hero-allex.webp
   tags: [ALLEX, ACT, Imitation Learning, LeRobot, Isaac Sim]
   stack: [Python, ROS 2, LeRobot, ACT, Isaac Sim, PyTorch]
   summary: "An end-to-end imitation-learning study for a 22-DoF ALLEX arm-hand system, from 50 Hz demonstrations to ACT training and real-robot task execution."
@@ -58,7 +58,7 @@
   status: "Current"
   year_group: "2026"
   featured: true
-  image: /assets/img/topics/topic-teleoperation.png
+  image: /assets/img/topics/topic-teleoperation.webp
   tags: [Teleoperation, Robot Learning, Dataset Logging, ROS 2]
   stack: [ROS 2, Python, Isaac Sim]
   summary: "A compact public overview of the interfaces used to operate ALLEX, observe robot state, and prepare demonstrations for learning experiments."

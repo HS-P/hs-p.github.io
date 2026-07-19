@@ -10,7 +10,8 @@ description: Personal academic homepage of Hansol Park.
 <section class="hero" id="about">
   <div class="hero-ghost-allex allex-nav" data-allex-nav>
     <div class="allex-art">
-      <img src="{{ '/assets/img/allex/allex-official-hero-source.png' | relative_url }}" alt="" aria-hidden="true">
+      <img src="{{ '/assets/img/allex/allex-official-hero-source.webp' | relative_url }}"
+        width="855" height="1171" decoding="async" fetchpriority="high" alt="" aria-hidden="true">
     </div>
   </div>
   <button class="allex-nav-trigger" type="button" aria-expanded="false" aria-label="Explore ALLEX topics" data-allex-toggle></button>
@@ -46,9 +47,8 @@ description: Personal academic homepage of Hansol Park.
   </div>
   <div class="hero-copy hero-copy--lab hero-profile-panel namecard" data-typeseq>
     <img class="hero-avatar"
-      src="{{ profile.image | relative_url }}"
-      srcset="{{ '/assets/img/profile/qqq-512.webp' | relative_url }} 512w, {{ profile.image | relative_url }} 1086w"
-      sizes="(max-width: 760px) 84px, (max-width: 980px) 108px, 214px"
+      src="{{ '/assets/img/profile/qqq-512.webp' | relative_url }}"
+      width="512" height="682"
       decoding="async"
       fetchpriority="high"
       alt="{{ profile.name }} profile photo">
@@ -94,11 +94,16 @@ description: Personal academic homepage of Hansol Park.
       <article class="video-card">
         <div class="video-frame">
           <iframe
-            src="https://www.youtube-nocookie.com/embed/{{ video.video_id }}"
+            data-video-src="https://www.youtube-nocookie.com/embed/{{ video.video_id }}"
             title="{{ video.title }}"
+            aria-hidden="true"
+            tabindex="-1"
             loading="lazy"
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
             allowfullscreen></iframe>
+          <a class="video-fallback" href="https://www.youtube.com/watch?v={{ video.video_id }}">
+            Watch on YouTube
+          </a>
         </div>
         <div class="video-copy">
           <span>{{ video.topic }}</span>

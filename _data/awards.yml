@@ -26,7 +26,7 @@
   role: "Researcher"
   summary: "WIRobotics joined the nine-company 2026 cohort to advance deployable physical AI and robot-learning workflows."
   gallery:
-    - src: "/assets/img/allex/hero-allex.png"
+    - src: "/assets/img/allex/hero-allex.webp"
       alt: "ALLEX dexterous manipulation platform"
       caption: "Physical AI research platform context · ALLEX"
       fit: "contain"

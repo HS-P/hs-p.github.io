@@ -1,9 +1,71 @@
 (function () {
   const compactExperienceQuery = window.matchMedia("(max-width: 980px)");
   const mobilePageQuery = window.matchMedia("(max-width: 760px)");
-  const reduceMobileMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   const isCompactExperience = compactExperienceQuery.matches;
+  const pageEntryRoot = document.documentElement;
+  const pageEntryStarted = pageEntryRoot.classList.contains("page-entry-pending") && !window.__pageEntryStarted
+    ? new Promise((resolve) => document.addEventListener("page-entry-start", resolve, { once: true }))
+    : Promise.resolve();
   document.body.classList.toggle("is-compact-experience", isCompactExperience);
+
+  function afterPageEntry(callback, delay = 0) {
+    pageEntryStarted.then(() => window.setTimeout(callback, delay));
+  }
+
+  function imageReady(image) {
+    if (typeof image.decode === "function") return image.decode().catch(() => {});
+    if (image.complete) return Promise.resolve();
+    return new Promise((resolve) => {
+      image.addEventListener("load", resolve, { once: true });
+      image.addEventListener("error", resolve, { once: true });
+    });
+  }
+
+  function fitSingleLine(element, minSize) {
+    element.style.fontSize = "";
+    if (!element.clientWidth || element.scrollWidth <= element.clientWidth + 1) return;
+
+    let low = minSize;
+    let high = parseFloat(window.getComputedStyle(element).fontSize);
+    element.style.fontSize = `${low}px`;
+    if (element.scrollWidth > element.clientWidth + 1) return;
+
+    for (let index = 0; index < 8 && high - low > 0.25; index += 1) {
+      const midpoint = (low + high) / 2;
+      element.style.fontSize = `${midpoint}px`;
+      if (element.scrollWidth > element.clientWidth + 1) high = midpoint;
+      else low = midpoint;
+    }
+    element.style.fontSize = `${Math.floor(low * 10) / 10}px`;
+  }
+
+  function navigateWithPageExit(destination) {
+    const shell = document.querySelector(".page-shell");
+    let committed = false;
+    let fallbackTimer;
+    function handleTransitionEnd(event) {
+      if (event.target === shell && (event.propertyName === "opacity" || event.propertyName === "transform")) {
+        commitNavigation();
+      }
+    }
+    function commitNavigation() {
+      if (committed) return;
+      committed = true;
+      window.clearTimeout(fallbackTimer);
+      if (shell) shell.removeEventListener("transitionend", handleTransitionEnd);
+      window.location.href = destination;
+    }
+    if (shell) {
+      shell.addEventListener("transitionend", handleTransitionEnd);
+    }
+    document.body.classList.add("page-exit");
+    fallbackTimer = window.setTimeout(commitNavigation, 260);
+  }
+
+  window.addEventListener("pageshow", () => {
+    document.body.classList.remove("page-exit", "bubble-pop");
+  });
 
   const toggle = document.querySelector("[data-nav-toggle]");
   const links = document.querySelector("[data-nav-links]");
@@ -109,13 +171,10 @@
       if (!url.hash || !samePath(url)) {
         if (!event.metaKey && !event.ctrlKey && !event.shiftKey && !event.altKey && !link.target) {
           event.preventDefault();
-          if (isCompactExperience) {
+          if (isCompactExperience || reduceMotion) {
             window.location.href = url.href;
           } else {
-            document.body.classList.add("page-exit");
-            window.setTimeout(() => {
-              window.location.href = url.href;
-            }, 420);
+            navigateWithPageExit(url.href);
           }
         }
         return;
@@ -234,6 +293,32 @@
             : "Public GitHub activity unavailable";
         }
       });
+  }
+
+  const deferredVideos = Array.from(document.querySelectorAll("iframe[data-video-src]"));
+  if (deferredVideos.length) {
+    function hydrateVideo(frame) {
+      if (!frame.dataset.videoSrc) return;
+      frame.src = frame.dataset.videoSrc;
+      delete frame.dataset.videoSrc;
+      frame.removeAttribute("aria-hidden");
+      frame.removeAttribute("tabindex");
+    }
+
+    afterPageEntry(() => {
+      if (!("IntersectionObserver" in window)) {
+        deferredVideos.forEach(hydrateVideo);
+        return;
+      }
+      const videoObserver = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) return;
+          hydrateVideo(entry.target);
+          videoObserver.unobserve(entry.target);
+        });
+      }, { threshold: 0.01, rootMargin: "180px 0px" });
+      deferredVideos.forEach((frame) => videoObserver.observe(frame));
+    }, 100);
   }
 
   const homeHero = document.querySelector(".home-page .hero");
@@ -367,14 +452,69 @@
   });
   const hasQueryYear = queryYear && yearButtons.some((button) => button.dataset.projectYear === queryYear);
 
+  let projectTopicMediaPromise;
+  let projectTopicMediaScheduled = false;
+  function prepareProjectTopicMedia() {
+    if (!projectBoard || !topicButtons.length) return Promise.resolve();
+    if (projectTopicMediaPromise) return projectTopicMediaPromise;
+
+    const images = topicButtons.map((button) => {
+      const value = window.getComputedStyle(button).getPropertyValue("--topic-image");
+      const match = value.match(/url\(["']?([^"')]+)["']?\)/);
+      if (!match) return Promise.resolve();
+      const image = new Image();
+      image.decoding = "async";
+      image.src = new URL(match[1], window.location.href).href;
+      return imageReady(image);
+    });
+    projectTopicMediaPromise = Promise.allSettled(images).then(() => {
+      projectBoard.classList.add("topic-media-ready");
+    });
+    return projectTopicMediaPromise;
+  }
+
+  function scheduleProjectTopicMedia() {
+    if (projectTopicMediaScheduled) return;
+    projectTopicMediaScheduled = true;
+    afterPageEntry(() => {
+      if ("requestIdleCallback" in window) {
+        window.requestIdleCallback(prepareProjectTopicMedia, { timeout: 1400 });
+      } else {
+        window.setTimeout(prepareProjectTopicMedia, 250);
+      }
+    }, 250);
+  }
+
   if (projectBoard && projectIntro && !hasQueryTopic && !hasQueryYear && !hashCard) {
     const reduceProjectIntroMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches || isCompactExperience;
     projectBoard.classList.add("has-project-intro");
     projectIntro.inert = !reduceProjectIntroMotion;
-    window.setTimeout(() => {
+    let introComplete = false;
+    let introFallback;
+    function completeProjectIntro() {
+      if (introComplete) return;
+      introComplete = true;
+      window.clearTimeout(introFallback);
       projectBoard.classList.add("is-project-intro-complete");
       projectIntro.inert = false;
-    }, reduceProjectIntroMotion ? 0 : 4800);
+      scheduleProjectTopicMedia();
+    }
+
+    if (reduceProjectIntroMotion) {
+      completeProjectIntro();
+    } else {
+      afterPageEntry(() => {
+        const finalYear = yearButtons[yearButtons.length - 1];
+        if (finalYear) {
+          finalYear.addEventListener("animationend", (event) => {
+            if (event.animationName === "project-year-arrive") completeProjectIntro();
+          }, { once: true });
+        }
+        introFallback = window.setTimeout(completeProjectIntro, 2100);
+      });
+    }
+  } else if (projectBoard) {
+    scheduleProjectTopicMedia();
   }
 
   if (projectBoard && projectCards.length && yearButtons.length && projectIntro && projectYearView && projectYearTitle) {
@@ -469,16 +609,7 @@
 
     // Shrink a card title until it fits on a single line (auto-fit).
     function fitCardTitle(h2) {
-      h2.style.fontSize = "";
-      if (!h2.clientWidth) return;
-      let size = parseFloat(window.getComputedStyle(h2).fontSize);
-      const minSize = 15;
-      let guard = 0;
-      while (h2.scrollWidth > h2.clientWidth + 1 && size > minSize && guard < 48) {
-        size -= 1;
-        h2.style.fontSize = size + "px";
-        guard += 1;
-      }
+      fitSingleLine(h2, 15);
     }
 
     function fitVisibleTitles() {
@@ -512,6 +643,7 @@
     function setMode(mode) {
       state.mode = mode;
       const topicMode = mode === "topic";
+      if (topicMode) prepareProjectTopicMedia();
       projectBoard.classList.toggle("is-topic-mode", topicMode);
       if (projectToggle) {
         projectToggle.classList.toggle("is-active", topicMode);
@@ -536,8 +668,8 @@
       projectYearView.hidden = false;
       const focusMotionVersion = ++mobileFocusMotionVersion;
       const animateMobileFocus = mobilePageQuery.matches
-        && !reduceMobileMotion
-        && !document.documentElement.classList.contains("mobile-entry-pending");
+        && !reduceMotion
+        && !document.documentElement.classList.contains("page-entry-pending");
       if (animateMobileFocus) {
         projectYearView.classList.remove("is-mobile-focus-ready");
         projectYearView.classList.add("is-mobile-focus-pending");
@@ -759,12 +891,17 @@
         group.forEach(({ el, text }) => {
           el.classList.add("nc-caret");
           const speed = speedFor(el);
-          let ci = 0;
-          function step() {
-            el.textContent = text.slice(0, ci);
-            ci += 1;
-            if (ci <= text.length) {
-              window.setTimeout(step, speed);
+          let startedAt;
+          let renderedCharacters = 0;
+          function step(now) {
+            if (startedAt === undefined) startedAt = now;
+            const nextCharacters = Math.min(text.length, Math.floor((now - startedAt) / speed) + 1);
+            if (nextCharacters !== renderedCharacters) {
+              renderedCharacters = nextCharacters;
+              el.textContent = text.slice(0, renderedCharacters);
+            }
+            if (renderedCharacters < text.length) {
+              window.requestAnimationFrame(step);
             } else {
               el.classList.remove("nc-caret");
               remaining -= 1;
@@ -774,14 +911,14 @@
               }
             }
           }
-          step();
+          window.requestAnimationFrame(step);
         });
       }
-      window.setTimeout(typeGroup, 520);
+      afterPageEntry(typeGroup, 200);
     } else {
       // Reduced motion / nothing to type: still announce completion (deferred
       // so the ALLEX hint listener, registered later, receives it).
-      window.setTimeout(() => document.dispatchEvent(new Event("hero-typed")), 200);
+      afterPageEntry(() => document.dispatchEvent(new Event("hero-typed")));
     }
   }
 
@@ -1068,7 +1205,7 @@
     }
     document.addEventListener("hero-typed", armHint);
     // Fallback in case the typing sequence never signals completion.
-    window.setTimeout(armHint, 3200);
+    afterPageEntry(armHint, 3200);
   }
 
   // Project detail motion: keep the hero sequential, then reveal each dossier
@@ -1129,8 +1266,13 @@
         });
       }, { threshold: 0.12, rootMargin: "0px 0px -8% 0px" });
 
-      detailRevealTargets.forEach((target) => detailObserver.observe(target));
+      // Arm the hidden start state while the shared page surface is still
+      // concealed. Observing after release keeps scroll transitions from
+      // completing behind the entry gate without flashing visible content.
       detailPage.classList.add("is-detail-motion-ready");
+      afterPageEntry(() => {
+        detailRevealTargets.forEach((target) => detailObserver.observe(target));
+      });
     }
   }
 
@@ -1163,16 +1305,7 @@
   const detailTitle = document.querySelector(".project-detail-copy h1");
   if (detailTitle && !isCompactExperience) {
     function fitDetailTitle() {
-      detailTitle.style.fontSize = "";
-      if (!detailTitle.clientWidth) return;
-      let size = parseFloat(window.getComputedStyle(detailTitle).fontSize);
-      const minSize = 34;
-      let guard = 0;
-      while (detailTitle.scrollWidth > detailTitle.clientWidth + 1 && size > minSize && guard < 90) {
-        size -= 2;
-        detailTitle.style.fontSize = size + "px";
-        guard += 1;
-      }
+      fitSingleLine(detailTitle, 34);
     }
     fitDetailTitle();
     if (document.fonts && document.fonts.ready) {
@@ -1181,56 +1314,75 @@
     window.addEventListener("resize", fitDetailTitle);
   }
 
-  // Mobile enters as one stable editorial surface. Wait briefly for the fonts
-  // and eager above-the-fold images that can affect layout, then reveal the
-  // complete page on a single compositor-friendly clock. Lazy media below the
-  // fold (including YouTube) must never hold the first screen hostage.
-  const mobileEntryRoot = document.documentElement;
+  // Release the shared motion clock only after a short stable-layout window.
+  // Fonts, eager above-the-fold images, and preloaded CSS artwork may settle
+  // first, but a bounded deadline always keeps the page from feeling blocked.
+  function announcePageEntryStart() {
+    if (window.__pageEntryStarted) return;
+    window.__pageEntryStarted = true;
+    document.dispatchEvent(new Event("page-entry-start"));
+  }
 
-  function finishMobileEntry(immediate) {
-    if (!mobileEntryRoot.classList.contains("mobile-entry-pending")) return;
-    window.clearTimeout(window.__mobileEntryFallback);
+  function finishPageEntry(immediate) {
+    if (!pageEntryRoot.classList.contains("page-entry-pending")) return;
+    window.clearTimeout(window.__pageEntryFallback);
 
     if (immediate) {
-      mobileEntryRoot.classList.remove("mobile-entry-pending", "mobile-entry-ready");
+      pageEntryRoot.classList.remove("page-entry-pending", "page-entry-ready");
+      announcePageEntryStart();
       return;
     }
 
-    mobileEntryRoot.classList.add("mobile-entry-ready");
+    pageEntryRoot.classList.add("page-entry-ready");
+    announcePageEntryStart();
     window.setTimeout(() => {
-      mobileEntryRoot.classList.remove("mobile-entry-pending", "mobile-entry-ready");
-    }, 680);
+      pageEntryRoot.classList.remove("page-entry-pending", "page-entry-ready");
+    }, 720);
   }
 
-  if (mobilePageQuery.matches && !reduceMobileMotion && mobileEntryRoot.classList.contains("mobile-entry-pending")) {
+  if (!reduceMotion && pageEntryRoot.classList.contains("page-entry-pending")) {
     const delay = (duration) => new Promise((resolve) => window.setTimeout(resolve, duration));
     const criticalImages = Array.from(document.querySelectorAll(".page-shell img:not([loading='lazy'])"))
       .filter((image) => image.getBoundingClientRect().top < window.innerHeight * 1.25);
-    const imageReady = criticalImages.map((image) => {
-      if (image.complete) {
-        return typeof image.decode === "function" ? image.decode().catch(() => {}) : Promise.resolve();
-      }
-      return new Promise((resolve) => {
-        image.addEventListener("load", resolve, { once: true });
-        image.addEventListener("error", resolve, { once: true });
+    const preloadImages = Array.from(document.querySelectorAll("link[rel='preload'][as='image']"))
+      .filter((link) => !link.media || window.matchMedia(link.media).matches)
+      .map((link) => {
+        const image = new Image();
+        image.decoding = "async";
+        image.fetchPriority = "high";
+        image.src = link.href;
+        return image;
       });
+    let preloadArtworkSettled = preloadImages.length === 0;
+    const preloadReady = Promise.allSettled(preloadImages.map(imageReady)).then(() => {
+      preloadArtworkSettled = true;
     });
     const fontReady = document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve();
-    const resourcesReady = Promise.allSettled([fontReady, ...imageReady]);
+    const resourcesReady = Promise.allSettled([
+      fontReady,
+      preloadReady,
+      ...criticalImages.map(imageReady)
+    ]);
 
     Promise.all([
-      delay(150),
-      Promise.race([resourcesReady, delay(450)])
-    ]).then(() => {
+      delay(180),
+      Promise.race([
+        resourcesReady.then(() => true),
+        delay(700).then(() => false)
+      ])
+    ]).then(([, resourcesFinished]) => {
+      if (!resourcesFinished && !preloadArtworkSettled && document.querySelector(".project-timeline-page")) {
+        pageEntryRoot.classList.add("page-entry-assets-late");
+      }
       window.requestAnimationFrame(() => {
-        window.requestAnimationFrame(() => finishMobileEntry(false));
+        window.requestAnimationFrame(() => finishPageEntry(false));
       });
     });
 
     window.addEventListener("pageshow", (event) => {
-      if (event.persisted) finishMobileEntry(true);
+      if (event.persisted) finishPageEntry(true);
     });
-  } else if (mobileEntryRoot.classList.contains("mobile-entry-pending")) {
-    finishMobileEntry(true);
+  } else if (pageEntryRoot.classList.contains("page-entry-pending")) {
+    finishPageEntry(true);
   }
 })();

@@ -66,7 +66,7 @@ layout: default
     <header class="project-detail-hero">
       {{ copy_block }}
       <figure class="project-detail-media">
-        <img src="{{ project.image | relative_url }}" alt="{{ project.title }} project image">
+        <img src="{{ project.image | relative_url }}" decoding="async" fetchpriority="high" alt="{{ project.title }} project image">
       </figure>
     </header>
   {% else %}
@@ -153,7 +153,7 @@ layout: default
       <div class="project-media-grid">
         {% for item in project.gallery %}
           <figure class="project-media-item">
-            <img src="{{ item.src | relative_url }}" alt="{{ item.alt | default: project.title }}" loading="lazy">
+            <img src="{{ item.src | relative_url }}" alt="{{ item.alt | default: project.title }}" loading="lazy" decoding="async">
             {% if item.caption %}<figcaption>{{ item.caption }}</figcaption>{% endif %}
           </figure>
         {% endfor %}
