@@ -31,6 +31,15 @@
     }
   }, 120);
 
+  const deferredArtwork = document.querySelector("img[data-deferred-src]");
+  if (deferredArtwork) {
+    const artworkDelay = pageEntryRoot.classList.contains("page-entry-pending") ? 0 : 120;
+    afterPageEntry(() => {
+      deferredArtwork.src = deferredArtwork.dataset.deferredSrc;
+      deferredArtwork.removeAttribute("data-deferred-src");
+    }, artworkDelay);
+  }
+
   function imageReady(image) {
     if (typeof image.decode === "function") return image.decode().catch(() => {});
     if (image.complete) return Promise.resolve();
@@ -999,7 +1008,7 @@
 
     function renderedImageRect(image) {
       const box = image.getBoundingClientRect();
-      const naturalRatio = image.naturalWidth && image.naturalHeight
+      const naturalRatio = image.naturalWidth > 1 && image.naturalHeight > 1
         ? image.naturalWidth / image.naturalHeight
         : 855 / 1171;
       let width = box.width;
@@ -1080,7 +1089,7 @@
     }
     afterPageEntry(scheduleTopicLayout, 120);
     window.addEventListener("resize", scheduleTopicLayout);
-    if (allexImage && !allexImage.complete) allexImage.addEventListener("load", scheduleTopicLayout, { once: true });
+    if (allexImage) allexImage.addEventListener("load", scheduleTopicLayout, { once: true });
 
     function render() {
       allexNav.classList.toggle("is-awake", isOpen || isHover);
