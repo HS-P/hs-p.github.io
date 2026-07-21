@@ -38,11 +38,21 @@
     <link rel="icon" type="image/svg+xml" href="{{ '/assets/img/favicons/hamburger.svg' | relative_url }}">
     {% if page.url == '/' %}
       <link rel="preload" as="image" type="image/webp" href="{{ '/assets/img/profile/qqq-512.webp' | relative_url }}" fetchpriority="high">
-      <link rel="preload" as="image" type="image/webp" href="{{ '/assets/img/allex/allex-official-hero-source.webp' | relative_url }}" media="(min-width: 981px)" fetchpriority="low" data-entry-defer>
+      <script>
+        if (stagePageEntry && window.matchMedia("(min-width: 981px)").matches) {
+          var homeArtPreload = document.createElement("link");
+          homeArtPreload.rel = "preload";
+          homeArtPreload.as = "image";
+          homeArtPreload.type = "image/webp";
+          homeArtPreload.href = "{{ '/assets/img/allex/allex-official-hero-source.webp' | relative_url }}";
+          homeArtPreload.fetchPriority = "low";
+          homeArtPreload.setAttribute("data-entry-defer", "");
+          document.head.appendChild(homeArtPreload);
+        }
+      </script>
     {% elsif page.url == '/projects/' %}
       <link rel="preload" as="image" type="image/webp" href="{{ '/assets/img/allex/hero-allex.webp' | relative_url }}" media="(min-width: 761px)" fetchpriority="low" data-entry-defer>
     {% endif %}
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.1/css/all.min.css" media="print" fetchpriority="low" onload="this.onload=null;this.media='all'">
     <noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.1/css/all.min.css"></noscript>
     <link rel="stylesheet" href="{{ '/assets/css/site.css' | relative_url }}">
     <link rel="stylesheet" href="{{ '/assets/css/mobile.css' | relative_url }}" media="(max-width: 760px)">

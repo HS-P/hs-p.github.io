@@ -13,6 +13,24 @@
     pageEntryStarted.then(() => window.setTimeout(callback, delay));
   }
 
+  function loadIconStyles() {
+    if (document.querySelector("link[data-icon-styles]")) return;
+    const stylesheet = document.createElement("link");
+    stylesheet.rel = "stylesheet";
+    stylesheet.href = "https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.1/css/all.min.css";
+    stylesheet.fetchPriority = "low";
+    stylesheet.dataset.iconStyles = "";
+    document.head.appendChild(stylesheet);
+  }
+
+  afterPageEntry(() => {
+    if ("requestIdleCallback" in window) {
+      window.requestIdleCallback(loadIconStyles, { timeout: 1200 });
+    } else {
+      window.setTimeout(loadIconStyles, 400);
+    }
+  }, 120);
+
   function imageReady(image) {
     if (typeof image.decode === "function") return image.decode().catch(() => {});
     if (image.complete) return Promise.resolve();
