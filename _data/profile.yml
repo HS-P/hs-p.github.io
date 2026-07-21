@@ -16,6 +16,20 @@ keywords:
   - ACT
   - RL
   - ALLEX
+research_interests:
+  - Dexterous Manipulation
+  - Robot Learning
+  - Vision-Language-Action Models
+  - Imitation & Reinforcement Learning
+  - Teleoperation & Robot Data
+  - Sim-to-Real Deployment
+skills:
+  - category: Robotics & Software
+    items: [Python, ROS 2, Linux]
+  - category: Learning & Simulation
+    items: [PyTorch, LeRobot, ACT, RSL-RL, Isaac Sim, IsaacLab]
+  - category: Embedded & Interfaces
+    items: [OpenCR, CAN, RS-485]
 intro: >-
   I build robot software systems for dexterous manipulation, with a focus on
   physical AI, robot learning, sim-to-real workflows, and deployable

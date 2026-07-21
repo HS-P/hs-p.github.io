@@ -1,102 +1,135 @@
 ---
 layout: page
 title: CV
-description: Academic profile summary.
+display_title: Hansol Park
+description: Curriculum Vitae · AI Robotics Engineer
 page_class: cv-editorial-page
 ---
 
 {% assign profile = site.data.profile %}
 {% assign projects = site.data.projects | sort: "importance" %}
-{% assign graduate_projects = projects | where: "stage", "Graduate" %}
-{% assign undergraduate_projects = projects | where: "stage", "Undergraduate" %}
 
-<section class="cv-block" id="cv-profile">
-  <h2>Profile</h2>
-  <p>
-    <strong>{{ profile.name }} ({{ profile.korean_name }})</strong> is an M.S. student at
-    {{ profile.affiliation }}, advised by {{ profile.advisor }}. His research focuses on
-    dexterous manipulation, robot learning, physical AI systems, and sim-to-real robot software.
-  </p>
-  <div class="link-row inline">
-    <a href="mailto:{{ profile.email }}"><i class="fa-solid fa-envelope"></i><span>{{ profile.email }}</span></a>
-    <a href="{{ profile.github }}" target="_blank" rel="noopener"><i class="fa-brands fa-github"></i>GitHub</a>
-    <a href="{{ profile.linkedin }}" target="_blank" rel="noopener"><i class="fa-brands fa-linkedin"></i>LinkedIn</a>
+<div class="cv-contact" aria-label="Contact information">
+  <span><i class="fa-solid fa-location-dot" aria-hidden="true"></i>{{ profile.location | escape }}</span>
+  <a href="mailto:{{ profile.email | escape }}"><i class="fa-solid fa-envelope" aria-hidden="true"></i>{{ profile.email | escape }}</a>
+  <a href="{{ profile.github | escape }}" target="_blank" rel="noopener"><i class="fa-brands fa-github" aria-hidden="true"></i>GitHub</a>
+  <a href="{{ profile.linkedin | escape }}" target="_blank" rel="noopener"><i class="fa-brands fa-linkedin" aria-hidden="true"></i>LinkedIn</a>
+</div>
+
+<p class="cv-summary">
+  AI robotics engineer building software systems for dexterous manipulation, robot learning,
+  teleoperation, sim-to-real validation, and deployable physical AI workflows.
+</p>
+
+<section class="cv-block" id="cv-education">
+  <h2>Education</h2>
+  <div class="cv-entry-list">
+    <article class="cv-entry">
+      <div class="cv-entry-body">
+        <h3>M.S. Student <span>· AI Robotics Research</span></h3>
+        <p class="cv-institution">{{ profile.affiliation | escape }} · {{ profile.location | escape }}</p>
+        <p>Advised by {{ profile.advisor | escape }}. Research focus: dexterous manipulation, robot learning, physical AI systems, and sim-to-real robot software.</p>
+      </div>
+      <span class="cv-date cv-date--current">Present</span>
+    </article>
   </div>
 </section>
 
 <section class="cv-block" id="cv-research">
   <h2>Research Interests</h2>
-  <div class="keyword-row">
-    {% for keyword in profile.keywords %}
-      <span>{{ keyword }}</span>
+  <ul class="cv-interest-list">
+    {% for interest in profile.research_interests %}
+      <li>{{ interest | escape }}</li>
     {% endfor %}
-  </div>
+  </ul>
 </section>
 
-<section class="cv-block" id="cv-projects">
-  <h2>Project Tracks</h2>
-  <div class="cv-project-columns">
-    <div>
-      <h3>Graduate</h3>
-      <ul>
-        {% for project in graduate_projects %}
-          <li><a href="{{ '/projects/#' | append: project.id | relative_url }}">{{ project.title }}</a></li>
-        {% endfor %}
-      </ul>
-    </div>
-    <div>
-      <h3>Undergraduate</h3>
-      <ul>
-        {% for project in undergraduate_projects %}
-          <li><a href="{{ '/projects/#' | append: project.id | relative_url }}">{{ project.title }}</a></li>
-        {% endfor %}
-      </ul>
-    </div>
-  </div>
+<section class="cv-block" id="cv-skills">
+  <h2>Technical Skills</h2>
+  <dl class="cv-skills-list">
+    {% for group in profile.skills %}
+      <div>
+        <dt>{{ group.category | escape }}</dt>
+        <dd>{{ group.items | join: " · " | escape }}</dd>
+      </div>
+    {% endfor %}
+  </dl>
 </section>
 
-<section class="cv-block" id="cv-outputs">
-  <h2>Papers & Manuscripts</h2>
-  <div class="paper-list slim">
-    {% for paper in site.data.papers %}
-      <article class="paper-item">
-        <div class="paper-year">{{ paper.year }}</div>
-        <div class="paper-body">
-          <h3>{{ paper.title }}</h3>
-          <p class="authors">{{ paper.authors }}</p>
-          <p class="venue">{{ paper.venue }}</p>
+<section class="cv-block" id="cv-experience">
+  <h2>Research Experience</h2>
+  <div class="cv-entry-list">
+    {% for item in site.data.experience %}
+      <article class="cv-entry">
+        <div class="cv-entry-body">
+          <h3>{{ item.role | escape }}</h3>
+          <p class="cv-institution">{{ item.organization | escape }} · {{ item.location | escape }}</p>
+          <p>{{ item.summary | escape }}</p>
         </div>
+        <span class="cv-date{% if item.period == 'Current' %} cv-date--current{% endif %}">{% if item.period == 'Current' %}Present{% else %}{{ item.period | replace: " - ", "–" | escape }}{% endif %}</span>
       </article>
     {% endfor %}
   </div>
 </section>
 
-<section class="cv-block" id="cv-experience">
-  <h2>Experience</h2>
-  <div class="timeline compact-timeline">
-    {% for item in site.data.experience %}
-      <article class="timeline-item">
-        <div class="timeline-date{% if item.period == 'Current' %} timeline-date--current{% endif %}">{{ item.period }}</div>
-        <div class="timeline-body">
-          <h3>{{ item.role }}</h3>
-          <p class="venue">{{ item.organization }} · {{ item.location }}</p>
-          <p>{{ item.summary }}</p>
+<section class="cv-block" id="cv-research-progress">
+  <h2>Research in Progress</h2>
+  <div class="cv-entry-list">
+    {% for paper in site.data.papers %}
+      <article class="cv-entry">
+        <div class="cv-entry-body">
+          <div class="cv-entry-kicker">{{ paper.status | escape }}</div>
+          <h3>{{ paper.title | escape }}</h3>
+          <p class="cv-institution">{{ paper.authors | escape }} · {{ paper.venue | escape }}</p>
+          <p>{{ paper.summary | escape }}</p>
+          {% if paper.links %}
+            <div class="cv-entry-links">
+              {% for link in paper.links %}
+                <a href="{{ link.url | escape }}">{{ link.label | escape }} <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a>
+              {% endfor %}
+            </div>
+          {% endif %}
         </div>
+        <span class="cv-date">{{ paper.year | escape }}</span>
+      </article>
+    {% endfor %}
+  </div>
+</section>
+
+<section class="cv-block" id="cv-projects">
+  <h2>Selected Research Projects</h2>
+  <div class="cv-entry-list">
+    {% for project in projects limit:5 %}
+      {% assign project_url = '/projects/' | append: project.id | append: '/' %}
+      <article class="cv-entry cv-project-entry">
+        <div class="cv-entry-body">
+          <div class="cv-entry-kicker">{{ project.role | escape }}</div>
+          <h3><a href="{{ project_url | relative_url | escape }}">{{ project.title | escape }}</a></h3>
+          <p>{{ project.summary | escape }}</p>
+          <p class="cv-stack">{{ project.stack | join: " · " | escape }}</p>
+        </div>
+        <span class="cv-date">{{ project.year_group | escape }}</span>
       </article>
     {% endfor %}
   </div>
 </section>
 
 <section class="cv-block" id="cv-awards">
-  <h2>Awards & Recognition</h2>
-  <div class="award-grid">
+  <h2>Awards &amp; Honors</h2>
+  <div class="cv-entry-list">
     {% for award in site.data.awards %}
-      <a class="award-card" href="{{ '/awards/' | append: award.id | append: '/' | relative_url }}?from=cv" aria-label="Open {{ award.title }} gallery">
-        <span class="award-year">{{ award.year }}</span>
-        <h3>{{ award.title }}</h3>
-        <p class="venue">{{ award.organization }}</p>
-        <span class="award-card-cta">View gallery <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></span>
-      </a>
+      {% unless award.category == "Competition Milestone" %}
+        {% assign award_url = '/awards/' | append: award.id | append: '/' %}
+        <article class="cv-entry cv-award-entry">
+          <div class="cv-entry-body">
+            <div class="cv-entry-kicker">{{ award.category | escape }} · {{ award.role | escape }}</div>
+            <h3><a href="{{ award_url | relative_url | escape }}?from=cv">{% if award.id == "aws-physical-ai-fellowship" %}WIRobotics · {% endif %}{{ award.title | escape }}</a></h3>
+            <p class="cv-institution">{{ award.recognition | escape }} · {{ award.organization | escape }}</p>
+            <p>{{ award.summary | escape }}</p>
+          </div>
+          <span class="cv-date">{{ award.year | replace: " - ", "–" | escape }}</span>
+        </article>
+      {% endunless %}
     {% endfor %}
   </div>
 </section>

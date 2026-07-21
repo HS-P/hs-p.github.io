@@ -59,9 +59,9 @@ img {
   position: sticky;
   top: 0;
   z-index: 20;
-  background: rgba(251, 252, 254, 0.92);
+  background: rgba(251, 252, 254, 0.985);
   border-bottom: 1px solid var(--line);
-  backdrop-filter: blur(12px);
+  backdrop-filter: none;
 }
 
 .nav-wrap {
@@ -741,7 +741,9 @@ img {
   width: min(var(--max-width), calc(100% - 32px));
   margin: 0 auto;
   padding: 56px 0 76px;
-  transition: opacity 180ms ease, transform 180ms ease;
+  transition:
+    opacity 400ms ease,
+    transform 400ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 /* Arm motion before the first paint, then release every CSS clock only after
@@ -756,17 +758,29 @@ img {
     visibility: visible;
   }
 
-  html.page-entry-pending .page-shell,
-  html.page-entry-pending .page-shell *,
-  html.page-entry-pending .page-shell *::before,
-  html.page-entry-pending .page-shell *::after {
+  html.page-entry-pending .page-shell > *,
+  html.page-entry-pending .page-shell > .prose-page::after,
+  html.page-entry-pending .project-timeline-page.has-project-intro .project-intro::before,
+  html.page-entry-pending .project-timeline-page.has-project-intro .project-intro > *,
+  html.page-entry-pending .project-timeline-page.has-project-intro .project-intro-title-text,
+  html.page-entry-pending .project-timeline-page.has-project-intro .project-mode-toggle,
+  html.page-entry-pending .project-timeline-page.has-project-intro .project-axis-stage,
+  html.page-entry-pending .project-timeline-page.has-project-intro .year-timeline-line,
+  html.page-entry-pending .project-timeline-page.has-project-intro .year-timeline button,
+  html.page-entry-pending .project-detail-page.is-detail-motion-ready .project-detail-copy > * {
     animation-play-state: paused !important;
   }
 
-  html.page-entry-pending.page-entry-ready .page-shell,
-  html.page-entry-pending.page-entry-ready .page-shell *,
-  html.page-entry-pending.page-entry-ready .page-shell *::before,
-  html.page-entry-pending.page-entry-ready .page-shell *::after {
+  html.page-entry-pending.page-entry-ready .page-shell > *,
+  html.page-entry-pending.page-entry-ready .page-shell > .prose-page::after,
+  html.page-entry-pending.page-entry-ready .project-timeline-page.has-project-intro .project-intro::before,
+  html.page-entry-pending.page-entry-ready .project-timeline-page.has-project-intro .project-intro > *,
+  html.page-entry-pending.page-entry-ready .project-timeline-page.has-project-intro .project-intro-title-text,
+  html.page-entry-pending.page-entry-ready .project-timeline-page.has-project-intro .project-mode-toggle,
+  html.page-entry-pending.page-entry-ready .project-timeline-page.has-project-intro .project-axis-stage,
+  html.page-entry-pending.page-entry-ready .project-timeline-page.has-project-intro .year-timeline-line,
+  html.page-entry-pending.page-entry-ready .project-timeline-page.has-project-intro .year-timeline button,
+  html.page-entry-pending.page-entry-ready .project-detail-page.is-detail-motion-ready .project-detail-copy > * {
     animation-play-state: running !important;
   }
 }
@@ -784,6 +798,7 @@ img {
 .sub-page .post-page,
 .sub-page .blog-row {
   animation: page-soft-drop 980ms cubic-bezier(0.16, 0.86, 0.22, 1) both;
+  transform-origin: 50% 0;
 }
 
 .sub-page .cv-block,
@@ -2895,14 +2910,15 @@ img {
 @keyframes page-soft-drop {
   0% {
     opacity: 0;
-    transform: translate3d(0, -26px, 0);
+    transform: perspective(1400px) translate3d(0, -22px, 0) rotateX(-3deg) scaleY(0.985);
   }
-  58% {
-    opacity: 0.82;
+  56% {
+    opacity: 0.9;
+    transform: perspective(1400px) translate3d(0, 2px, 0) rotateX(0.35deg) scaleY(1.002);
   }
   100% {
     opacity: 1;
-    transform: translate3d(0, 0, 0);
+    transform: perspective(1400px) translate3d(0, 0, 0) rotateX(0) scaleY(1);
   }
 }
 
@@ -3346,6 +3362,7 @@ img {
     transition: none;
   }
 }
+
 
 /* ---------- Visual restraint: clean result canvas + editorial return ---------- */
 body.sub-page:has(.project-timeline-page)::before {
@@ -6092,6 +6109,7 @@ body.sub-page:has(.project-timeline-page.is-year-open)::before {
 
 .hero-avatar {
   width: min(20vw, 224px);
+  height: auto;
   min-width: 170px;
   aspect-ratio: 1;
   border: 1px solid rgba(17, 23, 34, 0.12);
@@ -6191,7 +6209,7 @@ body.sub-page:has(.project-timeline-page.is-year-open)::before {
   background-position: center bottom;
   background-size: min(62vw, 960px) auto;
   opacity: 0.055;
-  filter: grayscale(0.08) drop-shadow(0 36px 68px rgba(17, 23, 34, 0.12));
+  filter: none;
 }
 
 .sub-page .site-header,
@@ -8683,7 +8701,7 @@ body.sub-page:has(.project-timeline-page.is-year-open)::before {
   opacity: 0;
   filter: grayscale(0.08) drop-shadow(0 36px 68px rgba(17, 23, 34, 0.12));
   transform-origin: center bottom;
-  animation: project-allex-curtain 900ms ease-in-out both;
+  animation: project-allex-curtain 2195ms ease-in-out both;
 }
 
 html.page-entry-assets-late .project-timeline-page.has-project-intro .project-intro::before {
@@ -8706,44 +8724,44 @@ html.page-entry-assets-late .project-timeline-page.has-project-intro .project-in
   color: var(--accent-green);
   clip-path: inset(0 100% 0 0);
   animation:
-    project-title-write 520ms steps(7, end) 220ms both,
-    project-title-ink 320ms ease 700ms both;
+    project-title-write 825ms steps(7, end) 520ms both,
+    project-title-ink 590ms ease 1460ms both;
 }
 
 .project-timeline-page.has-project-intro .project-intro-copy {
-  animation: project-support-in 360ms cubic-bezier(0.2, 0.82, 0.2, 1) 900ms backwards;
+  animation: project-support-in 445ms cubic-bezier(0.2, 0.82, 0.2, 1) 2195ms backwards;
 }
 
 .project-timeline-page.has-project-intro .project-mode-toggle {
-  animation: project-support-in 380ms cubic-bezier(0.2, 0.82, 0.2, 1) 1020ms backwards;
+  animation: project-support-in 475ms cubic-bezier(0.2, 0.82, 0.2, 1) 2375ms backwards;
 }
 
 .project-timeline-page.has-project-intro .project-axis-stage {
-  animation: project-support-in 400ms cubic-bezier(0.2, 0.82, 0.2, 1) 1120ms backwards;
+  animation: project-support-in 495ms cubic-bezier(0.2, 0.82, 0.2, 1) 2555ms backwards;
 }
 
 .project-timeline-page.has-project-intro .year-timeline-line {
-  animation: project-timeline-draw 480ms cubic-bezier(0.16, 0.86, 0.2, 1) 1240ms backwards;
+  animation: project-timeline-draw 720ms cubic-bezier(0.16, 0.86, 0.2, 1) 2670ms backwards;
 }
 
 .project-timeline-page.has-project-intro .year-timeline button {
-  animation: project-year-arrive 380ms cubic-bezier(0.16, 0.9, 0.2, 1) var(--project-intro-year-delay) backwards;
+  animation: project-year-arrive 620ms cubic-bezier(0.16, 0.9, 0.2, 1) var(--project-intro-year-delay) backwards;
 }
 
 .project-timeline-page.has-project-intro .year-timeline button[data-project-year="before"] {
-  --project-intro-year-delay: 1230ms;
+  --project-intro-year-delay: 2850ms;
 }
 
 .project-timeline-page.has-project-intro .year-timeline button[data-project-year="2024"] {
-  --project-intro-year-delay: 1320ms;
+  --project-intro-year-delay: 3155ms;
 }
 
 .project-timeline-page.has-project-intro .year-timeline button[data-project-year="2025"] {
-  --project-intro-year-delay: 1410ms;
+  --project-intro-year-delay: 3470ms;
 }
 
 .project-timeline-page.has-project-intro .year-timeline button[data-project-year="2026"] {
-  --project-intro-year-delay: 1500ms;
+  --project-intro-year-delay: 3770ms;
 }
 
 .project-timeline-page.has-project-intro:not(.is-project-intro-complete) .project-mode-toggle,
@@ -9701,16 +9719,14 @@ html.page-entry-assets-late .project-timeline-page.has-project-intro .project-in
     box-shadow:
       0 24px 72px rgba(17, 23, 34, 0.038),
       inset 0 1px 0 rgba(255, 255, 255, 0.48);
-    backdrop-filter: blur(4px);
+    backdrop-filter: none;
     transition:
       opacity 540ms ease,
-      filter 620ms ease,
       transform 680ms cubic-bezier(0.16, 0.86, 0.2, 1);
   }
 
   .home-page.is-allex-open .hero-profile-panel.namecard {
     opacity: 0.34;
-    filter: blur(1px);
     transform: translate3d(-12px, -50%, 0);
   }
 
@@ -9763,7 +9779,7 @@ html.page-entry-assets-late .project-timeline-page.has-project-intro .project-in
     height: 100%;
     transform: scale(1.055);
     transform-origin: right bottom;
-    animation: allex-art-breathe 7.2s ease-in-out infinite;
+    animation: none;
   }
 
   .home-page .allex-art::before {
@@ -9778,7 +9794,7 @@ html.page-entry-assets-late .project-timeline-page.has-project-intro .project-in
       transparent 72%
     );
     opacity: 0;
-    filter: blur(10px);
+    filter: none;
     transition: opacity 520ms ease;
     pointer-events: none;
   }
@@ -9797,13 +9813,11 @@ html.page-entry-assets-late .project-timeline-page.has-project-intro .project-in
     animation: none !important;
     transition:
       opacity 580ms cubic-bezier(0.2, 0.78, 0.18, 1),
-      transform 620ms cubic-bezier(0.16, 0.86, 0.2, 1),
-      filter 580ms cubic-bezier(0.2, 0.78, 0.18, 1);
+      transform 620ms cubic-bezier(0.16, 0.86, 0.2, 1);
   }
 
   .home-page .allex-nav.is-hovered img {
     opacity: 0.69;
-    filter: grayscale(0.02) contrast(1.055) drop-shadow(0 31px 62px rgba(16, 21, 34, 0.19));
     transform: translate3d(var(--allex-shift-x, 0), var(--allex-shift-y, -6px), 0) scale(1.025);
   }
 
@@ -9815,9 +9829,8 @@ html.page-entry-assets-late .project-timeline-page.has-project-intro .project-in
   .home-page .allex-nav.is-open img,
   .home-page .allex-nav.is-awake.is-open img {
     opacity: 0.88;
-    filter: grayscale(0) contrast(1.055) drop-shadow(0 30px 60px rgba(16, 21, 34, 0.2));
     transform: translate3d(0, 0, 0) scale(1);
-    transition-duration: 580ms, 120ms, 580ms;
+    transition-duration: 580ms, 120ms;
   }
 
   .home-page .allex-nav.is-pressed img,
@@ -10064,7 +10077,6 @@ html.page-entry-assets-late .project-timeline-page.has-project-intro .project-in
 
   .home-page.is-allex-open .hero-profile-panel.namecard {
     opacity: 0.16;
-    filter: blur(1.6px);
     transform: translate3d(-18px, -50%, 0);
   }
 
@@ -10459,7 +10471,7 @@ html.page-entry-assets-late .project-timeline-page.has-project-intro .project-in
     box-shadow: 0 8px 24px rgba(17, 23, 34, 0.08);
     color: rgba(17, 23, 34, 0.78);
     scale: 1;
-    backdrop-filter: blur(12px);
+    backdrop-filter: none;
   }
 
   .bubble-toggle i {
@@ -10485,7 +10497,7 @@ html.page-entry-assets-late .project-timeline-page.has-project-intro .project-in
     transform: translateY(-8px);
     transition: opacity 180ms ease, transform 220ms ease, visibility 0ms linear 220ms;
     pointer-events: none;
-    backdrop-filter: blur(18px);
+    backdrop-filter: none;
   }
 
   .bubble-nav.is-open .bubble-links {
@@ -12299,6 +12311,61 @@ body:has(.experience-editorial-page) .page-shell {
   filter: none;
 }
 
+.project-timeline-page .project-node,
+.project-timeline-page.is-card-hover .project-node:not(.is-hovered),
+.project-timeline-page.is-card-hover .project-node.is-hovered {
+  filter: none;
+  backdrop-filter: none;
+  will-change: auto;
+}
+
+.project-timeline-page .project-node,
+.project-timeline-page .project-node:hover,
+.project-timeline-page .project-node.is-hovered {
+  transition:
+    opacity 280ms ease,
+    transform 420ms cubic-bezier(0.16, 0.98, 0.2, 1);
+}
+
+.project-timeline-page.is-card-hover .project-node-grid:has(.project-node:hover) .project-node:not(.is-hovered),
+.project-timeline-page.is-card-hover .project-node-grid:has(.project-node:hover) .project-node.is-hovered,
+.project-timeline-page.is-card-hover .project-node-grid:has(.project-node:hover) .project-node.is-hovered:hover {
+  filter: none;
+}
+
+.project-axis-stage .project-topic-panel button {
+  filter: none;
+  transition:
+    opacity 320ms ease,
+    color 220ms ease,
+    transform 520ms cubic-bezier(0.16, 0.98, 0.2, 1);
+}
+
+.project-timeline-page.is-topic-mode .project-axis-stage .project-topic-panel:hover button {
+  filter: none;
+}
+
+.project-axis-stage .project-topic-panel button::before {
+  filter: none;
+  transition:
+    opacity 420ms ease,
+    transform 620ms cubic-bezier(0.16, 0.98, 0.2, 1);
+}
+
+.project-axis-stage .project-topic-panel button:hover::before,
+.project-axis-stage .project-topic-panel button:focus-visible::before,
+.project-axis-stage .project-topic-panel button.is-active::before {
+  clip-path: polygon(4% 0, 100% 8%, 95% 100%, 0 91%);
+  filter: none;
+}
+
+.project-timeline-page.is-topic-mode .project-axis-stage .project-topic-panel button:hover::before,
+.project-timeline-page.is-topic-mode .project-axis-stage .project-topic-panel button:focus-visible::before,
+.project-timeline-page.is-topic-mode .project-axis-stage .project-topic-panel button.is-active::before {
+  clip-path: polygon(4% 0, 100% 8%, 95% 100%, 0 91%);
+  filter: none;
+}
+
 /* ---------- ALLEX annotations: larger reach and role-matched type ---------- */
 .home-page .topic-flag {
   gap: 10px;
@@ -12351,7 +12418,8 @@ body:has(.experience-editorial-page) .page-shell {
     rgba(251, 252, 254, 0.97) 56%,
     #fbfcfe 100%
   );
-  clip-path: inset(0 100% 0 0);
+  transform: scaleX(0);
+  transform-origin: left center;
 }
 
 .allex-route-transition::after {
@@ -12400,25 +12468,25 @@ body:has(.experience-editorial-page) .page-shell {
 }
 
 @keyframes allex-route-wash {
-  0%, 18% { clip-path: inset(0 100% 0 0); }
-  100% { clip-path: inset(0 0 0 0); }
+  0%, 18% { transform: scaleX(0); }
+  100% { transform: scaleX(1); }
 }
 
 @keyframes allex-route-content {
-  0% { opacity: 1; transform: translateX(0); filter: blur(0); }
-  100% { opacity: 0.16; transform: translateX(-14px); filter: blur(2px); }
+  0% { opacity: 1; transform: translateX(0); }
+  100% { opacity: 0.16; transform: translateX(-14px); }
 }
 
 @keyframes allex-route-label {
-  0% { opacity: 1; translate: 0 0; filter: none; }
+  0% { opacity: 1; translate: 0 0; }
   58% { opacity: 1; }
-  100% { opacity: 0; translate: 0 -5px; filter: blur(1px) drop-shadow(0 0 8px rgba(67, 201, 71, 0.28)); }
+  100% { opacity: 0; translate: 0 -5px; }
 }
 
 @keyframes allex-route-bloom {
-  0% { opacity: 1; scale: 1; filter: none; }
-  55% { opacity: 0.85; scale: 0.72 1.35; filter: blur(0.5px); }
-  100% { opacity: 0; scale: 0.16 2; filter: blur(4px); }
+  0% { opacity: 1; scale: 1; }
+  55% { opacity: 0.85; scale: 0.72 1.35; }
+  100% { opacity: 0; scale: 0.16 2; }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -12430,5 +12498,482 @@ body:has(.experience-editorial-page) .page-shell {
   .home-page .allex-topic.is-routing .topic-text,
   .home-page .allex-topic.is-routing .topic-bloom {
     animation: none !important;
+  }
+}
+
+/* Keep the ALLEX artwork composited at every desktop/tablet breakpoint. */
+.home-page .allex-nav img {
+  transition-property: opacity, transform;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .home-page .allex-nav img {
+    animation: none;
+  }
+
+  .prose-page:is(.cv-editorial-page, .experience-editorial-page) {
+    animation: page-soft-drop 980ms cubic-bezier(0.16, 0.86, 0.22, 1) both;
+    transform-origin: 50% 0;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .sub-page .prose-page {
+    position: relative;
+  }
+
+  .sub-page .prose-page::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    right: 0;
+    left: 0;
+    height: min(140px, 18vh);
+    background: linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.5),
+      rgba(67, 201, 71, 0.035) 42%,
+      transparent
+    );
+    opacity: 0;
+    transform: scaleY(0.2);
+    transform-origin: top;
+    animation: page-fold-highlight 900ms cubic-bezier(0.16, 0.86, 0.22, 1) both;
+    pointer-events: none;
+  }
+}
+
+@keyframes page-fold-highlight {
+  0% {
+    opacity: 0.72;
+    transform: scaleY(0.2);
+  }
+  72% {
+    opacity: 0.18;
+    transform: scaleY(1);
+  }
+  100% {
+    opacity: 0;
+    transform: scaleY(1);
+  }
+}
+
+/* ---------- Conventional academic CV ---------- */
+body:has(.cv-editorial-page) .page-shell {
+  width: min(1120px, calc(100% - 48px));
+  padding: 38px 0 64px;
+}
+
+.prose-page.cv-editorial-page {
+  width: 100%;
+  max-width: 1040px;
+  margin: 0 auto;
+  padding: clamp(40px, 5vw, 64px);
+  counter-reset: none;
+  background: #fff;
+  box-shadow: 0 22px 64px rgba(17, 23, 34, 0.045);
+}
+
+.cv-editorial-page::before {
+  display: none;
+}
+
+.cv-editorial-page .page-title {
+  margin: 0;
+  padding: 0 0 20px;
+  border-bottom: 2px solid rgba(12, 122, 55, 0.78);
+}
+
+.cv-editorial-page .page-title h1 {
+  font-size: clamp(3rem, 5vw, 4.7rem);
+  font-weight: 880;
+  line-height: 0.94;
+  letter-spacing: -0.045em;
+}
+
+.cv-editorial-page .page-title p {
+  margin-top: 12px;
+  color: rgba(17, 23, 34, 0.64);
+  font-size: 0.86rem;
+  font-weight: 720;
+  line-height: 1.45;
+  letter-spacing: 0.045em;
+  text-transform: none;
+}
+
+.cv-contact {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 24px;
+  margin-top: 18px;
+  color: rgba(17, 23, 34, 0.68);
+  font-size: 0.82rem;
+  line-height: 1.5;
+}
+
+.cv-contact a,
+.cv-contact span {
+  display: inline-flex;
+  gap: 7px;
+  align-items: center;
+  color: inherit;
+}
+
+.cv-contact a:hover,
+.cv-contact a:focus-visible {
+  color: var(--cv-accent);
+}
+
+.cv-summary {
+  max-width: 82ch;
+  margin: 22px 0 4px;
+  color: rgba(17, 23, 34, 0.76);
+  font-size: 1rem;
+  line-height: 1.72;
+}
+
+.cv-editorial-page .cv-block {
+  display: block;
+  margin: 0;
+  padding: 28px 0 0;
+  border: 0;
+  counter-increment: none;
+}
+
+.cv-editorial-page .cv-block > h2 {
+  display: block;
+  margin: 0;
+  padding: 0 0 8px;
+  border-bottom: 1px solid rgba(17, 23, 34, 0.2);
+  color: #0c7a37;
+  font-size: 0.84rem;
+  font-weight: 860;
+  line-height: 1.35;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+}
+
+.cv-editorial-page .cv-block > h2::before {
+  content: none;
+  display: none;
+}
+
+.cv-editorial-page .cv-block > :not(h2) {
+  grid-column: auto;
+  margin-top: 2px;
+}
+
+.cv-entry-list {
+  display: grid;
+  gap: 0;
+}
+
+.cv-entry {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) max-content;
+  gap: 12px 34px;
+  padding: 18px 0;
+  border-bottom: 1px solid rgba(17, 23, 34, 0.1);
+}
+
+.cv-entry:last-child {
+  border-bottom: 0;
+}
+
+.cv-entry-body {
+  min-width: 0;
+}
+
+.cv-entry h3 {
+  margin: 0;
+  color: var(--text);
+  font-size: 1.06rem;
+  font-weight: 790;
+  line-height: 1.38;
+  letter-spacing: -0.012em;
+}
+
+.cv-entry h3 span {
+  color: rgba(17, 23, 34, 0.54);
+  font-weight: 620;
+}
+
+.cv-entry h3 a {
+  color: inherit;
+}
+
+.cv-entry h3 a:hover,
+.cv-entry h3 a:focus-visible {
+  color: var(--cv-accent);
+}
+
+.cv-entry p {
+  max-width: 80ch;
+  margin: 7px 0 0;
+  color: rgba(17, 23, 34, 0.7);
+  font-size: 0.9rem;
+  line-height: 1.62;
+}
+
+.cv-entry .cv-institution {
+  margin-top: 4px;
+  color: rgba(17, 23, 34, 0.55);
+  font-size: 0.78rem;
+  font-weight: 660;
+  line-height: 1.5;
+  letter-spacing: 0.015em;
+  text-transform: none;
+}
+
+.cv-date {
+  grid-column: 2;
+  grid-row: 1;
+  align-self: start;
+  min-width: 82px;
+  padding-top: 2px;
+  color: rgba(17, 23, 34, 0.58);
+  font-size: 0.78rem;
+  font-weight: 760;
+  line-height: 1.4;
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+  white-space: nowrap;
+}
+
+.cv-date--current {
+  color: #0c7a37;
+}
+
+.cv-entry-kicker,
+.cv-stack {
+  color: #0c7a37 !important;
+  font-size: 0.72rem !important;
+  font-weight: 790 !important;
+  line-height: 1.45 !important;
+  letter-spacing: 0.045em;
+  text-transform: none;
+}
+
+.cv-entry-kicker {
+  margin-bottom: 5px;
+}
+
+.cv-entry-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 18px;
+  margin-top: 10px;
+}
+
+.cv-entry-links a {
+  display: inline-flex;
+  gap: 7px;
+  align-items: center;
+  color: #0c7a37;
+  font-size: 0.76rem;
+  font-weight: 780;
+}
+
+.cv-interest-list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0 32px;
+  padding: 10px 0 0;
+  list-style: none;
+}
+
+.cv-interest-list li {
+  position: relative;
+  padding: 8px 0 8px 16px;
+  border-bottom: 1px solid rgba(17, 23, 34, 0.08);
+  color: rgba(17, 23, 34, 0.78);
+  font-size: 0.88rem;
+  line-height: 1.5;
+}
+
+.cv-interest-list li::before {
+  content: "";
+  position: absolute;
+  top: 16px;
+  left: 0;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--cv-accent);
+}
+
+.cv-skills-list {
+  margin: 8px 0 0;
+}
+
+.cv-skills-list > div {
+  display: grid;
+  grid-template-columns: 190px minmax(0, 1fr);
+  gap: 24px;
+  padding: 10px 0;
+  border-bottom: 1px solid rgba(17, 23, 34, 0.08);
+}
+
+.cv-skills-list > div:last-child {
+  border-bottom: 0;
+}
+
+.cv-skills-list dt,
+.cv-skills-list dd {
+  margin: 0;
+  font-size: 0.86rem;
+  line-height: 1.55;
+}
+
+.cv-skills-list dt {
+  color: rgba(17, 23, 34, 0.78);
+  font-weight: 780;
+}
+
+.cv-skills-list dd {
+  color: rgba(17, 23, 34, 0.64);
+}
+
+@media (max-width: 760px) {
+  .sub-page .prose-page::after {
+    display: none;
+  }
+}
+
+@media print {
+  @page {
+    margin: 14mm;
+  }
+
+  html,
+  body,
+  body.sub-page {
+    background: #fff !important;
+    color: #111722;
+    font-size: 9pt;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  .site-header,
+  .bubble-nav,
+  .site-footer,
+  body.sub-page::before {
+    display: none !important;
+  }
+
+  body:has(.cv-editorial-page) .page-shell,
+  .prose-page.cv-editorial-page {
+    width: 100%;
+    max-width: none;
+    margin: 0;
+    padding: 0;
+    background: #fff;
+    box-shadow: none;
+    opacity: 1 !important;
+    transform: none !important;
+    animation: none !important;
+  }
+
+  .cv-editorial-page .page-title h1 {
+    color: #111722 !important;
+    font-size: 24pt;
+  }
+
+  .cv-editorial-page .page-title {
+    padding-bottom: 7pt;
+  }
+
+  .cv-editorial-page .page-title p,
+  .cv-contact,
+  .cv-summary,
+  .cv-entry p,
+  .cv-entry .cv-institution,
+  .cv-interest-list li,
+  .cv-skills-list dt,
+  .cv-skills-list dd {
+    color: #313943 !important;
+  }
+
+  .cv-contact {
+    margin-top: 5pt;
+    font-size: 7.5pt;
+  }
+
+  .cv-summary {
+    margin: 7pt 0 0;
+    font-size: 8.5pt;
+    line-height: 1.45;
+  }
+
+  .cv-editorial-page .cv-block {
+    padding-top: 10pt;
+  }
+
+  .cv-editorial-page .cv-block > h2 {
+    padding-bottom: 3pt;
+    color: #0c7a37 !important;
+    font-size: 7.5pt;
+  }
+
+  .cv-entry {
+    gap: 5pt 16pt;
+    padding: 6pt 0;
+    break-inside: avoid;
+  }
+
+  .cv-entry h3,
+  .cv-entry h3 span,
+  .cv-entry h3 a {
+    color: #111722 !important;
+    font-size: 9pt;
+    line-height: 1.25;
+  }
+
+  .cv-entry p,
+  .cv-entry .cv-institution {
+    margin-top: 2pt;
+    font-size: 7.7pt;
+    line-height: 1.38;
+  }
+
+  .cv-date,
+  .cv-entry-kicker,
+  .cv-stack,
+  .cv-entry-links a {
+    color: #0c7a37 !important;
+    font-size: 7pt !important;
+  }
+
+  .cv-interest-list {
+    padding-top: 3pt;
+  }
+
+  .cv-interest-list li {
+    padding-top: 3pt;
+    padding-bottom: 3pt;
+    font-size: 7.8pt;
+  }
+
+  .cv-skills-list {
+    margin-top: 3pt;
+  }
+
+  .cv-skills-list > div {
+    padding: 3pt 0;
+  }
+
+  .cv-skills-list dt,
+  .cv-skills-list dd {
+    font-size: 7.8pt;
+    line-height: 1.35;
+  }
+
+  .cv-skills-list > div {
+    break-inside: avoid;
+  }
+
+  .cv-editorial-page a {
+    color: inherit !important;
   }
 }

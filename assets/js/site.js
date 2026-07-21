@@ -60,12 +60,39 @@
       shell.addEventListener("transitionend", handleTransitionEnd);
     }
     document.body.classList.add("page-exit");
-    fallbackTimer = window.setTimeout(commitNavigation, 260);
+    fallbackTimer = window.setTimeout(commitNavigation, 460);
   }
 
   window.addEventListener("pageshow", () => {
     document.body.classList.remove("page-exit", "bubble-pop");
   });
+
+  const prefetchedRoutes = new Set();
+
+  function prefetchInternalRoute(link) {
+    if (!link || link.target || link.hasAttribute("download")) return;
+    const destination = new URL(link.href, window.location.href);
+    if (destination.origin !== window.location.origin) return;
+    if (destination.pathname === window.location.pathname && destination.search === window.location.search) return;
+    destination.hash = "";
+    if (prefetchedRoutes.has(destination.href)) return;
+    prefetchedRoutes.add(destination.href);
+
+    const prefetch = document.createElement("link");
+    prefetch.rel = "prefetch";
+    prefetch.as = "document";
+    prefetch.href = destination.href;
+    prefetch.fetchPriority = "low";
+    document.head.appendChild(prefetch);
+  }
+
+  function prefetchFromIntent(event) {
+    prefetchInternalRoute(event.target.closest?.("a[href]"));
+  }
+
+  document.addEventListener("pointerover", prefetchFromIntent, { passive: true });
+  document.addEventListener("pointerdown", prefetchFromIntent, { passive: true });
+  document.addEventListener("focusin", prefetchFromIntent);
 
   const toggle = document.querySelector("[data-nav-toggle]");
   const links = document.querySelector("[data-nav-links]");
@@ -311,9 +338,8 @@
         return;
       }
       const videoObserver = new IntersectionObserver((entries) => {
-        entries.forEach((entry) => {
-          if (!entry.isIntersecting) return;
-          hydrateVideo(entry.target);
+        entries.filter((entry) => entry.isIntersecting).forEach((entry, index) => {
+          window.setTimeout(() => hydrateVideo(entry.target), index * 100);
           videoObserver.unobserve(entry.target);
         });
       }, { threshold: 0.01, rootMargin: "180px 0px" });
@@ -497,7 +523,6 @@
       window.clearTimeout(introFallback);
       projectBoard.classList.add("is-project-intro-complete");
       projectIntro.inert = false;
-      scheduleProjectTopicMedia();
     }
 
     if (reduceProjectIntroMotion) {
@@ -510,9 +535,10 @@
             if (event.animationName === "project-year-arrive") completeProjectIntro();
           }, { once: true });
         }
-        introFallback = window.setTimeout(completeProjectIntro, 2100);
+        introFallback = window.setTimeout(completeProjectIntro, 4610);
       });
     }
+    scheduleProjectTopicMedia();
   } else if (projectBoard) {
     scheduleProjectTopicMedia();
   }
@@ -940,6 +966,9 @@
     let heroReady = false;
     let isRouting = false;
     let routeTimer;
+    let allexPointerRect;
+    let allexPointerFrame;
+    let pendingAllexPointer;
 
     function showHint() {
       if (allexHint && heroReady && !hintDismissed && !parked && !isOpen) {
@@ -1061,6 +1090,7 @@
         allexToggle.style.top = `${imageRect.top - rootRect.top}px`;
         allexToggle.style.width = `${imageRect.width}px`;
         allexToggle.style.height = `${imageRect.height}px`;
+        allexPointerRect = imageRect;
       }
     }
     layoutTopics();
@@ -1084,16 +1114,25 @@
     if (allexToggle) {
       let pressTimer;
       function updateAllexPointer(event) {
-        const rect = allexToggle.getBoundingClientRect();
-        if (!rect.width || !rect.height) return;
-        const x = Math.max(0, Math.min(1, (event.clientX - rect.left) / rect.width));
-        const y = Math.max(0, Math.min(1, (event.clientY - rect.top) / rect.height));
-        allexNav.style.setProperty("--allex-pointer-x", `${Math.round(x * 100)}%`);
-        allexNav.style.setProperty("--allex-pointer-y", `${Math.round(y * 100)}%`);
-        allexNav.style.setProperty("--allex-shift-x", `${((x - 0.5) * 10).toFixed(2)}px`);
-        allexNav.style.setProperty("--allex-shift-y", `${(-6 + (y - 0.5) * 8).toFixed(2)}px`);
+        pendingAllexPointer = { x: event.clientX, y: event.clientY };
+        if (allexPointerFrame) return;
+        allexPointerFrame = window.requestAnimationFrame(() => {
+          allexPointerFrame = 0;
+          const rect = allexPointerRect || allexToggle.getBoundingClientRect();
+          const pointer = pendingAllexPointer;
+          if (!pointer || !rect.width || !rect.height) return;
+          const x = Math.max(0, Math.min(1, (pointer.x - rect.left) / rect.width));
+          const y = Math.max(0, Math.min(1, (pointer.y - rect.top) / rect.height));
+          allexNav.style.setProperty("--allex-pointer-x", `${Math.round(x * 100)}%`);
+          allexNav.style.setProperty("--allex-pointer-y", `${Math.round(y * 100)}%`);
+          allexNav.style.setProperty("--allex-shift-x", `${((x - 0.5) * 10).toFixed(2)}px`);
+          allexNav.style.setProperty("--allex-shift-y", `${(-6 + (y - 0.5) * 8).toFixed(2)}px`);
+        });
       }
       function resetAllexPointer() {
+        if (allexPointerFrame) window.cancelAnimationFrame(allexPointerFrame);
+        allexPointerFrame = 0;
+        pendingAllexPointer = null;
         allexNav.style.setProperty("--allex-pointer-x", "50%");
         allexNav.style.setProperty("--allex-pointer-y", "46%");
         allexNav.style.setProperty("--allex-shift-x", "0px");
@@ -1105,7 +1144,11 @@
         pressTimer = window.setTimeout(() => allexNav.classList.remove("is-pressed"), 220);
       }
       resetAllexPointer();
-      allexToggle.addEventListener("pointerenter", () => { isHover = true; render(); });
+      allexToggle.addEventListener("pointerenter", () => {
+        allexPointerRect = allexToggle.getBoundingClientRect();
+        isHover = true;
+        render();
+      });
       allexToggle.addEventListener("pointermove", updateAllexPointer, { passive: true });
       allexToggle.addEventListener("pointerleave", () => {
         isHover = false;
@@ -1342,10 +1385,13 @@
 
   if (!reduceMotion && pageEntryRoot.classList.contains("page-entry-pending")) {
     const delay = (duration) => new Promise((resolve) => window.setTimeout(resolve, duration));
+    const entryWaitStartedAt = performance.now();
     const criticalImages = Array.from(document.querySelectorAll(".page-shell img:not([loading='lazy'])"))
       .filter((image) => image.getBoundingClientRect().top < window.innerHeight * 1.25);
+    const criticalImageUrls = new Set(criticalImages.map((image) => image.currentSrc || image.src));
     const preloadImages = Array.from(document.querySelectorAll("link[rel='preload'][as='image']"))
       .filter((link) => !link.media || window.matchMedia(link.media).matches)
+      .filter((link) => !criticalImageUrls.has(link.href))
       .map((link) => {
         const image = new Image();
         image.decoding = "async";
@@ -1364,15 +1410,16 @@
       ...criticalImages.map(imageReady)
     ]);
 
-    Promise.all([
-      delay(180),
-      Promise.race([
-        resourcesReady.then(() => true),
-        delay(700).then(() => false)
-      ])
-    ]).then(([, resourcesFinished]) => {
+    Promise.race([
+      resourcesReady.then(() => true),
+      delay(700).then(() => false)
+    ]).then(async (resourcesFinished) => {
       if (!resourcesFinished && !preloadArtworkSettled && document.querySelector(".project-timeline-page")) {
         pageEntryRoot.classList.add("page-entry-assets-late");
+      }
+      if (resourcesFinished) {
+        const elapsed = performance.now() - entryWaitStartedAt;
+        await delay(Math.max(100, 180 - elapsed));
       }
       window.requestAnimationFrame(() => {
         window.requestAnimationFrame(() => finishPageEntry(false));
