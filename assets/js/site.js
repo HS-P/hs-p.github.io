@@ -44,7 +44,7 @@
     const visibleCopy = Array.from(paperSequencePage.querySelectorAll(paperCopySelector))
       .slice(0, copyLimit);
     const paperRevealSurface = paperSequencePage.querySelector("[data-paper-reveal-surface]");
-    const paperDuration = mobilePageQuery.matches ? 1060 : 1240;
+    const paperDuration = mobilePageQuery.matches ? 1360 : 1560;
     const copyInterval = mobilePageQuery.matches ? 46 : 52;
     const copyDuration = mobilePageQuery.matches ? 145 : 165;
     let paperSettleTimer;
