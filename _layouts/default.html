@@ -12,14 +12,47 @@
     <meta property="og:image" content="{{ site.data.profile.image | absolute_url }}">
     <title>{% if page.title %}{{ page.title }} · {% endif %}{{ site.title }}</title>
     <script>
+      var pageEntryRoot = document.documentElement;
+      var pageMotionEnabled = window.matchMedia("(prefers-reduced-motion: no-preference)").matches;
+      window.__siteMotionHydrated = false;
+      window.__failOpenPageMotion = function () {
+        if (window.__startPageMotion) window.__startPageMotion();
+        pageEntryRoot.classList.remove("page-motion-pending");
+        pageEntryRoot.classList.add("page-motion-ready", "icons-ready");
+        var typeSequence = document.querySelector("[data-typeseq]");
+        if (typeSequence) typeSequence.classList.add("is-typed");
+        var deferredArtwork = document.querySelector("img[data-deferred-src]");
+        if (deferredArtwork) {
+          deferredArtwork.src = deferredArtwork.getAttribute("data-deferred-src");
+          deferredArtwork.removeAttribute("data-deferred-src");
+          var artworkShell = deferredArtwork.closest("[data-allex-nav]");
+          if (artworkShell) artworkShell.classList.add("is-artwork-visible");
+        }
+      };
       var stagePageEntry = false;
       try {
         stagePageEntry = Boolean(document.referrer) && new URL(document.referrer).origin === window.location.origin;
       } catch (error) {
         stagePageEntry = false;
       }
-      if (stagePageEntry && window.matchMedia("(prefers-reduced-motion: no-preference)").matches) {
-        var pageEntryRoot = document.documentElement;
+
+      if (pageMotionEnabled) {
+        pageEntryRoot.classList.add("page-motion-pending");
+        window.__startPageMotion = function () {
+          if (window.__pageMotionStarted) return;
+          window.__pageMotionStarted = true;
+          window.clearTimeout(window.__pageMotionFallback);
+          pageEntryRoot.classList.add("page-motion-ready");
+          document.dispatchEvent(new Event("page-motion-start"));
+        };
+        window.__pageMotionFallback = window.setTimeout(window.__startPageMotion, 1200);
+        window.__siteMotionFailureFallback = window.setTimeout(function () {
+          if (!window.__siteMotionHydrated) window.__failOpenPageMotion();
+        }, 1600);
+      }
+
+      if (stagePageEntry && pageMotionEnabled) {
+        pageEntryRoot.classList.add("page-entry-internal");
         pageEntryRoot.classList.add("page-entry-pending");
         window.__pageEntryFallback = window.setTimeout(function () {
           pageEntryRoot.classList.add("page-entry-ready");
@@ -51,7 +84,7 @@
         }
       </script>
     {% elsif page.url == '/projects/' %}
-      <link rel="preload" as="image" type="image/webp" href="{{ '/assets/img/allex/hero-allex.webp' | relative_url }}" media="(min-width: 761px)" fetchpriority="low" data-entry-defer>
+      <link rel="preload" as="image" type="image/webp" href="{{ '/assets/img/allex/hero-allex.webp' | relative_url }}" media="(min-width: 981px)" fetchpriority="low" data-entry-defer>
     {% endif %}
     <noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.1/css/all.min.css"></noscript>
     <link rel="stylesheet" href="{{ '/assets/css/site.css' | relative_url }}">
@@ -67,6 +100,6 @@
       <div class="allex-route-transition" data-allex-route-transition aria-hidden="true"></div>
     {% endif %}
     {% include site-footer.html %}
-    <script src="{{ '/assets/js/site.js' | relative_url }}"></script>
+    <script src="{{ '/assets/js/site.js' | relative_url }}" onerror="window.__failOpenPageMotion && window.__failOpenPageMotion()"></script>
   </body>
 </html>

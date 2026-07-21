@@ -755,9 +755,9 @@ img {
     transform 400ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-/* Arm motion before the first paint, then release every CSS clock only after
-   above-the-fold media has had a chance to decode. Desktop keeps its native
-   section choreography; mobile adds a single surface reveal in mobile.css. */
+/* Internal navigation stages the shell while its critical media settles.
+   A separate post-paint clock pauses the route choreography on every entry;
+   mobile adds its lightweight surface reveal in mobile.css. */
 @media (prefers-reduced-motion: no-preference) {
   html.page-entry-pending .page-shell {
     visibility: hidden;
@@ -767,29 +767,49 @@ img {
     visibility: visible;
   }
 
-  html.page-entry-pending .page-shell > *,
-  html.page-entry-pending .page-shell > .prose-page::after,
-  html.page-entry-pending .project-timeline-page.has-project-intro .project-intro::before,
-  html.page-entry-pending .project-timeline-page.has-project-intro .project-intro > *,
-  html.page-entry-pending .project-timeline-page.has-project-intro .project-intro-title-text,
-  html.page-entry-pending .project-timeline-page.has-project-intro .project-mode-toggle,
-  html.page-entry-pending .project-timeline-page.has-project-intro .project-axis-stage,
-  html.page-entry-pending .project-timeline-page.has-project-intro .year-timeline-line,
-  html.page-entry-pending .project-timeline-page.has-project-intro .year-timeline button,
-  html.page-entry-pending .project-detail-page.is-detail-motion-ready .project-detail-copy > * {
+  html.page-motion-pending .home-page .hero-copy--lab > .hero-avatar,
+  html.page-motion-pending .home-page .hero-identity > *,
+  html.page-motion-pending .home-page .hero-identity [data-type],
+  html.page-motion-pending .sub-page .prose-page,
+  html.page-motion-pending .sub-page .post-page,
+  html.page-motion-pending .sub-page .blog-row,
+  html.page-motion-pending .sub-page .prose-page::after,
+  html.page-motion-pending .award-detail-page,
+  html.page-motion-pending .project-timeline-page,
+  html.page-motion-pending .project-timeline-page.has-project-intro .project-intro::before,
+  html.page-motion-pending .project-timeline-page.has-project-intro .project-intro > *,
+  html.page-motion-pending .project-timeline-page.has-project-intro .project-intro-title-text,
+  html.page-motion-pending .project-timeline-page.has-project-intro .project-mode-toggle,
+  html.page-motion-pending .project-timeline-page.has-project-intro .project-axis-stage,
+  html.page-motion-pending .project-timeline-page.has-project-intro .year-timeline-line,
+  html.page-motion-pending .project-timeline-page.has-project-intro .year-timeline button,
+  html.page-motion-pending .project-timeline-page .project-focus-title h2,
+  html.page-motion-pending .project-timeline-page .project-node,
+  html.page-motion-pending .project-timeline-page.is-topic-mode .project-axis-stage .project-topic-panel button,
+  html.page-motion-pending .project-detail-page.is-detail-motion-ready .project-detail-copy > * {
     animation-play-state: paused !important;
   }
 
-  html.page-entry-pending.page-entry-ready .page-shell > *,
-  html.page-entry-pending.page-entry-ready .page-shell > .prose-page::after,
-  html.page-entry-pending.page-entry-ready .project-timeline-page.has-project-intro .project-intro::before,
-  html.page-entry-pending.page-entry-ready .project-timeline-page.has-project-intro .project-intro > *,
-  html.page-entry-pending.page-entry-ready .project-timeline-page.has-project-intro .project-intro-title-text,
-  html.page-entry-pending.page-entry-ready .project-timeline-page.has-project-intro .project-mode-toggle,
-  html.page-entry-pending.page-entry-ready .project-timeline-page.has-project-intro .project-axis-stage,
-  html.page-entry-pending.page-entry-ready .project-timeline-page.has-project-intro .year-timeline-line,
-  html.page-entry-pending.page-entry-ready .project-timeline-page.has-project-intro .year-timeline button,
-  html.page-entry-pending.page-entry-ready .project-detail-page.is-detail-motion-ready .project-detail-copy > * {
+  html.page-motion-pending.page-motion-ready .home-page .hero-copy--lab > .hero-avatar,
+  html.page-motion-pending.page-motion-ready .home-page .hero-identity > *,
+  html.page-motion-pending.page-motion-ready .home-page .hero-identity [data-type],
+  html.page-motion-pending.page-motion-ready .sub-page .prose-page,
+  html.page-motion-pending.page-motion-ready .sub-page .post-page,
+  html.page-motion-pending.page-motion-ready .sub-page .blog-row,
+  html.page-motion-pending.page-motion-ready .sub-page .prose-page::after,
+  html.page-motion-pending.page-motion-ready .award-detail-page,
+  html.page-motion-pending.page-motion-ready .project-timeline-page,
+  html.page-motion-pending.page-motion-ready .project-timeline-page.has-project-intro .project-intro::before,
+  html.page-motion-pending.page-motion-ready .project-timeline-page.has-project-intro .project-intro > *,
+  html.page-motion-pending.page-motion-ready .project-timeline-page.has-project-intro .project-intro-title-text,
+  html.page-motion-pending.page-motion-ready .project-timeline-page.has-project-intro .project-mode-toggle,
+  html.page-motion-pending.page-motion-ready .project-timeline-page.has-project-intro .project-axis-stage,
+  html.page-motion-pending.page-motion-ready .project-timeline-page.has-project-intro .year-timeline-line,
+  html.page-motion-pending.page-motion-ready .project-timeline-page.has-project-intro .year-timeline button,
+  html.page-motion-pending.page-motion-ready .project-timeline-page .project-focus-title h2,
+  html.page-motion-pending.page-motion-ready .project-timeline-page .project-node,
+  html.page-motion-pending.page-motion-ready .project-timeline-page.is-topic-mode .project-axis-stage .project-topic-panel button,
+  html.page-motion-pending.page-motion-ready .project-detail-page.is-detail-motion-ready .project-detail-copy > * {
     animation-play-state: running !important;
   }
 }
@@ -11471,8 +11491,14 @@ html.page-entry-assets-late .project-timeline-page.has-project-intro .project-in
 @media (prefers-reduced-motion: reduce) {
   .home-page .allex-art,
   .home-page .allex-nav img,
+  .home-page .scroll-cue span,
   .allex-hint-dot::before {
     animation: none !important;
+    transition: none !important;
+  }
+
+  .home-page .allex-hint,
+  .home-page .allex-hint * {
     transition: none !important;
   }
 
@@ -12871,6 +12897,166 @@ body:has(.cv-editorial-page) .page-shell {
 
 .cv-skills-list dd {
   color: rgba(17, 23, 34, 0.64);
+}
+
+/* ---------- Entry motion clock: paint first, then run the choreography ---------- */
+@media screen {
+  .fa-solid,
+  .fa-brands {
+    transition: opacity 240ms ease;
+  }
+
+  html.page-motion-pending:not(.icons-ready) .fa-solid,
+  html.page-motion-pending:not(.icons-ready) .fa-brands {
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .home-page .namecard.is-typed .link-row {
+    transition-delay: 90ms;
+  }
+}
+
+@media (min-width: 761px) and (prefers-reduced-motion: no-preference) {
+  .home-page .hero-copy--lab > .hero-avatar {
+    animation: hero-copy-in 760ms cubic-bezier(0.16, 0.86, 0.2, 1) 80ms both;
+  }
+
+  .home-page .hero-copy--lab > .hero-identity {
+    opacity: 1;
+    transform: none;
+    animation: none !important;
+  }
+
+  .home-page .hero-identity > h1,
+  .home-page .hero-identity > .hero-role,
+  .home-page .hero-identity > .affiliation,
+  .home-page .hero-identity > .advisor {
+    animation: home-line-in 720ms cubic-bezier(0.16, 0.86, 0.2, 1) both;
+  }
+
+  .home-page .hero-identity > h1 {
+    animation-delay: 140ms;
+  }
+
+  .home-page .hero-identity > .hero-role {
+    animation-delay: 250ms;
+  }
+
+  .home-page .hero-identity > .affiliation {
+    animation-delay: 350ms;
+  }
+
+  .home-page .hero-identity > .advisor {
+    animation-delay: 430ms;
+  }
+
+  html.page-motion-pending .home-page .namecard:not(.is-typed) [data-type-reveal] {
+    opacity: 0;
+    transform: translate3d(0, 10px, 0);
+  }
+
+  .home-page .allex-nav img {
+    transition:
+      opacity 760ms cubic-bezier(0.2, 0.78, 0.18, 1),
+      transform 860ms cubic-bezier(0.16, 0.86, 0.2, 1);
+  }
+
+  html.page-motion-pending .home-page .allex-nav:not(.is-artwork-visible) img {
+    opacity: 0 !important;
+    transform: translate3d(32px, 18px, 0) scale(0.985) !important;
+  }
+
+  .sub-page .award-detail-page {
+    animation: page-soft-drop 900ms cubic-bezier(0.16, 0.86, 0.22, 1) both;
+    transform-origin: 50% 0;
+  }
+}
+
+@media (min-width: 981px) and (prefers-reduced-motion: no-preference) {
+  .home-page .hero-identity > h1 {
+    opacity: 1;
+    transform: none;
+    animation: none;
+  }
+
+  .home-page .hero-identity [data-type] {
+    width: max-content;
+    max-width: 100%;
+    opacity: 1;
+    transform: none;
+    animation-name: home-type-reveal;
+    animation-timing-function: steps(11, end);
+    animation-fill-mode: both;
+  }
+
+  .home-page .hero-name-main {
+    animation-duration: 860ms;
+    animation-delay: 160ms;
+    animation-timing-function: steps(11, end) !important;
+  }
+
+  .home-page .hero-name-sub {
+    animation-duration: 240ms;
+    animation-delay: 1190ms;
+    animation-timing-function: steps(3, end) !important;
+  }
+
+  .home-page .hero-identity > .hero-role {
+    animation-duration: 320ms;
+    animation-delay: 1620ms;
+    animation-timing-function: steps(27, end) !important;
+  }
+
+  .home-page .hero-identity > .affiliation {
+    animation-duration: 620ms;
+    animation-delay: 2160ms;
+    animation-timing-function: steps(56, end) !important;
+  }
+
+  .home-page .hero-identity > .advisor {
+    animation-duration: 400ms;
+    animation-delay: 2160ms;
+    animation-timing-function: steps(29, end) !important;
+  }
+}
+
+@media (min-width: 761px) and (max-width: 980px) and (prefers-reduced-motion: no-preference) {
+  .project-timeline-page {
+    animation: compact-page-in 680ms cubic-bezier(0.16, 0.86, 0.22, 1) both;
+  }
+}
+
+@keyframes home-line-in {
+  0% {
+    opacity: 0.28;
+    transform: translate3d(0, 14px, 0);
+  }
+  100% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes home-type-reveal {
+  0% {
+    clip-path: inset(0 100% 0 0);
+  }
+  100% {
+    clip-path: inset(0 0 0 0);
+  }
+}
+
+@keyframes compact-page-in {
+  0% {
+    opacity: 0.2;
+    transform: translate3d(0, 10px, 0) scaleY(0.994);
+  }
+  100% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scaleY(1);
+  }
 }
 
 @media (max-width: 760px) {

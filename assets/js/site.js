@@ -7,11 +7,26 @@
   const pageEntryStarted = pageEntryRoot.classList.contains("page-entry-pending") && !window.__pageEntryStarted
     ? new Promise((resolve) => document.addEventListener("page-entry-start", resolve, { once: true }))
     : Promise.resolve();
+  const pageMotionStarted = pageEntryRoot.classList.contains("page-motion-pending") && !window.__pageMotionStarted
+    ? new Promise((resolve) => document.addEventListener("page-motion-start", resolve, { once: true }))
+    : Promise.resolve();
   document.body.classList.toggle("is-compact-experience", isCompactExperience);
 
   function afterPageEntry(callback, delay = 0) {
     pageEntryStarted.then(() => window.setTimeout(callback, delay));
   }
+
+  function afterPageMotion(callback, delay = 0) {
+    pageMotionStarted.then(() => window.setTimeout(callback, delay));
+  }
+
+  pageEntryStarted.then(() => {
+    window.requestAnimationFrame(() => {
+      window.requestAnimationFrame(() => {
+        window.setTimeout(() => window.__startPageMotion?.(), 50);
+      });
+    });
+  });
 
   function loadIconStyles() {
     if (document.querySelector("link[data-icon-styles]")) return;
@@ -20,23 +35,52 @@
     stylesheet.href = "https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.1/css/all.min.css";
     stylesheet.fetchPriority = "low";
     stylesheet.dataset.iconStyles = "";
+    stylesheet.addEventListener("load", () => pageEntryRoot.classList.add("icons-ready"), { once: true });
+    stylesheet.addEventListener("error", () => pageEntryRoot.classList.add("icons-ready"), { once: true });
     document.head.appendChild(stylesheet);
   }
 
-  afterPageEntry(() => {
+  afterPageMotion(() => {
     if ("requestIdleCallback" in window) {
-      window.requestIdleCallback(loadIconStyles, { timeout: 1200 });
+      window.requestIdleCallback(loadIconStyles, { timeout: 480 });
     } else {
-      window.setTimeout(loadIconStyles, 400);
+      window.setTimeout(loadIconStyles, 60);
     }
-  }, 120);
+  });
 
   const deferredArtwork = document.querySelector("img[data-deferred-src]");
   if (deferredArtwork) {
+    const artworkShell = deferredArtwork.closest("[data-allex-nav]");
+    let artworkDecoded = false;
+    let artworkMotionReady = !pageEntryRoot.classList.contains("page-motion-pending") || window.__pageMotionStarted;
+    let artworkDecodePromise;
+
+    function revealDeferredArtwork() {
+      if (!artworkDecoded || !artworkMotionReady || !artworkShell) return;
+      window.requestAnimationFrame(() => artworkShell.classList.add("is-artwork-visible"));
+    }
+
+    function prepareArtworkReveal() {
+      if (deferredArtwork.naturalWidth <= 1 || artworkDecodePromise) return;
+      artworkDecodePromise = imageReady(deferredArtwork).then(() => {
+        if (deferredArtwork.naturalWidth <= 1) return;
+        artworkDecoded = true;
+        deferredArtwork.removeEventListener("load", prepareArtworkReveal);
+        revealDeferredArtwork();
+      });
+    }
+
+    deferredArtwork.addEventListener("load", prepareArtworkReveal);
+    pageMotionStarted.then(() => {
+      artworkMotionReady = true;
+      revealDeferredArtwork();
+    });
+
     const artworkDelay = pageEntryRoot.classList.contains("page-entry-pending") ? 0 : 120;
     afterPageEntry(() => {
       deferredArtwork.src = deferredArtwork.dataset.deferredSrc;
       deferredArtwork.removeAttribute("data-deferred-src");
+      prepareArtworkReveal();
     }, artworkDelay);
   }
 
@@ -571,7 +615,7 @@
     if (reduceProjectIntroMotion) {
       completeProjectIntro();
     } else {
-      afterPageEntry(() => {
+      afterPageMotion(() => {
         const finalYear = yearButtons[yearButtons.length - 1];
         if (finalYear) {
           finalYear.addEventListener("animationend", (event) => {
@@ -918,13 +962,22 @@
     restoreProjectState();
   }
 
-  // Typewriter identity for the home name-card hero.
+  // Keep every identity line in the layout, then reveal the contact rows after
+  // the layout-stable stepped sequence. Desktop retains the old typewriter
+  // rhythm without mutating the large title one character per frame.
   const typeSeq = document.querySelector("[data-typeseq]");
   if (typeSeq) {
-    // Keep the identity immediately readable. The former per-character rAF
-    // loop repeatedly relaid out the largest text during the first seconds.
-    typeSeq.classList.add("is-typed");
-    afterPageEntry(() => document.dispatchEvent(new Event("hero-typed")), 720);
+    if (reduceMotion) {
+      typeSeq.classList.add("is-typed");
+      afterPageEntry(() => document.dispatchEvent(new Event("hero-typed")));
+    } else {
+      typeSeq.classList.add("is-typing-ready");
+      const identityRevealDelay = isCompactExperience ? 520 : 2820;
+      afterPageMotion(() => {
+        typeSeq.classList.add("is-typed");
+        window.setTimeout(() => document.dispatchEvent(new Event("hero-typed")), 580);
+      }, identityRevealDelay);
+    }
   }
 
   // Interactive ALLEX: wake on hover, reveal part-anchored topic callouts (home).
@@ -1247,7 +1300,7 @@
     }
     document.addEventListener("hero-typed", armHint);
     // Fallback in case the typing sequence never signals completion.
-    afterPageEntry(armHint, 3200);
+    afterPageMotion(armHint, 3800);
   }
 
   // Project detail motion: keep the hero sequential, then reveal each dossier
@@ -1312,7 +1365,7 @@
       // concealed. Observing after release keeps scroll transitions from
       // completing behind the entry gate without flashing visible content.
       detailPage.classList.add("is-detail-motion-ready");
-      afterPageEntry(() => {
+      afterPageMotion(() => {
         detailRevealTargets.forEach((target) => detailObserver.observe(target));
       });
     }
@@ -1356,9 +1409,9 @@
     window.addEventListener("resize", fitDetailTitle);
   }
 
-  // Release the shared motion clock only after a short stable-layout window.
-  // Fonts, eager above-the-fold images, and preloaded CSS artwork may settle
-  // first, but a bounded deadline always keeps the page from feeling blocked.
+  // Release the internal-navigation shell after a short stable-layout window.
+  // Critical images and preloaded artwork may settle first, while the bounded
+  // deadline keeps navigation from feeling blocked.
   function announcePageEntryStart() {
     if (window.__pageEntryStarted) return;
     window.__pageEntryStarted = true;
@@ -1447,4 +1500,6 @@
   } else if (pageEntryRoot.classList.contains("page-entry-pending")) {
     finishPageEntry(true);
   }
+  window.__siteMotionHydrated = true;
+  window.clearTimeout(window.__siteMotionFailureFallback);
 })();
