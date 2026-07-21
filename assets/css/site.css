@@ -13084,17 +13084,32 @@ body:has(.research-editorial-page) .page-shell {
 
 /* ---------- CV / Research / Experience paper sequence ---------- */
 .sub-page .paper-sequence-page {
-  --paper-surface: #fff;
-  --paper-settled-surface: #fff;
+  --paper-base: #fbfaf7;
+  --paper-texture:
+    radial-gradient(circle, rgba(51, 43, 31, 0.028) 0 0.52px, transparent 0.78px),
+    radial-gradient(circle, rgba(255, 255, 255, 0.56) 0 0.48px, transparent 0.76px),
+    repeating-linear-gradient(4deg, transparent 0 6px, rgba(63, 52, 36, 0.014) 7px, transparent 8px 15px),
+    linear-gradient(96deg, rgba(47, 39, 28, 0.025), transparent 17%, transparent 83%, rgba(47, 39, 28, 0.021));
+  --paper-fold-shadow: rgba(56, 47, 34, 0.045);
+  --paper-fold-highlight: rgba(255, 255, 255, 0.12);
+  background-color: var(--paper-base);
+  background-image: var(--paper-texture);
+  background-position: 1px 2px, 5px 7px, 0 0, 0 0;
+  background-size: 13px 15px, 19px 17px, auto, auto;
   opacity: 1 !important;
   transform: none !important;
   transform-origin: initial;
   animation: none !important;
 }
 
+.sub-page .paper-reveal {
+  display: none;
+}
+
 .sub-page .paper-sequence-page::before,
 .sub-page .paper-sequence-page::after {
   content: none;
+  display: none;
   animation: none !important;
 }
 
@@ -13104,27 +13119,24 @@ body:has(.research-editorial-page) .page-shell {
     box-shadow: none;
   }
 
-  html.paper-sequence-entry.page-motion-pending .sub-page .paper-sequence-page:not(.is-paper-motion-armed) > * {
-    visibility: hidden;
+  html.paper-sequence-entry.page-motion-pending .sub-page .paper-sequence-page:not(.is-paper-motion-armed) > :not(.paper-reveal) {
+    opacity: 0;
   }
 
   .sub-page .paper-sequence-page.is-paper-motion-armed {
-    --paper-depth: max(240px, calc(100vh - 96px));
-    --paper-depth: max(240px, calc(100svh - 96px));
-    --paper-lift-start: 130px;
-    --paper-lift-mid: 82px;
-    --paper-lift-low: 30px;
-    --paper-lift-touch: 16px;
-    --paper-lift-damp: 8px;
-    --paper-lift-final: 3px;
-    --paper-roll-lift: 150px;
-    --paper-tilt-start: -68deg;
-    --paper-tilt-mid: -30deg;
+    --paper-depth: max(240px, calc(100vh - 125px));
+    --paper-depth: max(240px, calc(100svh - 125px));
+    --paper-motion-duration: 1240ms;
+    --paper-z-start: 70px;
+    --paper-z-mid: 24px;
+    --paper-z-low: 7px;
+    --paper-tilt-start: -5deg;
+    --paper-yaw-start: 0.18deg;
+    --paper-turn-start: -0.14deg;
     position: relative;
-    isolation: isolate;
-    overflow: hidden;
-    perspective: 1180px;
-    perspective-origin: 50% 0;
+    overflow: visible;
+    perspective: 1580px;
+    perspective-origin: 50% -8%;
     transform-style: preserve-3d;
   }
 
@@ -13134,226 +13146,284 @@ body:has(.research-editorial-page) .page-shell {
   }
 
   .sub-page .paper-sequence-page.is-paper-motion-armed.is-paper-surface-settled {
-    background: var(--paper-settled-surface);
-    isolation: auto;
     overflow: visible;
     perspective: none;
     transform-style: flat;
   }
 
-  .sub-page .paper-sequence-page.is-paper-motion-armed.is-paper-surface-settled::before,
-  .sub-page .paper-sequence-page.is-paper-motion-armed.is-paper-surface-settled::after {
-    content: none;
+  .sub-page .paper-sequence-page.is-paper-motion-armed.is-paper-surface-settled .paper-reveal {
     display: none;
-    pointer-events: none;
     animation: none !important;
   }
 
-  .sub-page .paper-sequence-page.is-paper-motion-armed:not(.is-paper-surface-settled) > * {
-    visibility: hidden;
+  .sub-page .paper-sequence-page.is-paper-motion-armed:not(.is-paper-surface-settled) > :not(.paper-reveal) {
+    opacity: 0;
+    pointer-events: none;
   }
 
-  .sub-page .paper-sequence-page.is-paper-motion-armed::before,
-  .sub-page .paper-sequence-page.is-paper-motion-armed::after {
-    content: "";
+  .sub-page .paper-sequence-page.is-paper-motion-armed:not(.is-paper-surface-settled)::before,
+  .sub-page .paper-sequence-page.is-paper-motion-armed:not(.is-paper-surface-settled)::after {
+    opacity: 0;
+  }
+
+  .sub-page .paper-sequence-page.is-paper-motion-armed .paper-reveal {
+    display: block;
+    position: absolute;
+    z-index: 20;
+    top: -1px;
+    right: 0;
+    left: 0;
+    height: calc(var(--paper-depth) + 2px);
+    overflow: hidden;
+    pointer-events: none;
+    backface-visibility: hidden;
+    transform-origin: 50% 10%;
+    will-change: transform;
+    animation: paper-sheet-place var(--paper-motion-duration) both !important;
+  }
+
+  .sub-page .paper-sequence-page.is-paper-motion-armed .paper-reveal__face,
+  .sub-page .paper-sequence-page.is-paper-motion-armed .paper-reveal__edge {
     display: block;
     position: absolute;
     right: 0;
     left: 0;
-    pointer-events: auto;
-    backface-visibility: hidden;
+    background-color: var(--paper-base);
+    background-image: var(--paper-texture);
+    background-position: 1px 2px, 5px 7px, 0 0, 0 0;
+    background-size: 13px 15px, 19px 17px, auto, auto;
+  }
+
+  .sub-page .paper-sequence-page.is-paper-motion-armed .paper-reveal__face {
+    top: 0;
+    bottom: 20px;
+    border: 1px solid rgba(56, 47, 34, 0.025);
+    border-bottom: 0;
+  }
+
+  .sub-page .paper-sequence-page.is-paper-motion-armed .paper-reveal__edge {
+    bottom: 0;
+    z-index: 2;
+    height: 34px;
+    border-right: 1px solid rgba(56, 47, 34, 0.025);
+    border-left: 1px solid rgba(56, 47, 34, 0.025);
+    clip-path: polygon(0 0, 100% 0, 100% 84%, 90% 78%, 80% 82%, 70% 88%, 60% 94%, 50% 89%, 40% 80%, 30% 76%, 20% 83%, 10% 92%, 0 87%);
+    will-change: clip-path;
+    animation: paper-edge-flutter var(--paper-motion-duration) both !important;
+  }
+
+  .sub-page .paper-sequence-page.is-paper-motion-armed .paper-reveal__crease {
+    display: block;
+    position: absolute;
+    right: -4%;
+    left: -4%;
+    height: 14%;
+    background: linear-gradient(
+      180deg,
+      transparent 4%,
+      var(--paper-fold-shadow) 38%,
+      var(--paper-fold-highlight) 51%,
+      transparent 76%
+    );
+    opacity: 0;
+    transform-origin: 50% 50%;
     will-change: transform, opacity;
   }
 
-  .sub-page .paper-sequence-page.is-paper-motion-armed::before {
-    z-index: 20;
-    top: -2px;
-    height: calc(var(--paper-depth) + 4px);
-    background:
-      linear-gradient(98deg, rgba(17, 23, 34, 0.032), transparent 16%, transparent 82%, rgba(17, 23, 34, 0.025)),
-      var(--paper-surface);
-    box-shadow: 0 24px 52px rgba(17, 23, 34, 0.16), 0 5px 14px rgba(17, 23, 34, 0.08);
-    transform-origin: 50% 0;
-    animation: paper-scroll-face 1060ms linear both !important;
+  .sub-page .paper-sequence-page.is-paper-motion-armed .paper-reveal__crease--upper {
+    top: 23%;
+    animation: paper-crease-upper var(--paper-motion-duration) both !important;
   }
 
-  .sub-page .paper-sequence-page.is-paper-motion-armed::after {
-    z-index: 21;
-    top: -22px;
-    height: 44px;
-    border-radius: 0 0 50% 50% / 0 0 72% 72%;
-    background: linear-gradient(
-      180deg,
-      transparent 0% 10%,
-      rgba(17, 23, 34, 0.08) 24%,
-      rgba(255, 255, 255, 0.84) 42%,
-      rgba(255, 255, 255, 0.99) 52%,
-      rgba(12, 122, 55, 0.08) 66%,
-      rgba(17, 23, 34, 0.13) 80%,
-      transparent 100%
-    );
-    box-shadow: 0 10px 18px rgba(17, 23, 34, 0.13);
-    transform-origin: 50% 50%;
-    animation:
-      paper-scroll-roll-travel 1060ms cubic-bezier(0.4, 0, 0.55, 1) both,
-      paper-scroll-roll-curl 1060ms linear both !important;
+  .sub-page .paper-sequence-page.is-paper-motion-armed .paper-reveal__crease--lower {
+    top: 58%;
+    animation: paper-crease-lower var(--paper-motion-duration) both !important;
   }
 
   .paper-sequence-page .paper-copy-strike {
+    opacity: 0;
+    transform: translate3d(0, 2px, 0);
+    animation: none !important;
+  }
+
+  .paper-sequence-page.is-paper-surface-settled .paper-copy-strike {
+    animation: paper-copy-strike 165ms cubic-bezier(0.2, 0.72, 0.24, 1) var(--paper-copy-delay) both !important;
+  }
+
+  .paper-sequence-page.is-paper-surface-settled .paper-copy-strike.paper-copy-line {
+    animation-duration: 185ms !important;
+  }
+
+  .paper-sequence-page .page-title {
+    transition: border-color 180ms ease;
+  }
+
+  .paper-sequence-page.is-paper-surface-settled .page-title:has(> h1.paper-copy-strike) {
+    border-bottom-color: transparent;
+  }
+
+  html.paper-sequence-entry.page-motion-pending .sub-page .bubble-nav {
     visibility: hidden;
     opacity: 0;
-    transform: translate3d(0, 3px, 0);
-    animation: paper-copy-strike 140ms steps(3, end) var(--paper-copy-delay) both !important;
+    pointer-events: none;
+    transition: opacity 180ms ease, visibility 0s linear 180ms;
   }
 
-  .paper-sequence-page .paper-copy-strike.paper-copy-line {
-    animation-name: paper-copy-line !important;
-    animation-timing-function: steps(7, end) !important;
+  html.paper-sequence-entry.page-motion-pending:has(.paper-sequence-page.is-paper-surface-settled) .sub-page .bubble-nav {
+    visibility: visible;
+    opacity: 1;
+    transition-delay: 0s;
   }
 
-  html.page-motion-pending .paper-sequence-page.is-paper-motion-armed::before,
-  html.page-motion-pending .paper-sequence-page.is-paper-motion-armed::after,
-  html.page-motion-pending .paper-sequence-page .paper-copy-strike {
+  html.page-motion-pending .paper-sequence-page.is-paper-motion-armed .paper-reveal,
+  html.page-motion-pending .paper-sequence-page.is-paper-motion-armed .paper-reveal__crease,
+  html.page-motion-pending .paper-sequence-page.is-paper-motion-armed .paper-reveal__edge,
+  html.page-motion-pending .paper-sequence-page.is-paper-surface-settled .paper-copy-strike {
     animation-play-state: paused !important;
   }
 
-  html.page-motion-pending.page-motion-ready .paper-sequence-page.is-paper-motion-armed::before,
-  html.page-motion-pending.page-motion-ready .paper-sequence-page.is-paper-motion-armed::after,
-  html.page-motion-pending.page-motion-ready .paper-sequence-page .paper-copy-strike {
+  html.page-motion-pending.page-motion-ready .paper-sequence-page.is-paper-motion-armed .paper-reveal,
+  html.page-motion-pending.page-motion-ready .paper-sequence-page.is-paper-motion-armed .paper-reveal__crease,
+  html.page-motion-pending.page-motion-ready .paper-sequence-page.is-paper-motion-armed .paper-reveal__edge,
+  html.page-motion-pending.page-motion-ready .paper-sequence-page.is-paper-surface-settled .paper-copy-strike {
     animation-play-state: running !important;
   }
+
 }
 
-@keyframes paper-scroll-face {
+@keyframes paper-sheet-place {
   0% {
-    opacity: 1;
-    transform: translate3d(0, -14px, var(--paper-lift-start)) rotateX(var(--paper-tilt-start)) rotateY(-1.1deg) scale3d(1, 0.055, 1);
+    transform: translate3d(0, -2.2%, var(--paper-z-start)) rotateX(var(--paper-tilt-start)) rotateY(var(--paper-yaw-start)) rotateZ(var(--paper-turn-start));
+    animation-timing-function: cubic-bezier(0.2, 0.55, 0.25, 1);
   }
 
-  38% {
-    opacity: 1;
-    transform: translate3d(0, -7px, var(--paper-lift-mid)) rotateX(var(--paper-tilt-mid)) rotateY(0.72deg) scale3d(1, 0.48, 1);
+  48% {
+    transform: translate3d(0, -0.45%, var(--paper-z-mid)) rotateX(-1.6deg) rotateY(-0.11deg) rotateZ(0.06deg);
+    animation-timing-function: cubic-bezier(0.22, 0.68, 0.24, 1);
   }
 
-  66% {
-    opacity: 1;
-    transform: translate3d(0, -2px, var(--paper-lift-low)) rotateX(-7deg) rotateY(-0.48deg) scale3d(1, 0.94, 1);
+  70% {
+    transform: translate3d(0, 0.24%, var(--paper-z-low)) rotateX(0.78deg) rotateY(0.05deg) rotateZ(-0.025deg);
+    animation-timing-function: cubic-bezier(0.25, 0.7, 0.28, 1);
   }
 
-  77% {
-    opacity: 1;
-    transform: translate3d(0, 1px, var(--paper-lift-touch)) rotateX(4deg) rotateY(0.28deg) scale3d(1, 1.012, 1);
-  }
-
-  86% {
-    opacity: 1;
-    transform: translate3d(0, -1px, var(--paper-lift-damp)) rotateX(-2.2deg) rotateY(-0.14deg) scale3d(1, 0.997, 1);
+  84% {
+    transform: translate3d(0, -0.09%, 2px) rotateX(-0.31deg) rotateY(-0.018deg) rotateZ(0.009deg);
+    animation-timing-function: ease-out;
   }
 
   94% {
-    opacity: 1;
-    transform: translate3d(0, 0, var(--paper-lift-final)) rotateX(0.7deg) rotateY(0.05deg) scale3d(1, 1.002, 1);
+    transform: translate3d(0, 0.025%, 0) rotateX(0.07deg) rotateY(0.004deg) rotateZ(-0.002deg);
+    animation-timing-function: ease-out;
   }
 
   100% {
-    opacity: 1;
-    transform: translate3d(0, 0, 0) rotateX(0) rotateY(0) scale3d(1, 1, 1);
+    transform: translate3d(0, 0, 0) rotateX(0) rotateY(0) rotateZ(0);
   }
 }
 
-@keyframes paper-scroll-roll-travel {
+@keyframes paper-edge-flutter {
   0% {
-    translate: 0 0 var(--paper-roll-lift);
+    clip-path: polygon(0 0, 100% 0, 100% 84%, 90% 78%, 80% 82%, 70% 88%, 60% 94%, 50% 89%, 40% 80%, 30% 76%, 20% 83%, 10% 92%, 0 87%);
+    animation-timing-function: cubic-bezier(0.2, 0.55, 0.25, 1);
   }
 
-  100% {
-    translate: 0 var(--paper-depth) 0;
-  }
-}
-
-@keyframes paper-scroll-roll-curl {
-  0% {
-    opacity: 0.64;
-    transform: rotateX(-66deg) scaleY(0.72);
+  48% {
+    clip-path: polygon(0 0, 100% 0, 100% 88%, 90% 94%, 80% 90%, 70% 82%, 60% 77%, 50% 82%, 40% 91%, 30% 95%, 20% 89%, 10% 80%, 0 84%);
+    animation-timing-function: cubic-bezier(0.22, 0.68, 0.24, 1);
   }
 
-  16% {
-    opacity: 1;
-    transform: rotateX(-38deg) scaleY(0.9);
+  70% {
+    clip-path: polygon(0 0, 100% 0, 100% 91%, 90% 90%, 80% 91%, 70% 93%, 60% 95%, 50% 93%, 40% 90%, 30% 89%, 20% 91%, 10% 94%, 0 93%);
+    animation-timing-function: cubic-bezier(0.25, 0.7, 0.28, 1);
   }
 
-  38% {
-    opacity: 1;
-    transform: rotateX(-16deg) scaleY(1);
-  }
-
-  66% {
-    opacity: 1;
-    transform: rotateX(12deg) scaleY(1.08);
-  }
-
-  77% {
-    opacity: 0.94;
-    transform: rotateX(-6deg) scaleY(0.88);
-  }
-
-  86% {
-    opacity: 0.76;
-    transform: rotateX(2deg) scaleY(0.76);
+  84% {
+    clip-path: polygon(0 0, 100% 0, 100% 95%, 90% 97%, 80% 96%, 70% 94%, 60% 93%, 50% 94%, 40% 96%, 30% 97%, 20% 96%, 10% 94%, 0 95%);
+    animation-timing-function: ease-out;
   }
 
   94% {
-    opacity: 0.42;
-    transform: rotateX(-1deg) scaleY(0.66);
+    clip-path: polygon(0 0, 100% 0, 100% 98%, 90% 98.5%, 80% 98.2%, 70% 97.8%, 60% 97.6%, 50% 97.8%, 40% 98.3%, 30% 98.5%, 20% 98.2%, 10% 97.8%, 0 98%);
+    animation-timing-function: ease-out;
+  }
+
+  100% {
+    clip-path: polygon(0 0, 100% 0, 100% 100%, 90% 100%, 80% 100%, 70% 100%, 60% 100%, 50% 100%, 40% 100%, 30% 100%, 20% 100%, 10% 100%, 0 100%);
+  }
+}
+
+@keyframes paper-crease-upper {
+  0% {
+    opacity: 0.88;
+    transform: translate3d(0, -18%, 0) rotate(-0.45deg) scaleY(1.18);
+    animation-timing-function: cubic-bezier(0.22, 0.52, 0.24, 1);
+  }
+
+  46% {
+    opacity: 0.58;
+    transform: translate3d(0, 8%, 0) rotate(0.18deg) scaleY(0.82);
+    animation-timing-function: cubic-bezier(0.24, 0.7, 0.28, 1);
+  }
+
+  69% {
+    opacity: 0.32;
+    transform: translate3d(0, -3%, 0) rotate(-0.07deg) scaleY(0.56);
+    animation-timing-function: ease-out;
+  }
+
+  88% {
+    opacity: 0.1;
+    transform: translate3d(0, 1%, 0) rotate(0) scaleY(0.32);
   }
 
   100% {
     opacity: 0;
-    transform: rotateX(0) scaleY(0.56);
+    transform: translate3d(0, 0, 0) rotate(0) scaleY(0.2);
+  }
+}
+
+@keyframes paper-crease-lower {
+  0% {
+    opacity: 0.62;
+    transform: translate3d(0, 13%, 0) rotate(0.36deg) scaleY(0.9);
+    animation-timing-function: cubic-bezier(0.22, 0.54, 0.24, 1);
+  }
+
+  51% {
+    opacity: 0.52;
+    transform: translate3d(0, -9%, 0) rotate(-0.16deg) scaleY(1.08);
+    animation-timing-function: cubic-bezier(0.24, 0.7, 0.28, 1);
+  }
+
+  72% {
+    opacity: 0.26;
+    transform: translate3d(0, 3%, 0) rotate(0.055deg) scaleY(0.62);
+    animation-timing-function: ease-out;
+  }
+
+  90% {
+    opacity: 0.08;
+    transform: translate3d(0, -1%, 0) rotate(0) scaleY(0.3);
+  }
+
+  100% {
+    opacity: 0;
+    transform: translate3d(0, 0, 0) rotate(0) scaleY(0.2);
   }
 }
 
 @keyframes paper-copy-strike {
   0% {
-    visibility: hidden;
     opacity: 0;
-    transform: translate3d(0, 3px, 0);
+    transform: translate3d(0, 2px, 0);
   }
-  1% {
-    visibility: visible;
-  }
-  66% {
-    visibility: visible;
+  72% {
     opacity: 1;
-    transform: translate3d(0, -1px, 0);
+    transform: translate3d(0, -0.45px, 0);
   }
   100% {
-    visibility: visible;
     opacity: 1;
-    transform: translate3d(0, 0, 0);
-  }
-}
-
-@keyframes paper-copy-line {
-  0% {
-    visibility: hidden;
-    opacity: 0;
-    clip-path: inset(0 100% 0 0);
-    transform: translate3d(0, 3px, 0);
-  }
-  1% {
-    visibility: visible;
-  }
-  82% {
-    visibility: visible;
-    opacity: 1;
-    clip-path: inset(0 0 0 0);
-    transform: translate3d(0, 1px, 0);
-  }
-  100% {
-    visibility: visible;
-    opacity: 1;
-    clip-path: inset(0 0 0 0);
     transform: translate3d(0, 0, 0);
   }
 }
@@ -13542,14 +13612,17 @@ body:has(.research-editorial-page) .page-shell {
   .site-header,
   .bubble-nav,
   .site-footer,
+  .paper-reveal,
   body.sub-page::before {
     display: none !important;
   }
 
   body:has(.cv-editorial-page) .page-shell,
   body:has(.research-editorial-page) .page-shell,
+  body:has(.experience-editorial-page) .page-shell,
   .prose-page.cv-editorial-page,
-  .prose-page.research-editorial-page {
+  .prose-page.research-editorial-page,
+  .prose-page.experience-editorial-page {
     width: 100%;
     max-width: none;
     margin: 0;
@@ -13562,13 +13635,15 @@ body:has(.research-editorial-page) .page-shell {
   }
 
   .cv-editorial-page .page-title h1,
-  .research-editorial-page .page-title h1 {
+  .research-editorial-page .page-title h1,
+  .experience-editorial-page .page-title h1 {
     color: #111722 !important;
     font-size: 24pt;
   }
 
   .cv-editorial-page .page-title,
-  .research-editorial-page .page-title {
+  .research-editorial-page .page-title,
+  .experience-editorial-page .page-title {
     padding-bottom: 7pt;
   }
 
@@ -13595,11 +13670,13 @@ body:has(.research-editorial-page) .page-shell {
   }
 
   .cv-editorial-page .cv-block,
+  .experience-editorial-page .cv-block,
   .research-editorial-page .research-page-block {
     padding-top: 10pt;
   }
 
   .cv-editorial-page .cv-block > h2,
+  .experience-editorial-page .cv-block > h2,
   .research-editorial-page .research-page-block > h2 {
     padding-bottom: 3pt;
     color: #0c7a37 !important;
@@ -13668,7 +13745,8 @@ body:has(.research-editorial-page) .page-shell {
     break-inside: avoid;
   }
 
-  .cv-editorial-page a {
+  .cv-editorial-page a,
+  .experience-editorial-page a {
     color: inherit !important;
   }
 }

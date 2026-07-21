@@ -1913,9 +1913,16 @@ body:has(.paper-sequence-page) .page-shell {
 }
 
 .sub-page .paper-sequence-page {
-  --paper-surface: linear-gradient(180deg, #232824 0%, #1d211e 100%);
-  --paper-settled-surface: linear-gradient(180deg, #202521 0%, var(--mobile-bg) 720px);
-  background: var(--paper-settled-surface);
+  --paper-base: #20241f;
+  --paper-texture:
+    radial-gradient(circle, rgba(243, 246, 242, 0.02) 0 0.5px, transparent 0.76px),
+    radial-gradient(circle, rgba(0, 0, 0, 0.065) 0 0.48px, transparent 0.76px),
+    repeating-linear-gradient(4deg, transparent 0 6px, rgba(243, 246, 242, 0.012) 7px, transparent 8px 15px),
+    linear-gradient(96deg, rgba(0, 0, 0, 0.06), transparent 18%, transparent 82%, rgba(102, 216, 110, 0.017));
+  --paper-fold-shadow: rgba(0, 0, 0, 0.055);
+  --paper-fold-highlight: rgba(243, 246, 242, 0.05);
+  background-color: var(--paper-base);
+  background-image: var(--paper-texture);
 }
 
 html.page-entry-pending body:has(.paper-sequence-page) .page-shell,
@@ -1935,55 +1942,28 @@ html.page-entry-pending.page-entry-ready body:has(.paper-sequence-page) .page-sh
   }
 
   .sub-page .paper-sequence-page.is-paper-motion-armed {
-    --paper-depth: max(240px, calc(100vh - 89px));
-    --paper-depth: max(240px, calc(100svh - 89px));
-    --paper-lift-start: 80px;
-    --paper-lift-mid: 50px;
-    --paper-lift-low: 18px;
-    --paper-lift-touch: 10px;
-    --paper-lift-damp: 5px;
-    --paper-lift-final: 2px;
-    --paper-roll-lift: 92px;
-    --paper-tilt-start: -58deg;
-    --paper-tilt-mid: -24deg;
-    perspective: 900px;
+    --paper-depth: max(240px, calc(100vh - 115px));
+    --paper-depth: max(240px, calc(100svh - 115px));
+    --paper-motion-duration: 1060ms;
+    --paper-z-start: 34px;
+    --paper-z-mid: 11px;
+    --paper-z-low: 3px;
+    --paper-tilt-start: -3.4deg;
+    --paper-yaw-start: 0.08deg;
+    --paper-turn-start: -0.1deg;
+    perspective: 1120px;
   }
 
-  .sub-page .paper-sequence-page.is-paper-motion-armed::before,
-  .sub-page .paper-sequence-page.is-paper-motion-armed::after {
-    display: block !important;
-    animation-duration: 900ms !important;
+  .sub-page .paper-sequence-page.is-paper-motion-armed .paper-reveal__face,
+  .sub-page .paper-sequence-page.is-paper-motion-armed .paper-reveal__edge {
+    border-color: rgba(243, 246, 242, 0.02);
   }
 
-  .sub-page .paper-sequence-page.is-paper-motion-armed::before {
-    background:
-      linear-gradient(98deg, rgba(0, 0, 0, 0.14), transparent 18%, transparent 82%, rgba(102, 216, 110, 0.035)),
-      var(--paper-surface);
-    box-shadow: 0 18px 34px rgba(0, 0, 0, 0.24), 0 4px 10px rgba(0, 0, 0, 0.16);
+  .paper-sequence-page.is-paper-surface-settled .paper-copy-strike {
+    animation-duration: 145ms !important;
   }
 
-  .sub-page .paper-sequence-page.is-paper-motion-armed::after {
-    top: -14px;
-    height: 28px;
-    background: linear-gradient(
-      180deg,
-      transparent 0%,
-      rgba(0, 0, 0, 0.2) 30%,
-      rgba(243, 246, 242, 0.42) 49%,
-      rgba(102, 216, 110, 0.11) 66%,
-      rgba(0, 0, 0, 0.18) 82%,
-      transparent 100%
-    );
-    box-shadow: 0 7px 12px rgba(0, 0, 0, 0.22);
-  }
-
-  .paper-sequence-page .paper-copy-strike {
-    animation-duration: 120ms !important;
-    animation-timing-function: steps(3, end) !important;
-  }
-
-  .paper-sequence-page .paper-copy-strike.paper-copy-line {
-    animation-name: paper-copy-line !important;
-    animation-timing-function: steps(6, end) !important;
+  .paper-sequence-page.is-paper-surface-settled .paper-copy-strike.paper-copy-line {
+    animation-duration: 165ms !important;
   }
 }
