@@ -304,22 +304,31 @@
       }
     }
 
-    renderGithubSkeleton();
+    function loadGithubActivity() {
+      renderGithubSkeleton();
+      fetch(`https://github-contributions-api.jogruber.de/v4/${encodeURIComponent(user)}`)
+        .then((response) => {
+          if (!response.ok) throw new Error("GitHub activity unavailable");
+          return response.json();
+        })
+        .then(renderGithubActivity)
+        .catch(() => {
+          githubActivity.classList.add("is-unavailable");
+          if (status) {
+            status.textContent = fallbackTotal
+              ? `${fallbackTotal} public contributions in ${rangeYear}`
+              : "Public GitHub activity unavailable";
+          }
+        });
+    }
 
-    fetch(`https://github-contributions-api.jogruber.de/v4/${encodeURIComponent(user)}`)
-      .then((response) => {
-        if (!response.ok) throw new Error("GitHub activity unavailable");
-        return response.json();
-      })
-      .then(renderGithubActivity)
-      .catch(() => {
-        githubActivity.classList.add("is-unavailable");
-        if (status) {
-          status.textContent = fallbackTotal
-            ? `${fallbackTotal} public contributions in ${rangeYear}`
-            : "Public GitHub activity unavailable";
-        }
-      });
+    afterPageEntry(() => {
+      if ("requestIdleCallback" in window) {
+        window.requestIdleCallback(loadGithubActivity, { timeout: 1000 });
+      } else {
+        window.setTimeout(loadGithubActivity, 250);
+      }
+    }, 200);
   }
 
   const deferredVideos = Array.from(document.querySelectorAll("iframe[data-video-src]"));
@@ -354,6 +363,7 @@
     let isSnapping = false;
     let snapTarget = "";
     let snapTimer;
+    let scrollCueFrame;
     function atActivities() {
       return window.scrollY > window.innerHeight * 0.45;
     }
@@ -370,15 +380,20 @@
       }, 980);
     }
     function syncScrollCue() {
+      scrollCueFrame = 0;
       if (!scrollCue) return;
       const up = atActivities();
       scrollCue.classList.toggle("is-up", up);
       scrollCue.setAttribute("href", up ? "#about" : "#activities");
       scrollCue.setAttribute("aria-label", up ? "Scroll to top" : "Scroll to activities");
     }
+    function scheduleScrollCueSync() {
+      if (scrollCueFrame) return;
+      scrollCueFrame = window.requestAnimationFrame(syncScrollCue);
+    }
 
-    syncScrollCue();
-    window.addEventListener("scroll", syncScrollCue, { passive: true });
+    afterPageEntry(scheduleScrollCueSync, 120);
+    window.addEventListener("scroll", scheduleScrollCueSync, { passive: true });
     if (scrollCue) {
       scrollCue.addEventListener("click", (event) => {
         event.preventDefault();
@@ -490,6 +505,7 @@
       if (!match) return Promise.resolve();
       const image = new Image();
       image.decoding = "async";
+      image.fetchPriority = "low";
       image.src = new URL(match[1], window.location.href).href;
       return imageReady(image);
     });
@@ -878,74 +894,10 @@
   // Typewriter identity for the home name-card hero.
   const typeSeq = document.querySelector("[data-typeseq]");
   if (typeSeq) {
-    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches || isCompactExperience;
-    const lines = Array.from(typeSeq.querySelectorAll("[data-type]"));
-    if (lines.length && !reduceMotion) {
-      typeSeq.classList.add("is-typing-ready");
-      const targets = lines.map((el) => {
-        const text = el.textContent.trim();
-        el.textContent = "";
-        return { el, text };
-      });
-
-      function speedFor(el) {
-        if (el.classList.contains("hero-name-main")) return 90;
-        if (el.classList.contains("hero-name-sub")) return 118;
-        return 12;
-      }
-
-      // Group consecutive lines flagged with data-type-sync so they type at
-      // the same time (e.g. affiliation + advisor appear together).
-      const groups = [];
-      targets.forEach((t) => {
-        if (t.el.hasAttribute("data-type-sync") && groups.length) {
-          groups[groups.length - 1].push(t);
-        } else {
-          groups.push([t]);
-        }
-      });
-
-      let gi = 0;
-      function typeGroup() {
-        if (gi >= groups.length) {
-          typeSeq.classList.add("is-typed");
-          document.dispatchEvent(new Event("hero-typed"));
-          return;
-        }
-        const group = groups[gi];
-        let remaining = group.length;
-        group.forEach(({ el, text }) => {
-          el.classList.add("nc-caret");
-          const speed = speedFor(el);
-          let startedAt;
-          let renderedCharacters = 0;
-          function step(now) {
-            if (startedAt === undefined) startedAt = now;
-            const nextCharacters = Math.min(text.length, Math.floor((now - startedAt) / speed) + 1);
-            if (nextCharacters !== renderedCharacters) {
-              renderedCharacters = nextCharacters;
-              el.textContent = text.slice(0, renderedCharacters);
-            }
-            if (renderedCharacters < text.length) {
-              window.requestAnimationFrame(step);
-            } else {
-              el.classList.remove("nc-caret");
-              remaining -= 1;
-              if (remaining === 0) {
-                gi += 1;
-                window.setTimeout(typeGroup, 220);
-              }
-            }
-          }
-          window.requestAnimationFrame(step);
-        });
-      }
-      afterPageEntry(typeGroup, 200);
-    } else {
-      // Reduced motion / nothing to type: still announce completion (deferred
-      // so the ALLEX hint listener, registered later, receives it).
-      afterPageEntry(() => document.dispatchEvent(new Event("hero-typed")));
-    }
+    // Keep the identity immediately readable. The former per-character rAF
+    // loop repeatedly relaid out the largest text during the first seconds.
+    typeSeq.classList.add("is-typed");
+    afterPageEntry(() => document.dispatchEvent(new Event("hero-typed")), 720);
   }
 
   // Interactive ALLEX: wake on hover, reveal part-anchored topic callouts (home).
@@ -989,8 +941,7 @@
       const label = topic.querySelector(".topic-text");
       if (!label) return;
       label.dataset.fullText = label.textContent.trim();
-      label.style.setProperty("--topic-text-width", `${Math.ceil(label.getBoundingClientRect().width)}px`);
-      const styles = getComputedStyle(topic);
+      const styles = topic.style;
       topic.dataset.baseRun = String(parseFloat(styles.getPropertyValue("--run")) || 0);
       topic.dataset.baseBendX = String(parseFloat(styles.getPropertyValue("--bend-x")) || 0);
       topic.dataset.baseBendY = String(parseFloat(styles.getPropertyValue("--bend-y")) || 0);
@@ -1055,8 +1006,13 @@
       const imageRect = renderedImageRect(allexImage);
       const rootRect = anchorRoot.getBoundingClientRect();
       const lineScale = Math.max(0.68, Math.min(1, imageRect.width / 960));
+      const labelWidths = allexTopics.map((topic) => {
+        const label = topic.querySelector(".topic-text");
+        if (!label || label.style.getPropertyValue("--topic-text-width")) return 0;
+        return Math.ceil(label.getBoundingClientRect().width);
+      });
 
-      allexTopics.forEach((t) => {
+      allexTopics.forEach((t, topicIndex) => {
         const anchorX = (parseFloat(t.dataset.anchorX) || 0) / 100;
         const anchorY = (parseFloat(t.dataset.anchorY) || 0) / 100;
         const run = (parseFloat(t.dataset.baseRun) || 0) * lineScale;
@@ -1076,6 +1032,9 @@
         t.style.setProperty("--end-x", (run + bendX) + "px");
         t.style.setProperty("--connector-length", (runLength + bendLength) + "px");
         t.style.setProperty("--connector-bend-offset", -runLength + "px");
+        if (labelWidths[topicIndex]) {
+          t.querySelector(".topic-text").style.setProperty("--topic-text-width", `${labelWidths[topicIndex]}px`);
+        }
       });
 
       if (allexHint) {
@@ -1093,10 +1052,17 @@
         allexPointerRect = imageRect;
       }
     }
-    layoutTopics();
-    window.addEventListener("resize", layoutTopics);
-    if (allexImage && !allexImage.complete) allexImage.addEventListener("load", layoutTopics, { once: true });
-    if (document.fonts && document.fonts.ready) document.fonts.ready.then(layoutTopics);
+    let topicLayoutFrame;
+    function scheduleTopicLayout() {
+      if (topicLayoutFrame) return;
+      topicLayoutFrame = window.requestAnimationFrame(() => {
+        topicLayoutFrame = 0;
+        layoutTopics();
+      });
+    }
+    afterPageEntry(scheduleTopicLayout, 120);
+    window.addEventListener("resize", scheduleTopicLayout);
+    if (allexImage && !allexImage.complete) allexImage.addEventListener("load", scheduleTopicLayout, { once: true });
 
     function render() {
       allexNav.classList.toggle("is-awake", isOpen || isHover);
@@ -1226,6 +1192,7 @@
     });
 
     function syncPark() {
+      parkFrame = 0;
       const shouldPark = window.scrollY > window.innerHeight * 0.45;
       if (shouldPark === parked) return;
       parked = shouldPark;
@@ -1238,8 +1205,13 @@
       if (parked) hideHint();
       else showHint();
     }
-    syncPark();
-    window.addEventListener("scroll", syncPark, { passive: true });
+    let parkFrame;
+    function scheduleParkSync() {
+      if (parkFrame) return;
+      parkFrame = window.requestAnimationFrame(syncPark);
+    }
+    afterPageEntry(scheduleParkSync, 120);
+    window.addEventListener("scroll", scheduleParkSync, { passive: true });
 
     // Reveal the quiet ALLEX exploration cue once the home entrance finishes.
     function armHint() {
@@ -1385,12 +1357,30 @@
 
   if (!reduceMotion && pageEntryRoot.classList.contains("page-entry-pending")) {
     const delay = (duration) => new Promise((resolve) => window.setTimeout(resolve, duration));
+    const isInternalDocumentEntry = (() => {
+      if (!document.referrer) return false;
+      try {
+        return new URL(document.referrer).origin === window.location.origin;
+      } catch (_error) {
+        return false;
+      }
+    })();
+
+    if (!isInternalDocumentEntry) {
+      window.requestAnimationFrame(() => {
+        window.requestAnimationFrame(() => finishPageEntry(false));
+      });
+      return;
+    }
+
     const entryWaitStartedAt = performance.now();
     const criticalImages = Array.from(document.querySelectorAll(".page-shell img:not([loading='lazy'])"))
+      .filter((image) => !image.hasAttribute("data-entry-defer"))
       .filter((image) => image.getBoundingClientRect().top < window.innerHeight * 1.25);
     const criticalImageUrls = new Set(criticalImages.map((image) => image.currentSrc || image.src));
     const preloadImages = Array.from(document.querySelectorAll("link[rel='preload'][as='image']"))
       .filter((link) => !link.media || window.matchMedia(link.media).matches)
+      .filter((link) => !link.hasAttribute("data-entry-defer"))
       .filter((link) => !criticalImageUrls.has(link.href))
       .map((link) => {
         const image = new Image();
@@ -1403,16 +1393,14 @@
     const preloadReady = Promise.allSettled(preloadImages.map(imageReady)).then(() => {
       preloadArtworkSettled = true;
     });
-    const fontReady = document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve();
     const resourcesReady = Promise.allSettled([
-      fontReady,
       preloadReady,
       ...criticalImages.map(imageReady)
     ]);
 
     Promise.race([
       resourcesReady.then(() => true),
-      delay(700).then(() => false)
+      delay(500).then(() => false)
     ]).then(async (resourcesFinished) => {
       if (!resourcesFinished && !preloadArtworkSettled && document.querySelector(".project-timeline-page")) {
         pageEntryRoot.classList.add("page-entry-assets-late");

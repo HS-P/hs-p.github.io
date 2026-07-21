@@ -12,7 +12,13 @@
     <meta property="og:image" content="{{ site.data.profile.image | absolute_url }}">
     <title>{% if page.title %}{{ page.title }} · {% endif %}{{ site.title }}</title>
     <script>
-      if (window.matchMedia("(prefers-reduced-motion: no-preference)").matches) {
+      var stagePageEntry = false;
+      try {
+        stagePageEntry = Boolean(document.referrer) && new URL(document.referrer).origin === window.location.origin;
+      } catch (error) {
+        stagePageEntry = false;
+      }
+      if (stagePageEntry && window.matchMedia("(prefers-reduced-motion: no-preference)").matches) {
         var pageEntryRoot = document.documentElement;
         pageEntryRoot.classList.add("page-entry-pending");
         window.__pageEntryFallback = window.setTimeout(function () {
@@ -24,15 +30,20 @@
           window.setTimeout(function () {
             pageEntryRoot.classList.remove("page-entry-pending", "page-entry-ready");
           }, 720);
-        }, 1200);
+        }, 650);
       }
     </script>
     <link rel="canonical" href="{{ page.url | absolute_url }}">
     <link rel="alternate" type="application/atom+xml" title="{{ site.title }}" href="{{ '/feed.xml' | relative_url }}">
     <link rel="icon" type="image/svg+xml" href="{{ '/assets/img/favicons/hamburger.svg' | relative_url }}">
-    {% if page.url == '/' %}<link rel="preload" as="image" type="image/webp" href="{{ '/assets/img/allex/allex-official-hero-source.webp' | relative_url }}" media="(min-width: 981px)" fetchpriority="high">{% endif %}
-    {% if page.url != '/' and page.layout != 'project-detail' and page.layout != 'award-detail' %}<link rel="preload" as="image" type="image/webp" href="{{ '/assets/img/allex/hero-allex.webp' | relative_url }}" media="(min-width: 761px)" fetchpriority="high">{% endif %}
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.1/css/all.min.css">
+    {% if page.url == '/' %}
+      <link rel="preload" as="image" type="image/webp" href="{{ '/assets/img/profile/qqq-512.webp' | relative_url }}" fetchpriority="high">
+      <link rel="preload" as="image" type="image/webp" href="{{ '/assets/img/allex/allex-official-hero-source.webp' | relative_url }}" media="(min-width: 981px)" fetchpriority="low" data-entry-defer>
+    {% elsif page.url == '/projects/' %}
+      <link rel="preload" as="image" type="image/webp" href="{{ '/assets/img/allex/hero-allex.webp' | relative_url }}" media="(min-width: 761px)" fetchpriority="low" data-entry-defer>
+    {% endif %}
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.1/css/all.min.css" media="print" fetchpriority="low" onload="this.onload=null;this.media='all'">
+    <noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.1/css/all.min.css"></noscript>
     <link rel="stylesheet" href="{{ '/assets/css/site.css' | relative_url }}">
     <link rel="stylesheet" href="{{ '/assets/css/mobile.css' | relative_url }}" media="(max-width: 760px)">
   </head>

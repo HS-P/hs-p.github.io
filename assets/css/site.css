@@ -51,6 +51,15 @@ img {
   max-width: 100%;
 }
 
+.fa-solid,
+.fa-brands {
+  display: inline-block;
+  flex: 0 0 1em;
+  width: 1em;
+  font-style: normal;
+  text-align: center;
+}
+
 .hero-mobile-intro {
   display: none;
 }
@@ -12504,6 +12513,36 @@ body:has(.experience-editorial-page) .page-shell {
 /* Keep the ALLEX artwork composited at every desktop/tablet breakpoint. */
 .home-page .allex-nav img {
   transition-property: opacity, transform;
+}
+
+.home-page .hero-profile-panel.namecard,
+.project-timeline-page.has-project-intro .project-intro::before {
+  backdrop-filter: none;
+  filter: none;
+}
+
+@media (min-width: 761px) {
+  .home-page .hero-copy--lab > * {
+    animation-duration: 560ms;
+  }
+
+  .home-page .hero-copy--lab > *:nth-child(1) {
+    animation-delay: 0ms;
+  }
+
+  .home-page .hero-copy--lab > *:nth-child(2) {
+    animation-delay: 60ms;
+  }
+
+  .home-page .allex-nav img,
+  .home-page .allex-nav.is-awake img,
+  .home-page .allex-nav.is-hovered img,
+  .home-page .allex-nav.is-open img,
+  .home-page .allex-nav.is-awake.is-open img,
+  .home-page .allex-nav.is-pressed img,
+  .home-page .allex-nav.is-awake.is-pressed img {
+    filter: none;
+  }
 }
 
 @media (prefers-reduced-motion: no-preference) {
