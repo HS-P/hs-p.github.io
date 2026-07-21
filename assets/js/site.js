@@ -20,6 +20,75 @@
     pageMotionStarted.then(() => window.setTimeout(callback, delay));
   }
 
+  // CV and Research use a short, bounded paper reveal. Keep the long document
+  // itself static and strike in a small set of reading-order groups.
+  const paperSequencePage = document.querySelector(".paper-sequence-page");
+  if (paperSequencePage
+    && pageEntryRoot.classList.contains("paper-sequence-entry")
+    && !reduceMotion
+    && !window.location.hash) {
+    const isCvPaperSequence = paperSequencePage.classList.contains("cv-editorial-page");
+    const paperCopySelector = isCvPaperSequence
+      ? ".page-title > *, .cv-contact, .cv-summary, .cv-block > h2, .cv-entry, .cv-interest-list > li, .cv-skills-list > div"
+      : ".page-title > *, .research-page-block > h2, .work-map-item, .keyword-row > span, .paper-item";
+    const copyLimit = mobilePageQuery.matches
+      ? (isCvPaperSequence ? 10 : 13)
+      : (isCvPaperSequence ? 20 : 16);
+    const visibleCopy = Array.from(paperSequencePage.querySelectorAll(paperCopySelector))
+      .slice(0, copyLimit);
+    const paperDuration = mobilePageQuery.matches ? 720 : 820;
+    const copyInterval = mobilePageQuery.matches ? 62 : 70;
+    const copyDuration = mobilePageQuery.matches ? 120 : 140;
+    let paperSettleTimer;
+    let paperCleanupTimer;
+    let paperSequenceFinished = false;
+
+    visibleCopy.forEach((element, index) => {
+      element.classList.add("paper-copy-strike");
+      if (element.matches("h1, h2")) element.classList.add("paper-copy-line");
+      element.style.setProperty("--paper-copy-delay", `${paperDuration + (index * copyInterval)}ms`);
+      const releasePaperCopy = (event) => {
+        if (event.target !== element) return;
+        element.removeEventListener("animationend", releasePaperCopy);
+        element.classList.remove("paper-copy-strike", "paper-copy-line");
+        element.style.removeProperty("--paper-copy-delay");
+      };
+      element.addEventListener("animationend", releasePaperCopy);
+    });
+    paperSequencePage.classList.add("is-paper-motion-armed");
+
+    function finishPaperSequence() {
+      if (paperSequenceFinished) return;
+      paperSequenceFinished = true;
+      window.clearTimeout(paperSettleTimer);
+      window.clearTimeout(paperCleanupTimer);
+      pageEntryRoot.classList.remove("paper-sequence-entry");
+      paperSequencePage.classList.remove("is-paper-motion-armed", "is-paper-surface-settled");
+      visibleCopy.forEach((element) => {
+        element.classList.remove("paper-copy-strike", "paper-copy-line");
+        element.style.removeProperty("--paper-copy-delay");
+      });
+    }
+
+    const sequenceDuration = paperDuration
+      + (Math.max(visibleCopy.length - 1, 0) * copyInterval)
+      + copyDuration
+      + 100;
+    afterPageMotion(() => {
+      if (paperSequenceFinished) return;
+      paperSettleTimer = window.setTimeout(() => {
+        paperSequencePage.classList.add("is-paper-surface-settled");
+      }, paperDuration);
+      paperCleanupTimer = window.setTimeout(finishPaperSequence, sequenceDuration);
+    });
+    window.addEventListener("pagehide", finishPaperSequence);
+    window.addEventListener("pageshow", (event) => {
+      if (event.persisted) finishPaperSequence();
+    });
+  } else if (paperSequencePage) {
+    pageEntryRoot.classList.remove("paper-sequence-entry");
+  }
+
   pageEntryStarted.then(() => {
     window.requestAnimationFrame(() => {
       window.requestAnimationFrame(() => {
@@ -269,7 +338,7 @@
       if (!url.hash || !samePath(url)) {
         if (!event.metaKey && !event.ctrlKey && !event.shiftKey && !event.altKey && !link.target) {
           event.preventDefault();
-          if (isCompactExperience || reduceMotion) {
+          if (isCompactExperience || reduceMotion || paperSequencePage) {
             window.location.href = url.href;
           } else {
             navigateWithPageExit(url.href);

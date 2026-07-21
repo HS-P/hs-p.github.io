@@ -1756,12 +1756,12 @@ body.sub-page .site-header {
     transform: translate3d(0, 22px, 0) scale(1.015) !important;
   }
 
-  html.page-motion-pending:not(.page-entry-internal) .sub-page .page-shell > * {
+  html.page-motion-pending:not(.page-entry-internal) .sub-page .page-shell > :not(.paper-sequence-page) {
     animation: mobile-page-in 680ms cubic-bezier(0.16, 0.86, 0.22, 1) both !important;
     animation-play-state: paused !important;
   }
 
-  html.page-motion-pending.page-motion-ready:not(.page-entry-internal) .sub-page .page-shell > * {
+  html.page-motion-pending.page-motion-ready:not(.page-entry-internal) .sub-page .page-shell > :not(.paper-sequence-page) {
     animation-play-state: running !important;
   }
 }
@@ -1774,5 +1774,196 @@ body.sub-page .site-header {
   100% {
     opacity: 1;
     transform: translate3d(0, 0, 0) scaleY(1);
+  }
+}
+
+/* CV / Research keep the document fixed while a viewport-sized paper surface
+   unfolds. This replaces both the direct article transform and internal shell
+   transform, which were especially expensive on the long mobile CV. */
+body:has(.research-editorial-page) .page-shell {
+  width: 100%;
+  max-width: none;
+  margin: 0;
+  padding: 30px var(--mobile-gutter) 72px;
+}
+
+.prose-page.research-editorial-page {
+  width: 100%;
+  max-width: none;
+  margin: 0;
+  padding: 28px var(--mobile-gutter) 56px;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+.research-editorial-page .page-title {
+  margin: 0;
+  padding: 0 0 18px;
+  border-bottom: 2px solid rgba(102, 216, 110, 0.74);
+}
+
+.research-editorial-page .page-title h1 {
+  color: var(--mobile-text);
+  font-size: clamp(2.7rem, 14vw, 3.8rem);
+  font-weight: 820;
+  line-height: 0.96;
+  letter-spacing: -0.045em;
+}
+
+.research-editorial-page .page-title p {
+  margin-top: 10px;
+  color: var(--mobile-muted);
+  font-size: 0.76rem;
+  font-weight: 680;
+  line-height: 1.55;
+}
+
+.research-editorial-page .research-page-block {
+  margin: 0;
+  padding: 28px 0 0;
+  border: 0;
+}
+
+.research-editorial-page .research-page-block > h2 {
+  margin: 0;
+  padding: 0 0 8px;
+  border-bottom: 1px solid var(--mobile-line);
+  color: var(--mobile-green);
+  font-size: 0.78rem;
+  font-weight: 800;
+  line-height: 1.4;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.research-editorial-page .work-map {
+  grid-template-columns: minmax(0, 1fr);
+  margin-top: 6px;
+}
+
+.research-editorial-page .work-map-item,
+.research-editorial-page .work-map-item + .work-map-item {
+  padding: 17px 0;
+  border: 0;
+  border-bottom: 1px solid var(--mobile-line-soft);
+}
+
+.research-editorial-page .work-map-item h3,
+.research-editorial-page .paper-body h3 {
+  color: var(--mobile-text);
+  font-size: 1rem;
+}
+
+.research-editorial-page .work-map-item p,
+.research-editorial-page .paper-body p {
+  color: var(--mobile-muted);
+  font-size: 0.84rem;
+}
+
+.research-editorial-page .keyword-row {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  margin-top: 10px;
+  border-top-color: var(--mobile-line);
+}
+
+.research-editorial-page .keyword-row span,
+.research-editorial-page .keyword-row span:nth-child(3n) {
+  padding: 11px 8px 11px 16px;
+  border: solid var(--mobile-line-soft);
+  border-width: 0 1px 1px 0;
+  color: rgba(243, 246, 242, 0.84);
+  font-size: 0.76rem;
+}
+
+.research-editorial-page .keyword-row span:nth-child(even) {
+  border-right: 0;
+}
+
+.research-editorial-page .keyword-row span::before {
+  left: 3px;
+  background: var(--mobile-green);
+}
+
+.research-editorial-page .paper-item {
+  grid-template-columns: minmax(0, 1fr);
+  gap: 8px;
+  padding: 18px 0;
+  border-bottom-color: var(--mobile-line-soft);
+}
+
+.research-editorial-page .paper-year {
+  color: var(--mobile-green);
+}
+
+.research-editorial-page .paper-body .authors,
+.research-editorial-page .paper-body .venue {
+  color: rgba(167, 174, 168, 0.82);
+}
+
+.research-editorial-page .status-badge {
+  border-color: rgba(102, 216, 110, 0.2);
+  background: rgba(102, 216, 110, 0.08);
+  color: var(--mobile-green);
+}
+
+body:has(.paper-sequence-page) .page-shell {
+  transform: none;
+  transition: none !important;
+  will-change: auto;
+}
+
+.sub-page .paper-sequence-page {
+  --paper-surface: linear-gradient(180deg, #232824 0%, #1d211e 100%);
+  --paper-settled-surface: linear-gradient(180deg, #202521 0%, var(--mobile-bg) 720px);
+  background: var(--paper-settled-surface);
+}
+
+html.page-entry-pending body:has(.paper-sequence-page) .page-shell,
+html.page-entry-pending.page-entry-ready body:has(.paper-sequence-page) .page-shell {
+  opacity: 1;
+  pointer-events: auto;
+  transform: none;
+  transition: none !important;
+  will-change: auto;
+}
+
+@media screen and (prefers-reduced-motion: no-preference) {
+  .sub-page .page-shell > .paper-sequence-page {
+    opacity: 1 !important;
+    transform: none !important;
+    animation: none !important;
+  }
+
+  .sub-page .paper-sequence-page.is-paper-motion-armed {
+    --paper-depth: max(240px, calc(100vh - 89px));
+    --paper-depth: max(240px, calc(100svh - 89px));
+  }
+
+  .sub-page .paper-sequence-page.is-paper-motion-armed::before,
+  .sub-page .paper-sequence-page.is-paper-motion-armed::after {
+    display: block !important;
+    animation-duration: 720ms !important;
+  }
+
+  .sub-page .paper-sequence-page.is-paper-motion-armed::after {
+    background: linear-gradient(
+      180deg,
+      transparent 0%,
+      rgba(0, 0, 0, 0.2) 42%,
+      rgba(243, 246, 242, 0.62) 54%,
+      rgba(102, 216, 110, 0.13) 72%,
+      transparent 100%
+    );
+  }
+
+  .paper-sequence-page .paper-copy-strike {
+    animation-duration: 120ms !important;
+    animation-timing-function: steps(3, end) !important;
+  }
+
+  .paper-sequence-page .paper-copy-strike.paper-copy-line {
+    animation-name: paper-copy-line !important;
+    animation-timing-function: steps(6, end) !important;
   }
 }
