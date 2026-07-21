@@ -20,7 +20,7 @@
     pageMotionStarted.then(() => window.setTimeout(callback, delay));
   }
 
-  // CV and Research use a short, bounded paper reveal. Keep the long document
+  // The document indexes use a bounded paper reveal. Keep the long document
   // itself static and strike in a small set of reading-order groups.
   const paperSequencePage = document.querySelector(".paper-sequence-page");
   if (paperSequencePage
@@ -28,17 +28,24 @@
     && !reduceMotion
     && !window.location.hash) {
     const isCvPaperSequence = paperSequencePage.classList.contains("cv-editorial-page");
-    const paperCopySelector = isCvPaperSequence
-      ? ".page-title > *, .cv-contact, .cv-summary, .cv-block > h2, .cv-entry, .cv-interest-list > li, .cv-skills-list > div"
-      : ".page-title > *, .research-page-block > h2, .work-map-item, .keyword-row > span, .paper-item";
-    const copyLimit = mobilePageQuery.matches
-      ? (isCvPaperSequence ? 10 : 13)
-      : (isCvPaperSequence ? 20 : 16);
+    const isExperiencePaperSequence = paperSequencePage.classList.contains("experience-editorial-page");
+    let paperCopySelector;
+    let copyLimit;
+    if (isCvPaperSequence) {
+      paperCopySelector = ".page-title > *, .cv-contact, .cv-summary, .cv-block > h2, .cv-entry, .cv-interest-list > li, .cv-skills-list > div";
+      copyLimit = mobilePageQuery.matches ? 10 : 20;
+    } else if (isExperiencePaperSequence) {
+      paperCopySelector = ".page-title > *, .cv-block > h2, .award-card, .timeline-item";
+      copyLimit = 11;
+    } else {
+      paperCopySelector = ".page-title > *, .research-page-block > h2, .work-map-item, .keyword-row > span, .paper-item";
+      copyLimit = mobilePageQuery.matches ? 13 : 16;
+    }
     const visibleCopy = Array.from(paperSequencePage.querySelectorAll(paperCopySelector))
       .slice(0, copyLimit);
-    const paperDuration = mobilePageQuery.matches ? 720 : 820;
-    const copyInterval = mobilePageQuery.matches ? 62 : 70;
-    const copyDuration = mobilePageQuery.matches ? 120 : 140;
+    const paperDuration = mobilePageQuery.matches ? 900 : 1060;
+    const copyInterval = mobilePageQuery.matches ? 50 : 58;
+    const copyDuration = mobilePageQuery.matches ? 105 : 120;
     let paperSettleTimer;
     let paperCleanupTimer;
     let paperSequenceFinished = false;

@@ -1777,9 +1777,8 @@ body.sub-page .site-header {
   }
 }
 
-/* CV / Research keep the document fixed while a viewport-sized paper surface
-   unfolds. This replaces both the direct article transform and internal shell
-   transform, which were especially expensive on the long mobile CV. */
+/* The document indexes keep their content fixed while a viewport-sized paper
+   face unrolls and settles in 3D. */
 body:has(.research-editorial-page) .page-shell {
   width: 100%;
   max-width: none;
@@ -1938,23 +1937,44 @@ html.page-entry-pending.page-entry-ready body:has(.paper-sequence-page) .page-sh
   .sub-page .paper-sequence-page.is-paper-motion-armed {
     --paper-depth: max(240px, calc(100vh - 89px));
     --paper-depth: max(240px, calc(100svh - 89px));
+    --paper-lift-start: 80px;
+    --paper-lift-mid: 50px;
+    --paper-lift-low: 18px;
+    --paper-lift-touch: 10px;
+    --paper-lift-damp: 5px;
+    --paper-lift-final: 2px;
+    --paper-roll-lift: 92px;
+    --paper-tilt-start: -58deg;
+    --paper-tilt-mid: -24deg;
+    perspective: 900px;
   }
 
   .sub-page .paper-sequence-page.is-paper-motion-armed::before,
   .sub-page .paper-sequence-page.is-paper-motion-armed::after {
     display: block !important;
-    animation-duration: 720ms !important;
+    animation-duration: 900ms !important;
+  }
+
+  .sub-page .paper-sequence-page.is-paper-motion-armed::before {
+    background:
+      linear-gradient(98deg, rgba(0, 0, 0, 0.14), transparent 18%, transparent 82%, rgba(102, 216, 110, 0.035)),
+      var(--paper-surface);
+    box-shadow: 0 18px 34px rgba(0, 0, 0, 0.24), 0 4px 10px rgba(0, 0, 0, 0.16);
   }
 
   .sub-page .paper-sequence-page.is-paper-motion-armed::after {
+    top: -14px;
+    height: 28px;
     background: linear-gradient(
       180deg,
       transparent 0%,
-      rgba(0, 0, 0, 0.2) 42%,
-      rgba(243, 246, 242, 0.62) 54%,
-      rgba(102, 216, 110, 0.13) 72%,
+      rgba(0, 0, 0, 0.2) 30%,
+      rgba(243, 246, 242, 0.42) 49%,
+      rgba(102, 216, 110, 0.11) 66%,
+      rgba(0, 0, 0, 0.18) 82%,
       transparent 100%
     );
+    box-shadow: 0 7px 12px rgba(0, 0, 0, 0.22);
   }
 
   .paper-sequence-page .paper-copy-strike {
