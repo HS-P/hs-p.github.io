@@ -58,7 +58,7 @@
   .sub-page .paper-sequence-page.is-paper-motion-armed {
     --paper-depth: max(240px, calc(100vh - 125px));
     --paper-depth: max(240px, calc(100svh - 125px));
-    --paper-motion-duration: 1450ms;
+    --paper-motion-duration: 1350ms;
     position: relative;
     overflow: visible;
     perspective: none;

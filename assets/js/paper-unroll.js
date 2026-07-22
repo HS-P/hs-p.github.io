@@ -8,7 +8,7 @@
   const paperFallback = paperRevealSurface?.querySelector("[data-paper-unroll-fallback]");
   const mobilePageQuery = window.matchMedia("(max-width: 760px)");
   const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  const paperDuration = 1450;
+  const paperDuration = 1350;
   const baseCopyInterval = mobilePageQuery.matches ? 32 : 36;
   const maxCopyDelay = mobilePageQuery.matches ? 800 : 900;
   const copyDuration = mobilePageQuery.matches ? 250 : 280;

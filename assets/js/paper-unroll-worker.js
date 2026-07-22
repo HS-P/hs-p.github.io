@@ -1,4 +1,4 @@
-const PAPER_DURATION = 1450;
+const PAPER_DURATION = 1350;
 const X_SEGMENTS = 44;
 const Y_SEGMENTS = 220;
 const SOFTWARE_RENDERER = /SwiftShader|llvmpipe|softpipe|lavapipe|software rasterizer|Microsoft Basic Render/i;
