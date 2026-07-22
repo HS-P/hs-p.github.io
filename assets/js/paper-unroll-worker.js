@@ -1,4 +1,4 @@
-const PAPER_DURATION = 1350;
+const PAPER_DURATION = 900;
 const X_SEGMENTS = 44;
 const Y_SEGMENTS = 220;
 const SOFTWARE_RENDERER = /SwiftShader|llvmpipe|softpipe|lavapipe|software rasterizer|Microsoft Basic Render/i;
@@ -36,12 +36,12 @@ const vertexSource = `#version 300 es
   vec3 paperPosition(vec2 uv) {
     float t = uProgress;
     // Start lower and tighten in place with a jerk-free inward curl.
-    float prepClock = clamp(t / 0.16, 0.0, 1.0);
+    float prepClock = clamp(t / 0.28, 0.0, 1.0);
     float prep = prepClock * prepClock * prepClock
       * (prepClock * (prepClock * 6.0 - 15.0) + 10.0);
 
     // Release quickly after the curl. The short brake only softens contact.
-    float run = clamp((t - 0.16) / 0.72, 0.0, 1.0);
+    float run = clamp((t - 0.28) / 0.58, 0.0, 1.0);
     float drive = run * run * (2.2 - 1.2 * run);
     float brake = smoothstep(0.88, 1.0, run);
     float travel = mix(drive, 1.0, brake);

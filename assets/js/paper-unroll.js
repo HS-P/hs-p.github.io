@@ -8,10 +8,17 @@
   const paperFallback = paperRevealSurface?.querySelector("[data-paper-unroll-fallback]");
   const mobilePageQuery = window.matchMedia("(max-width: 760px)");
   const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  const paperDuration = 1350;
-  const baseCopyInterval = mobilePageQuery.matches ? 32 : 36;
-  const maxCopyDelay = mobilePageQuery.matches ? 800 : 900;
-  const copyDuration = mobilePageQuery.matches ? 250 : 280;
+  const connection = navigator.connection;
+  const lowResourceDevice = Boolean(connection?.saveData)
+    || (navigator.deviceMemory && navigator.deviceMemory <= 2)
+    || (navigator.hardwareConcurrency && navigator.hardwareConcurrency <= 2);
+  const useInkCopy = !mobilePageQuery.matches
+    && window.matchMedia("(pointer: fine)").matches
+    && !lowResourceDevice;
+  const paperDuration = 900;
+  const baseCopyInterval = mobilePageQuery.matches ? 46 : 52;
+  const maxCopyDelay = mobilePageQuery.matches ? 1120 : 1280;
+  const copyDuration = mobilePageQuery.matches ? 360 : 400;
   let resolveReady;
   let readyResolved = false;
   let rendererMode = "idle";
@@ -54,7 +61,7 @@
 
   function clearCopyStrike(element, releaseHandler) {
     if (releaseHandler) element.removeEventListener("animationend", releaseHandler);
-    element.classList.remove("paper-copy-strike");
+    element.classList.remove("paper-copy-strike", "paper-copy-ink");
     element.style.removeProperty("--paper-copy-delay");
   }
 
@@ -93,9 +100,11 @@
 
   visibleCopy.forEach((element, index) => {
     element.classList.add("paper-copy-strike");
+    if (useInkCopy && index < 8) element.classList.add("paper-copy-ink");
     element.style.setProperty("--paper-copy-delay", `${index * copyInterval}ms`);
     const releasePaperCopy = (event) => {
-      if (event.target !== element || event.animationName !== "paper-copy-strike") return;
+      if (event.target !== element
+        || !["paper-copy-strike", "paper-copy-ink-write"].includes(event.animationName)) return;
       paperCopyReleaseHandlers.delete(element);
       clearCopyStrike(element, releasePaperCopy);
     };
@@ -190,10 +199,6 @@
 
   function initializeRenderer() {
     if (paperSequenceFinished) return;
-    const connection = navigator.connection;
-    const lowResourceDevice = Boolean(connection?.saveData)
-      || (navigator.deviceMemory && navigator.deviceMemory <= 2)
-      || (navigator.hardwareConcurrency && navigator.hardwareConcurrency <= 2);
     const supportsWorkerCanvas = Boolean(workerUrl)
       && "Worker" in window
       && "OffscreenCanvas" in window

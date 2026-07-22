@@ -25,7 +25,7 @@
         if (paperSequence) {
           paperSequence.classList.remove("is-paper-motion-armed", "is-paper-surface-settled");
           paperSequence.querySelectorAll(".paper-copy-strike").forEach(function (element) {
-            element.classList.remove("paper-copy-strike", "paper-copy-line");
+            element.classList.remove("paper-copy-strike", "paper-copy-ink", "paper-copy-line");
             element.style.removeProperty("--paper-copy-delay");
           });
         }
@@ -100,7 +100,7 @@
     <link rel="stylesheet" href="{{ '/assets/css/site.css' | relative_url }}">
     <link rel="stylesheet" href="{{ '/assets/css/mobile.css' | relative_url }}" media="screen and (max-width: 760px)">
     {% if page.page_class contains 'paper-sequence-page' %}
-      <link rel="stylesheet" href="{{ '/assets/css/paper-unroll.css' | relative_url }}?v=paper-unroll-6">
+      <link rel="stylesheet" href="{{ '/assets/css/paper-unroll.css' | relative_url }}?v=paper-unroll-8">
     {% endif %}
   </head>
   <body class="{% if page.url == '/' %}home-page{% else %}sub-page{% endif %}">
@@ -114,7 +114,7 @@
     {% endif %}
     {% include site-footer.html %}
     {% if page.page_class contains 'paper-sequence-page' %}
-      <script src="{{ '/assets/js/paper-unroll.js' | relative_url }}?v=paper-unroll-6" data-paper-worker="{{ '/assets/js/paper-unroll-worker.js' | relative_url }}?v=paper-unroll-6" onerror="window.__failOpenPageMotion && window.__failOpenPageMotion()"></script>
+      <script src="{{ '/assets/js/paper-unroll.js' | relative_url }}?v=paper-unroll-8" data-paper-worker="{{ '/assets/js/paper-unroll-worker.js' | relative_url }}?v=paper-unroll-8" onerror="window.__failOpenPageMotion && window.__failOpenPageMotion()"></script>
     {% endif %}
     <script src="{{ '/assets/js/site.js' | relative_url }}?v=site-motion-1" onerror="window.__failOpenPageMotion && window.__failOpenPageMotion()"></script>
   </body>
