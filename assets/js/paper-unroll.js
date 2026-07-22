@@ -8,9 +8,10 @@
   const paperFallback = paperRevealSurface?.querySelector("[data-paper-unroll-fallback]");
   const mobilePageQuery = window.matchMedia("(max-width: 760px)");
   const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  const paperDuration = 1750;
-  const copyInterval = mobilePageQuery.matches ? 38 : 44;
-  const copyDuration = mobilePageQuery.matches ? 118 : 128;
+  const paperDuration = 1450;
+  const baseCopyInterval = mobilePageQuery.matches ? 32 : 36;
+  const maxCopyDelay = mobilePageQuery.matches ? 800 : 900;
+  const copyDuration = mobilePageQuery.matches ? 250 : 280;
   let resolveReady;
   let readyResolved = false;
   let rendererMode = "idle";
@@ -53,7 +54,7 @@
 
   function clearCopyStrike(element, releaseHandler) {
     if (releaseHandler) element.removeEventListener("animationend", releaseHandler);
-    element.classList.remove("paper-copy-strike", "paper-copy-line");
+    element.classList.remove("paper-copy-strike");
     element.style.removeProperty("--paper-copy-delay");
   }
 
@@ -76,25 +77,22 @@
   const isCvPaperSequence = paperSequencePage.classList.contains("cv-editorial-page");
   const isExperiencePaperSequence = paperSequencePage.classList.contains("experience-editorial-page");
   let paperCopySelector;
-  let copyLimit;
   if (isCvPaperSequence) {
     paperCopySelector = ".page-title > *, .cv-contact, .cv-summary, .cv-block > h2, .cv-entry, .cv-interest-list > li, .cv-skills-list > div";
-    copyLimit = mobilePageQuery.matches ? 10 : 20;
   } else if (isExperiencePaperSequence) {
     paperCopySelector = ".page-title > *, .cv-block > h2, .award-card, .timeline-item";
-    copyLimit = 11;
   } else {
     paperCopySelector = ".page-title > *, .research-page-block > h2, .work-map-item, .keyword-row > span, .paper-item";
-    copyLimit = mobilePageQuery.matches ? 13 : 16;
   }
 
-  const visibleCopy = Array.from(paperSequencePage.querySelectorAll(paperCopySelector))
-    .slice(0, copyLimit);
+  const visibleCopy = Array.from(paperSequencePage.querySelectorAll(paperCopySelector));
+  const copyInterval = visibleCopy.length > 1
+    ? Math.min(baseCopyInterval, Math.floor(maxCopyDelay / (visibleCopy.length - 1)))
+    : 0;
   const paperCopyReleaseHandlers = new Map();
 
   visibleCopy.forEach((element, index) => {
     element.classList.add("paper-copy-strike");
-    if (element.matches("h1, h2")) element.classList.add("paper-copy-line");
     element.style.setProperty("--paper-copy-delay", `${index * copyInterval}ms`);
     const releasePaperCopy = (event) => {
       if (event.target !== element || event.animationName !== "paper-copy-strike") return;
@@ -145,7 +143,7 @@
     paperSequencePage.classList.add("is-paper-surface-settled");
     const copySequenceDuration = (Math.max(visibleCopy.length - 1, 0) * copyInterval)
       + copyDuration
-      + 160;
+      + 120;
     paperCleanupTimer = window.setTimeout(finishPaperSequence, copySequenceDuration);
   }
 

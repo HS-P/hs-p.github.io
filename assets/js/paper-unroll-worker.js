@@ -1,4 +1,4 @@
-const PAPER_DURATION = 1750;
+const PAPER_DURATION = 1450;
 const X_SEGMENTS = 44;
 const Y_SEGMENTS = 220;
 const SOFTWARE_RENDERER = /SwiftShader|llvmpipe|softpipe|lavapipe|software rasterizer|Microsoft Basic Render/i;
@@ -35,24 +35,24 @@ const vertexSource = `#version 300 es
 
   vec3 paperPosition(vec2 uv) {
     float t = uProgress;
-    // First wind the crown upward a fraction, then release the stored tension
-    // into one fast, continuously accelerating downward fall.
-    float wind = smoothstep(0.0, 0.24, t);
-    float run = clamp((t - 0.24) / 0.70, 0.0, 1.0);
-    float releaseBase = 0.16 * run + 0.84 * pow(run, 1.55);
-    float travel = 1.0 - pow(max(0.0, 1.0 - releaseBase), 1.18);
-    float stick = smoothstep(0.88, 1.0, t);
+    // Start lower and tighten in place with a jerk-free inward curl.
+    float prepClock = clamp(t / 0.16, 0.0, 1.0);
+    float prep = prepClock * prepClock * prepClock
+      * (prepClock * (prepClock * 6.0 - 15.0) + 10.0);
 
-    // The small initial rewind is intentional anticipation; the release itself
-    // stays monotonic with no bounce or elastic return.
-    float laid = t < 0.24
-      ? mix(0.105, 0.094, wind)
-      : mix(0.094, 1.003, travel);
+    // Release quickly after the curl. The short brake only softens contact.
+    float run = clamp((t - 0.16) / 0.72, 0.0, 1.0);
+    float drive = run * run * (2.2 - 1.2 * run);
+    float brake = smoothstep(0.88, 1.0, run);
+    float travel = mix(drive, 1.0, brake);
+    float stick = smoothstep(0.80, 1.0, t);
 
-    // The roll tightens during anticipation and presses flat only on contact.
-    float radiusBase = t < 0.24
-      ? mix(0.084, 0.089, wind)
-      : mix(0.089, 0.055, smoothstep(0.0, 0.82, travel));
+    float laid = mix(0.150, 0.153, prep)
+      + (1.003 - 0.153) * travel;
+
+    // Tightening the radius produces depth without lifting or lateral motion.
+    float radiusBase = mix(0.094, 0.079, prep);
+    radiusBase = mix(radiusBase, 0.052, smoothstep(0.0, 0.84, travel));
     float radius = mix(radiusBase, 0.0032, stick);
     float flatEnd = max(0.0, laid - radius);
     float s = uv.y;
@@ -64,15 +64,12 @@ const vertexSource = `#version 300 es
       z = 0.0;
     } else {
       float theta = (s - flatEnd) / radius;
-      // The tail wraps toward the viewer. Anything behind one roll is occluded below.
-      float shownTheta = min(theta, PI * 1.30);
+      // Exponential winding keeps the flat-to-curl tangent continuous and
+      // draws the tail inward without a hard angular clamp.
+      float thetaLimit = mix(PI * 1.65, PI * 1.82, prep);
+      float shownTheta = thetaLimit * (1.0 - exp(-theta / thetaLimit));
       y = -flatEnd - radius * sin(shownTheta);
       z = radius * (1.0 - cos(shownTheta));
-      if (theta > PI * 1.30) {
-        float hidden = theta - PI * 1.30;
-        y += radius * 0.025 * min(hidden, 1.0);
-        z -= min(hidden, 1.0) * 0.002;
-      }
     }
 
     float width = uAspect > 1.2 ? 0.69 : 0.82;
