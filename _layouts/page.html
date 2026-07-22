@@ -4,7 +4,10 @@ layout: default
 
 <article class="prose-page{% if page.page_class %} {{ page.page_class }}{% endif %}">
   {% if page.page_class contains 'paper-sequence-page' %}
-    <div class="paper-reveal" data-paper-reveal data-paper-reveal-surface aria-hidden="true"></div>
+    <div class="paper-reveal" data-paper-reveal data-paper-reveal-surface aria-hidden="true">
+      <span class="paper-reveal__fallback" data-paper-unroll-fallback></span>
+      <canvas class="paper-reveal__canvas" data-paper-unroll-canvas width="1" height="1"></canvas>
+    </div>
   {% endif %}
   <header class="page-title">
     <h1>{{ page.display_title | default: page.title }}</h1>

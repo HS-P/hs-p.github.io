@@ -18,6 +18,7 @@
       window.__siteMotionHydrated = false;
       window.__failOpenPageMotion = function () {
         if (window.__startPageMotion) window.__startPageMotion();
+        if (window.__paperUnroll) window.__paperUnroll.dispose();
         pageEntryRoot.classList.remove("page-motion-pending", "paper-sequence-entry");
         pageEntryRoot.classList.add("page-motion-ready", "icons-ready");
         var paperSequence = document.querySelector(".paper-sequence-page");
@@ -98,6 +99,9 @@
     <noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.1/css/all.min.css"></noscript>
     <link rel="stylesheet" href="{{ '/assets/css/site.css' | relative_url }}">
     <link rel="stylesheet" href="{{ '/assets/css/mobile.css' | relative_url }}" media="screen and (max-width: 760px)">
+    {% if page.page_class contains 'paper-sequence-page' %}
+      <link rel="stylesheet" href="{{ '/assets/css/paper-unroll.css' | relative_url }}?v=paper-unroll-4">
+    {% endif %}
   </head>
   <body class="{% if page.url == '/' %}home-page{% else %}sub-page{% endif %}">
     {% include site-header.html %}
@@ -109,6 +113,9 @@
       <div class="allex-route-transition" data-allex-route-transition aria-hidden="true"></div>
     {% endif %}
     {% include site-footer.html %}
-    <script src="{{ '/assets/js/site.js' | relative_url }}" onerror="window.__failOpenPageMotion && window.__failOpenPageMotion()"></script>
+    {% if page.page_class contains 'paper-sequence-page' %}
+      <script src="{{ '/assets/js/paper-unroll.js' | relative_url }}?v=paper-unroll-4" data-paper-worker="{{ '/assets/js/paper-unroll-worker.js' | relative_url }}?v=paper-unroll-4" onerror="window.__failOpenPageMotion && window.__failOpenPageMotion()"></script>
+    {% endif %}
+    <script src="{{ '/assets/js/site.js' | relative_url }}?v=site-motion-1" onerror="window.__failOpenPageMotion && window.__failOpenPageMotion()"></script>
   </body>
 </html>

@@ -20,119 +20,12 @@
     pageMotionStarted.then(() => window.setTimeout(callback, delay));
   }
 
-  // The document indexes use a bounded, flexible paper reveal. Keep the long
-  // document itself static and strike in a small set of reading-order groups.
-  const paperSequencePage = document.querySelector(".paper-sequence-page");
-  if (paperSequencePage
-    && pageEntryRoot.classList.contains("paper-sequence-entry")
-    && !reduceMotion
-    && !window.location.hash) {
-    const isCvPaperSequence = paperSequencePage.classList.contains("cv-editorial-page");
-    const isExperiencePaperSequence = paperSequencePage.classList.contains("experience-editorial-page");
-    let paperCopySelector;
-    let copyLimit;
-    if (isCvPaperSequence) {
-      paperCopySelector = ".page-title > *, .cv-contact, .cv-summary, .cv-block > h2, .cv-entry, .cv-interest-list > li, .cv-skills-list > div";
-      copyLimit = mobilePageQuery.matches ? 10 : 20;
-    } else if (isExperiencePaperSequence) {
-      paperCopySelector = ".page-title > *, .cv-block > h2, .award-card, .timeline-item";
-      copyLimit = 11;
-    } else {
-      paperCopySelector = ".page-title > *, .research-page-block > h2, .work-map-item, .keyword-row > span, .paper-item";
-      copyLimit = mobilePageQuery.matches ? 13 : 16;
-    }
-    const visibleCopy = Array.from(paperSequencePage.querySelectorAll(paperCopySelector))
-      .slice(0, copyLimit);
-    const paperRevealSurface = paperSequencePage.querySelector("[data-paper-reveal-surface]");
-    const paperDuration = mobilePageQuery.matches ? 1480 : 1680;
-    const copyInterval = mobilePageQuery.matches ? 46 : 52;
-    const copyDuration = mobilePageQuery.matches ? 145 : 165;
-    let paperSettleTimer;
-    let paperCleanupTimer;
-    let paperSequenceFinished = false;
-    let paperSurfaceSettled = false;
-    const paperCopyReleaseHandlers = new Map();
-
-    visibleCopy.forEach((element, index) => {
-      element.classList.add("paper-copy-strike");
-      if (element.matches("h1, h2")) element.classList.add("paper-copy-line");
-      element.style.setProperty("--paper-copy-delay", `${index * copyInterval}ms`);
-      const releasePaperCopy = (event) => {
-        if (event.target !== element) return;
-        element.removeEventListener("animationend", releasePaperCopy);
-        paperCopyReleaseHandlers.delete(element);
-        element.classList.remove("paper-copy-strike", "paper-copy-line");
-        element.style.removeProperty("--paper-copy-delay");
-      };
-      paperCopyReleaseHandlers.set(element, releasePaperCopy);
-      element.addEventListener("animationend", releasePaperCopy);
-    });
-    function finishPaperSequence() {
-      if (paperSequenceFinished) return;
-      paperSequenceFinished = true;
-      window.clearTimeout(paperSettleTimer);
-      window.clearTimeout(paperCleanupTimer);
-      pageEntryRoot.classList.remove("paper-sequence-entry");
-      paperSequencePage.classList.remove("is-paper-motion-armed", "is-paper-surface-settled");
-      visibleCopy.forEach((element) => {
-        const releasePaperCopy = paperCopyReleaseHandlers.get(element);
-        if (releasePaperCopy) element.removeEventListener("animationend", releasePaperCopy);
-        paperCopyReleaseHandlers.delete(element);
-        element.classList.remove("paper-copy-strike", "paper-copy-line");
-        element.style.removeProperty("--paper-copy-delay");
-      });
-      paperRevealSurface?.removeEventListener("animationend", settlePaperSurfaceFromAnimation);
-      document.removeEventListener("focusin", finishPaperSequenceFromFocus, true);
-      window.removeEventListener("pagehide", finishPaperSequence);
-      window.removeEventListener("hashchange", finishPaperSequence);
-      window.removeEventListener("pageshow", finishPaperSequenceFromCache);
-    }
-
-    function settlePaperSurface() {
-      if (paperSequenceFinished || paperSurfaceSettled) return;
-      paperSurfaceSettled = true;
-      window.clearTimeout(paperSettleTimer);
-      paperSequencePage.classList.add("is-paper-surface-settled");
-      const copySequenceDuration = (Math.max(visibleCopy.length - 1, 0) * copyInterval)
-      + copyDuration
-      + 160;
-      paperCleanupTimer = window.setTimeout(finishPaperSequence, copySequenceDuration);
-    }
-
-    function settlePaperSurfaceFromAnimation(event) {
-      if (event.target !== paperRevealSurface || event.animationName !== "paper-sheet-place") return;
-      settlePaperSurface();
-    }
-
-    function finishPaperSequenceFromCache(event) {
-      if (event.persisted) finishPaperSequence();
-    }
-
-    function finishPaperSequenceFromFocus(event) {
-      if (paperSequencePage.contains(event.target)) finishPaperSequence();
-    }
-
-    paperRevealSurface?.addEventListener("animationend", settlePaperSurfaceFromAnimation);
-    document.addEventListener("focusin", finishPaperSequenceFromFocus, true);
-    paperSequencePage.classList.add("is-paper-motion-armed");
-
-    afterPageMotion(() => {
-      if (paperSequenceFinished) return;
-      // Animation completion owns the handoff; the timer only fails open if a
-      // browser drops the event while the page is backgrounded.
-      paperSettleTimer = window.setTimeout(settlePaperSurface, paperDuration + 180);
-    });
-    window.addEventListener("pagehide", finishPaperSequence);
-    window.addEventListener("hashchange", finishPaperSequence);
-    window.addEventListener("pageshow", finishPaperSequenceFromCache);
-  } else if (paperSequencePage) {
-    pageEntryRoot.classList.remove("paper-sequence-entry");
-  }
-
   pageEntryStarted.then(() => {
     window.requestAnimationFrame(() => {
       window.requestAnimationFrame(() => {
-        window.setTimeout(() => window.__startPageMotion?.(), 50);
+        Promise.resolve(window.__paperUnrollReady).catch(() => {}).then(() => {
+          window.setTimeout(() => window.__startPageMotion?.(), 50);
+        });
       });
     });
   });
@@ -378,7 +271,7 @@
       if (!url.hash || !samePath(url)) {
         if (!event.metaKey && !event.ctrlKey && !event.shiftKey && !event.altKey && !link.target) {
           event.preventDefault();
-          if (isCompactExperience || reduceMotion || paperSequencePage) {
+          if (isCompactExperience || reduceMotion || document.querySelector(".paper-sequence-page")) {
             window.location.href = url.href;
           } else {
             navigateWithPageExit(url.href);
