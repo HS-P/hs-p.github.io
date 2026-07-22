@@ -1169,7 +1169,7 @@ body.sub-page .site-header {
 
 .prose-page:is(.cv-editorial-page, .experience-editorial-page) {
   --cv-accent: var(--mobile-green);
-  --cv-wash: rgba(102, 216, 110, 0.07);
+  --cv-wash: rgba(12, 122, 55, 0.06);
 }
 
 :is(.cv-editorial-page, .experience-editorial-page)::before {
@@ -1553,7 +1553,7 @@ body.sub-page .site-header {
 .cv-editorial-page .page-title {
   margin: 0;
   padding: 0 0 18px;
-  border-bottom: 2px solid rgba(102, 216, 110, 0.74);
+  border-bottom: 2px solid rgba(12, 122, 55, 0.74);
 }
 
 .cv-editorial-page .page-title h1 {
@@ -1594,7 +1594,7 @@ body.sub-page .site-header {
 
 .cv-summary {
   margin: 22px 0 0;
-  color: rgba(243, 246, 242, 0.82);
+  color: var(--mobile-muted);
   font-size: 0.95rem;
   line-height: 1.7;
 }
@@ -1660,7 +1660,7 @@ body.sub-page .site-header {
 }
 
 .cv-entry .cv-institution {
-  color: rgba(167, 174, 168, 0.82);
+  color: var(--mobile-muted);
   font-size: 0.75rem;
   text-transform: none;
 }
@@ -1686,7 +1686,7 @@ body.sub-page .site-header {
 
 .cv-interest-list li {
   border-bottom-color: var(--mobile-line-soft);
-  color: rgba(243, 246, 242, 0.84);
+  color: var(--mobile-muted);
   font-size: 0.84rem;
 }
 
@@ -1799,7 +1799,7 @@ body:has(.research-editorial-page) .page-shell {
 .research-editorial-page .page-title {
   margin: 0;
   padding: 0 0 18px;
-  border-bottom: 2px solid rgba(102, 216, 110, 0.74);
+  border-bottom: 2px solid rgba(12, 122, 55, 0.74);
 }
 
 .research-editorial-page .page-title h1 {
@@ -1871,7 +1871,7 @@ body:has(.research-editorial-page) .page-shell {
   padding: 11px 8px 11px 16px;
   border: solid var(--mobile-line-soft);
   border-width: 0 1px 1px 0;
-  color: rgba(243, 246, 242, 0.84);
+  color: var(--mobile-muted);
   font-size: 0.76rem;
 }
 
@@ -1897,12 +1897,12 @@ body:has(.research-editorial-page) .page-shell {
 
 .research-editorial-page .paper-body .authors,
 .research-editorial-page .paper-body .venue {
-  color: rgba(167, 174, 168, 0.82);
+  color: var(--mobile-muted);
 }
 
 .research-editorial-page .status-badge {
-  border-color: rgba(102, 216, 110, 0.2);
-  background: rgba(102, 216, 110, 0.08);
+  border-color: rgba(12, 122, 55, 0.2);
+  background: rgba(12, 122, 55, 0.07);
   color: var(--mobile-green);
 }
 
@@ -1913,16 +1913,33 @@ body:has(.paper-sequence-page) .page-shell {
 }
 
 .sub-page .paper-sequence-page {
-  --paper-base: #232823;
+  --mobile-bg: #fff;
+  --mobile-surface: #fff;
+  --mobile-surface-soft: #f4f7f4;
+  --mobile-text: #111722;
+  --mobile-muted: #626c65;
+  --mobile-line: rgba(17, 23, 34, 0.16);
+  --mobile-line-soft: rgba(17, 23, 34, 0.09);
+  --mobile-green: #0c7a37;
+  --bg: var(--mobile-bg);
+  --surface: var(--mobile-surface);
+  --surface-soft: var(--mobile-surface-soft);
+  --text: var(--mobile-text);
+  --muted: var(--mobile-muted);
+  --line: var(--mobile-line);
+  --accent: var(--mobile-green);
+  --accent-green: var(--mobile-green);
+  --accent-warm: var(--mobile-green);
+  --paper-base: #fff;
   --paper-texture:
-    radial-gradient(circle, rgba(243, 246, 242, 0.02) 0 0.5px, transparent 0.76px),
-    radial-gradient(circle, rgba(0, 0, 0, 0.065) 0 0.48px, transparent 0.76px),
-    repeating-linear-gradient(76deg, transparent 0 7px, rgba(243, 246, 242, 0.009) 8px, transparent 9px 18px),
-    linear-gradient(102deg, rgba(0, 0, 0, 0.035), transparent 21%, rgba(243, 246, 242, 0.018) 51%, transparent 80%, rgba(102, 216, 110, 0.012));
-  --paper-fold-shadow: rgba(0, 0, 0, 0.028);
-  --paper-fold-highlight: rgba(243, 246, 242, 0.04);
+    radial-gradient(circle, rgba(24, 32, 27, 0.024) 0 0.42px, transparent 0.7px),
+    radial-gradient(circle, rgba(75, 84, 78, 0.014) 0 0.38px, transparent 0.68px),
+    linear-gradient(180deg, rgba(255, 255, 255, 0), rgba(22, 31, 25, 0.005));
+  --paper-shadow: none;
   background-color: var(--paper-base);
   background-image: var(--paper-texture);
+  color: var(--mobile-text);
+  color-scheme: light;
 }
 
 html.page-entry-pending body:has(.paper-sequence-page) .page-shell,
@@ -1944,20 +1961,20 @@ html.page-entry-pending.page-entry-ready body:has(.paper-sequence-page) .page-sh
   .sub-page .paper-sequence-page.is-paper-motion-armed {
     --paper-depth: max(240px, calc(100vh - 115px));
     --paper-depth: max(240px, calc(100svh - 115px));
-    --paper-motion-duration: 1360ms;
-    --paper-z-start: 34px;
-    --paper-z-one: 24px;
-    --paper-z-mid: 11px;
-    --paper-z-low: 3px;
-    --paper-tilt-start: -3.4deg;
-    --paper-tilt-one: -2.4deg;
-    --paper-tilt-mid: -1.15deg;
-    --paper-turn-start: -0.06deg;
-    perspective: 1120px;
+    --paper-motion-duration: 1480ms;
+    --paper-place-start: 0 -18px 46px;
+    --paper-flutter-start: translateX(-3px) rotateX(-5.2deg) rotateY(1.05deg) rotateZ(-0.42deg);
+    --paper-flutter-one: translateX(2px) rotateX(-2.2deg) rotateY(-0.7deg) rotateZ(0.3deg);
+    --paper-flutter-two: translateX(-1.2px) rotateX(-3.8deg) rotateY(0.45deg) rotateZ(-0.17deg);
+    --paper-flutter-three: translateX(0.55px) rotateX(-1deg) rotateY(-0.2deg) rotateZ(0.07deg);
+    --paper-flutter-four: translateX(-0.15px) rotateX(0.32deg) rotateY(0.05deg) rotateZ(-0.02deg);
+    --paper-flutter-five: translateX(0) rotateX(-0.08deg) rotateY(0) rotateZ(0);
+    perspective: 1300px;
+    perspective-origin: 50% -3%;
   }
 
   .sub-page .paper-sequence-page.is-paper-motion-armed .paper-reveal {
-    border-color: rgba(243, 246, 242, 0.02);
+    border-color: rgba(17, 23, 34, 0.035);
   }
 
   .paper-sequence-page.is-paper-surface-settled .paper-copy-strike {

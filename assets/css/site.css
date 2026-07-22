@@ -13084,22 +13084,24 @@ body:has(.research-editorial-page) .page-shell {
 
 /* ---------- CV / Research / Experience paper sequence ---------- */
 .sub-page .paper-sequence-page {
-  --paper-base: #fffefb;
+  --paper-base: #fff;
   --paper-texture:
-    radial-gradient(circle, rgba(51, 43, 31, 0.028) 0 0.52px, transparent 0.78px),
-    radial-gradient(circle, rgba(255, 255, 255, 0.5) 0 0.48px, transparent 0.76px),
-    repeating-linear-gradient(76deg, transparent 0 7px, rgba(63, 52, 36, 0.012) 8px, transparent 9px 18px),
-    linear-gradient(102deg, rgba(47, 39, 28, 0.014), transparent 21%, rgba(255, 255, 255, 0.16) 51%, transparent 80%, rgba(47, 39, 28, 0.012));
-  --paper-fold-shadow: rgba(56, 47, 34, 0.028);
-  --paper-fold-highlight: rgba(255, 255, 255, 0.09);
+    radial-gradient(circle, rgba(24, 32, 27, 0.024) 0 0.42px, transparent 0.7px),
+    radial-gradient(circle, rgba(75, 84, 78, 0.014) 0 0.38px, transparent 0.68px),
+    linear-gradient(180deg, rgba(255, 255, 255, 0), rgba(22, 31, 25, 0.005));
+  --paper-shadow: 0 22px 64px rgba(17, 23, 34, 0.045);
   background-color: var(--paper-base);
   background-image: var(--paper-texture);
-  background-position: 1px 2px, 5px 7px, 0 0, 0 0;
-  background-size: 13px 15px, 19px 17px, auto, auto;
+  background-position: 1px 2px, 5px 7px, 0 0;
+  background-size: 13px 15px, 19px 17px, auto;
   opacity: 1 !important;
   transform: none !important;
   transform-origin: initial;
   animation: none !important;
+}
+
+.sub-page .experience-editorial-page.paper-sequence-page {
+  --paper-shadow: 0 22px 64px rgba(17, 23, 34, 0.025);
 }
 
 .sub-page .paper-reveal {
@@ -13126,19 +13128,18 @@ body:has(.research-editorial-page) .page-shell {
   .sub-page .paper-sequence-page.is-paper-motion-armed {
     --paper-depth: max(240px, calc(100vh - 125px));
     --paper-depth: max(240px, calc(100svh - 125px));
-    --paper-motion-duration: 1560ms;
-    --paper-z-start: 70px;
-    --paper-z-one: 48px;
-    --paper-z-mid: 23px;
-    --paper-z-low: 7px;
-    --paper-tilt-start: -4.6deg;
-    --paper-tilt-one: -3.3deg;
-    --paper-tilt-mid: -1.6deg;
-    --paper-turn-start: -0.08deg;
+    --paper-motion-duration: 1680ms;
+    --paper-place-start: 0 -30px 96px;
+    --paper-flutter-start: translateX(-7px) rotateX(-7.2deg) rotateY(1.65deg) rotateZ(-0.65deg);
+    --paper-flutter-one: translateX(4px) rotateX(-3.1deg) rotateY(-1.15deg) rotateZ(0.48deg);
+    --paper-flutter-two: translateX(-2.5px) rotateX(-5.4deg) rotateY(0.72deg) rotateZ(-0.28deg);
+    --paper-flutter-three: translateX(1.1px) rotateX(-1.45deg) rotateY(-0.32deg) rotateZ(0.12deg);
+    --paper-flutter-four: translateX(-0.3px) rotateX(0.48deg) rotateY(0.08deg) rotateZ(-0.035deg);
+    --paper-flutter-five: translateX(0) rotateX(-0.13deg) rotateY(0) rotateZ(0);
     position: relative;
     overflow: visible;
-    perspective: 1580px;
-    perspective-origin: 50% -8%;
+    perspective: 1800px;
+    perspective-origin: 50% -5%;
     transform-style: preserve-3d;
   }
 
@@ -13178,52 +13179,26 @@ body:has(.research-editorial-page) .page-shell {
     height: calc(var(--paper-depth) + 2px);
     box-sizing: border-box;
     overflow: hidden;
-    border: 1px solid rgba(56, 47, 34, 0.025);
+    border: 1px solid rgba(17, 23, 34, 0.035);
     background-color: var(--paper-base);
     background-image: var(--paper-texture);
-    background-position: 1px 2px, 5px 7px, 0 0, 0 0;
-    background-size: 13px 15px, 19px 17px, auto, auto;
+    background-position: 1px 2px, 5px 7px, 0 0;
+    background-size: 13px 15px, 19px 17px, auto;
+    box-shadow: var(--paper-shadow);
     pointer-events: none;
     backface-visibility: hidden;
-    transform-origin: 50% 10%;
-    will-change: transform;
-    animation: paper-sheet-place var(--paper-motion-duration) both !important;
+    transform-origin: 50% 42%;
+    will-change: transform, translate;
+    animation:
+      paper-sheet-place var(--paper-motion-duration) cubic-bezier(0.18, 0.56, 0.22, 1) both,
+      paper-sheet-flutter var(--paper-motion-duration) linear both !important;
   }
 
-  .sub-page .paper-sequence-page.is-paper-motion-armed .paper-reveal::before {
-    content: "";
-    position: absolute;
-    top: 8%;
-    right: -8%;
-    left: -8%;
-    height: 46%;
-    background:
-      radial-gradient(ellipse 72% 31% at 48% 56%, var(--paper-fold-shadow), transparent 70%),
-      radial-gradient(ellipse 76% 32% at 52% 43%, var(--paper-fold-highlight), transparent 72%);
-    opacity: 0;
-    transform-origin: 50% 50%;
-    will-change: transform, opacity;
-    animation: paper-surface-flex var(--paper-motion-duration) both !important;
-  }
-
+  .sub-page .paper-sequence-page.is-paper-motion-armed .paper-reveal::before,
   .sub-page .paper-sequence-page.is-paper-motion-armed .paper-reveal::after {
-    content: "";
-    position: absolute;
-    right: 0;
-    bottom: 0;
-    left: 0;
-    height: clamp(44px, 7%, 68px);
-    background: linear-gradient(
-      180deg,
-      transparent 0 30%,
-      var(--paper-fold-shadow) 68%,
-      var(--paper-fold-highlight) 84%,
-      transparent 100%
-    );
-    opacity: 0;
-    transform-origin: 50% 100%;
-    will-change: transform, opacity;
-    animation: paper-bottom-light var(--paper-motion-duration) both !important;
+    content: none;
+    display: none;
+    animation: none !important;
   }
 
   .paper-sequence-page .paper-copy-strike {
@@ -13262,15 +13237,11 @@ body:has(.research-editorial-page) .page-shell {
   }
 
   html.page-motion-pending .paper-sequence-page.is-paper-motion-armed .paper-reveal,
-  html.page-motion-pending .paper-sequence-page.is-paper-motion-armed .paper-reveal::before,
-  html.page-motion-pending .paper-sequence-page.is-paper-motion-armed .paper-reveal::after,
   html.page-motion-pending .paper-sequence-page.is-paper-surface-settled .paper-copy-strike {
     animation-play-state: paused !important;
   }
 
   html.page-motion-pending.page-motion-ready .paper-sequence-page.is-paper-motion-armed .paper-reveal,
-  html.page-motion-pending.page-motion-ready .paper-sequence-page.is-paper-motion-armed .paper-reveal::before,
-  html.page-motion-pending.page-motion-ready .paper-sequence-page.is-paper-motion-armed .paper-reveal::after,
   html.page-motion-pending.page-motion-ready .paper-sequence-page.is-paper-surface-settled .paper-copy-strike {
     animation-play-state: running !important;
   }
@@ -13279,94 +13250,47 @@ body:has(.research-editorial-page) .page-shell {
 
 @keyframes paper-sheet-place {
   0% {
-    transform: translate3d(0, -2.6%, var(--paper-z-start)) rotateX(var(--paper-tilt-start)) rotateZ(var(--paper-turn-start));
-    animation-timing-function: cubic-bezier(0.2, 0.55, 0.25, 1);
+    translate: var(--paper-place-start);
   }
 
-  35% {
-    transform: translate3d(0, -1.3%, var(--paper-z-one)) rotateX(var(--paper-tilt-one)) rotateZ(0.045deg);
-    animation-timing-function: cubic-bezier(0.22, 0.68, 0.24, 1);
+  100% {
+    translate: 0 0 0;
+  }
+}
+
+@keyframes paper-sheet-flutter {
+  0% {
+    transform: var(--paper-flutter-start);
+    animation-timing-function: cubic-bezier(0.45, 0, 0.55, 1);
   }
 
-  62% {
-    transform: translate3d(0, -0.4%, var(--paper-z-mid)) rotateX(var(--paper-tilt-mid)) rotateZ(-0.025deg);
-    animation-timing-function: cubic-bezier(0.25, 0.7, 0.28, 1);
+  23% {
+    transform: var(--paper-flutter-one);
+    animation-timing-function: cubic-bezier(0.45, 0, 0.55, 1);
   }
 
-  80% {
-    transform: translate3d(0, 0.14%, var(--paper-z-low)) rotateX(0.52deg) rotateZ(0.009deg);
-    animation-timing-function: ease-out;
+  46% {
+    transform: var(--paper-flutter-two);
+    animation-timing-function: cubic-bezier(0.45, 0, 0.55, 1);
+  }
+
+  67% {
+    transform: var(--paper-flutter-three);
+    animation-timing-function: cubic-bezier(0.45, 0, 0.55, 1);
+  }
+
+  82% {
+    transform: var(--paper-flutter-four);
+    animation-timing-function: cubic-bezier(0.45, 0, 0.55, 1);
   }
 
   92% {
-    transform: translate3d(0, -0.04%, 2px) rotateX(-0.14deg) rotateZ(-0.003deg);
-    animation-timing-function: ease-out;
+    transform: var(--paper-flutter-five);
+    animation-timing-function: cubic-bezier(0.45, 0, 0.55, 1);
   }
 
   100% {
-    transform: translate3d(0, 0, 0) rotateX(0) rotateZ(0);
-  }
-}
-
-@keyframes paper-surface-flex {
-  0% {
-    opacity: 0.72;
-    transform: translate3d(0, -16%, 0) rotate(-0.24deg) scaleY(1.08);
-    animation-timing-function: cubic-bezier(0.2, 0.55, 0.25, 1);
-  }
-
-  35% {
-    opacity: 0.54;
-    transform: translate3d(0, 18%, 0) rotate(0.1deg) scaleY(1);
-    animation-timing-function: cubic-bezier(0.22, 0.68, 0.24, 1);
-  }
-
-  62% {
-    opacity: 0.32;
-    transform: translate3d(0, 72%, 0) rotate(-0.04deg) scaleY(0.88);
-    animation-timing-function: cubic-bezier(0.25, 0.7, 0.28, 1);
-  }
-
-  80% {
-    opacity: 0.08;
-    transform: translate3d(0, 105%, 0) rotate(0) scaleY(0.68);
-    animation-timing-function: ease-out;
-  }
-
-  100% {
-    opacity: 0;
-    transform: translate3d(0, 112%, 0) rotate(0) scaleY(0.5);
-  }
-}
-
-@keyframes paper-bottom-light {
-  0% {
-    opacity: 0.62;
-    transform: translate3d(0, 6px, 0) scaleY(1.08);
-    animation-timing-function: cubic-bezier(0.2, 0.55, 0.25, 1);
-  }
-
-  35% {
-    opacity: 0.42;
-    transform: translate3d(0, -2px, 0) scaleY(0.98);
-    animation-timing-function: cubic-bezier(0.22, 0.68, 0.24, 1);
-  }
-
-  62% {
-    opacity: 0.24;
-    transform: translate3d(0, 1px, 0) scaleY(0.78);
-    animation-timing-function: cubic-bezier(0.25, 0.7, 0.28, 1);
-  }
-
-  80% {
-    opacity: 0.1;
-    transform: translate3d(0, 0, 0) scaleY(0.54);
-    animation-timing-function: ease-out;
-  }
-
-  100% {
-    opacity: 0;
-    transform: translate3d(0, 0, 0) scaleY(0.32);
+    transform: translateX(0) rotateX(0) rotateY(0) rotateZ(0);
   }
 }
 
@@ -13572,6 +13496,14 @@ body:has(.research-editorial-page) .page-shell {
   .paper-reveal,
   body.sub-page::before {
     display: none !important;
+  }
+
+  .paper-sequence-page.is-paper-motion-armed > :not(.paper-reveal),
+  .paper-sequence-page .paper-copy-strike {
+    opacity: 1 !important;
+    pointer-events: auto !important;
+    transform: none !important;
+    animation: none !important;
   }
 
   body:has(.cv-editorial-page) .page-shell,
