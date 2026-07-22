@@ -47,30 +47,43 @@ const vertexSource = `#version 300 es
     float travel = mix(drive, 1.0, brake);
     float stick = smoothstep(0.80, 1.0, t);
 
-    float laid = mix(0.150, 0.153, prep)
+    float laidProgress = mix(0.150, 0.153, prep)
       + (1.003 - 0.153) * travel;
+    float diagonalBias = uAspect > 1.2 ? 0.10 : 0.05;
+    float sweepSpan = 1.0 + diagonalBias;
+    float laid = sweepSpan * laidProgress;
 
     // Tightening the radius produces depth without lifting or lateral motion.
     float radiusBase = mix(0.094, 0.079, prep);
     radiusBase = mix(radiusBase, 0.052, smoothstep(0.0, 0.84, travel));
     float radius = mix(radiusBase, 0.0032, stick);
     float flatEnd = max(0.0, laid - radius);
-    float s = uv.y;
+    // One continuous oblique curl coordinate: the left edge lands first and
+    // the same rolled ridge then travels toward the lower-right corner.
+    float q = uv.y + diagonalBias * uv.x;
 
     float y;
     float z;
-    if (s <= flatEnd) {
-      y = -s;
+    if (q <= flatEnd) {
+      y = -uv.y;
       z = 0.0;
     } else {
-      float theta = (s - flatEnd) / radius;
+      float theta = (q - flatEnd) / radius;
       // Exponential winding keeps the flat-to-curl tangent continuous and
       // draws the tail inward without a hard angular clamp.
       float thetaLimit = mix(PI * 1.65, PI * 1.82, prep);
       float shownTheta = thetaLimit * (1.0 - exp(-theta / thetaLimit));
-      y = -flatEnd - radius * sin(shownTheta);
+      float curledQ = flatEnd + radius * sin(shownTheta);
+      y = -uv.y - (curledQ - q);
       z = radius * (1.0 - cos(shownTheta));
     }
+
+    // The sheet arrives from slightly above and in front of the desk before
+    // settling into the same final plane as the DOM paper.
+    float placement = smoothstep(0.04, 0.48, t);
+    float placementLift = 1.0 - placement;
+    y += 0.026 * placementLift;
+    z += 0.020 * placementLift;
 
     float width = uAspect > 1.2 ? 0.69 : 0.82;
     float x = (uv.x - 0.5) * width;
@@ -80,11 +93,11 @@ const vertexSource = `#version 300 es
   void main() {
     vec3 p = paperPosition(aUv);
     float eps = 0.0015;
-    vec3 pa = paperPosition(vec2(aUv.x, max(0.0, aUv.y - eps)));
-    vec3 pb = paperPosition(vec2(aUv.x, min(1.0, aUv.y + eps)));
-    vec3 tangentV = pb - pa;
-    vec3 tangentX = vec3(1.0, 0.0, 0.0);
-    vNormal = normalize(cross(tangentV, tangentX));
+    float du = aUv.x < 1.0 - eps ? eps : -eps;
+    float dv = aUv.y < 1.0 - eps ? eps : -eps;
+    vec3 tangentU = (paperPosition(aUv + vec2(du, 0.0)) - p) / du;
+    vec3 tangentV = (paperPosition(aUv + vec2(0.0, dv)) - p) / dv;
+    vNormal = normalize(cross(tangentV, tangentU));
     if (vNormal.z < 0.0) vNormal = -vNormal;
     vUv = aUv;
     vCurl = smoothstep(0.002, 0.055, p.z);

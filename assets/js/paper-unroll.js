@@ -12,13 +12,14 @@
   const lowResourceDevice = Boolean(connection?.saveData)
     || (navigator.deviceMemory && navigator.deviceMemory <= 2)
     || (navigator.hardwareConcurrency && navigator.hardwareConcurrency <= 2);
-  const useInkCopy = !mobilePageQuery.matches
+  const useDetailedHeading = !mobilePageQuery.matches
     && window.matchMedia("(pointer: fine)").matches
     && !lowResourceDevice;
   const paperDuration = 900;
-  const baseCopyInterval = mobilePageQuery.matches ? 46 : 52;
-  const maxCopyDelay = mobilePageQuery.matches ? 1120 : 1280;
-  const copyDuration = mobilePageQuery.matches ? 360 : 400;
+  const copyDuration = mobilePageQuery.matches ? 380 : 420;
+  const copyBeatGap = mobilePageQuery.matches ? 100 : 110;
+  const copyHeadingGap = mobilePageQuery.matches ? 140 : 150;
+  const copyRowOffset = mobilePageQuery.matches ? 24 : 36;
   let resolveReady;
   let readyResolved = false;
   let rendererMode = "idle";
@@ -61,7 +62,7 @@
 
   function clearCopyStrike(element, releaseHandler) {
     if (releaseHandler) element.removeEventListener("animationend", releaseHandler);
-    element.classList.remove("paper-copy-strike", "paper-copy-ink");
+    element.classList.remove("paper-copy-strike", "paper-copy-heading");
     element.style.removeProperty("--paper-copy-delay");
   }
 
@@ -92,19 +93,60 @@
     paperCopySelector = ".page-title > *, .research-page-block > h2, .work-map-item, .keyword-row > span, .paper-item";
   }
 
-  const visibleCopy = Array.from(paperSequencePage.querySelectorAll(paperCopySelector));
-  const copyInterval = visibleCopy.length > 1
-    ? Math.min(baseCopyInterval, Math.floor(maxCopyDelay / (visibleCopy.length - 1)))
-    : 0;
+  // Build a short typesetter rhythm from what the sheet actually shows. Copy
+  // below the first fold is already available when the reader scrolls; making
+  // the whole document wait creates a burst of overlapping, loader-like wipes.
+  const measuredCopy = Array.from(paperSequencePage.querySelectorAll(paperCopySelector))
+    .map((element) => ({
+      element,
+      rect: element.getBoundingClientRect(),
+      isSectionHeading: element.matches(".cv-block > h2, .research-page-block > h2")
+    }))
+    .filter((item) => item.rect.top < window.innerHeight && item.rect.bottom > 0)
+    .sort((a, b) => (a.rect.top - b.rect.top) || (a.rect.left - b.rect.left));
+
+  const copyBeats = [];
+  measuredCopy.forEach((item) => {
+    const previousBeat = copyBeats[copyBeats.length - 1];
+    const joinsVisualRow = previousBeat
+      && !item.isSectionHeading
+      && !previousBeat.isSectionHeading
+      && Math.abs(previousBeat.top - item.rect.top) <= 6;
+    if (joinsVisualRow) {
+      previousBeat.items.push(item);
+      return;
+    }
+    copyBeats.push({
+      isSectionHeading: item.isSectionHeading,
+      top: item.rect.top,
+      items: [item]
+    });
+  });
+
+  let copyCursor = 0;
+  let latestCopyEnd = 0;
+  const animatedCopy = [];
+  copyBeats.forEach((beat, beatIndex) => {
+    if (beatIndex > 0) copyCursor += beat.isSectionHeading ? copyHeadingGap : copyBeatGap;
+    beat.items.forEach((item, rowIndex) => {
+      const delay = copyCursor + rowIndex * copyRowOffset;
+      item.delay = delay;
+      latestCopyEnd = Math.max(latestCopyEnd, delay + copyDuration);
+      animatedCopy.push(item);
+    });
+  });
+
   const paperCopyReleaseHandlers = new Map();
 
-  visibleCopy.forEach((element, index) => {
+  animatedCopy.forEach(({ element, isSectionHeading, delay }) => {
     element.classList.add("paper-copy-strike");
-    if (useInkCopy && index < 8) element.classList.add("paper-copy-ink");
-    element.style.setProperty("--paper-copy-delay", `${index * copyInterval}ms`);
+    if (useDetailedHeading && !isExperiencePaperSequence && isSectionHeading) {
+      element.classList.add("paper-copy-heading");
+    }
+    element.style.setProperty("--paper-copy-delay", `${delay}ms`);
     const releasePaperCopy = (event) => {
       if (event.target !== element
-        || !["paper-copy-strike", "paper-copy-ink-write"].includes(event.animationName)) return;
+        || !["paper-copy-set", "paper-copy-heading-set"].includes(event.animationName)) return;
       paperCopyReleaseHandlers.delete(element);
       clearCopyStrike(element, releasePaperCopy);
     };
@@ -129,7 +171,7 @@
     );
     delete paperRevealSurface.dataset.paperUnrollMode;
     delete paperRevealSurface.dataset.paperUnrollPixels;
-    visibleCopy.forEach((element) => {
+    animatedCopy.forEach(({ element }) => {
       clearCopyStrike(element, paperCopyReleaseHandlers.get(element));
       paperCopyReleaseHandlers.delete(element);
     });
@@ -150,9 +192,7 @@
     window.clearTimeout(paperSettleTimer);
     releaseRenderer();
     paperSequencePage.classList.add("is-paper-surface-settled");
-    const copySequenceDuration = (Math.max(visibleCopy.length - 1, 0) * copyInterval)
-      + copyDuration
-      + 120;
+    const copySequenceDuration = latestCopyEnd + 120;
     paperCleanupTimer = window.setTimeout(finishPaperSequence, copySequenceDuration);
   }
 
