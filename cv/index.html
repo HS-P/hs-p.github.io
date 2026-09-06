@@ -18,8 +18,8 @@ page_class: cv-editorial-page paper-sequence-page
 </div>
 
 <p class="cv-summary">
-  M.S. student in mechatronics engineering working on dexterous manipulation, robot learning,
-  teleoperation, sim-to-real validation, and deployable physical AI systems.
+  M.S. student in electrical, electronics and communication engineering, researching hierarchical
+  ACT / RL for dexterous manipulation and working toward reactive dexterous manipulation.
 </p>
 
 <section class="cv-block" id="cv-education">
@@ -27,19 +27,21 @@ page_class: cv-editorial-page paper-sequence-page
   <div class="cv-entry-list">
     <article class="cv-entry">
       <div class="cv-entry-body">
-        <h3>M.S. in Mechatronics Engineering <span>· Degree in progress</span></h3>
+        <h3>M.S. in Electrical, Electronics &amp; Communication Engineering</h3>
         <p class="cv-institution">{{ profile.affiliation | escape }} · {{ profile.location | escape }}</p>
         <p><strong>Advisor:</strong> {{ profile.advisor | escape }}</p>
-        <p><strong>Research areas:</strong> Dexterous manipulation, robot learning, physical AI systems, and sim-to-real robot software.</p>
+        <p><strong>Current research:</strong> Hierarchical ACT / RL for dexterous manipulation.</p>
+        <p><strong>Research interest:</strong> Reactive dexterous manipulation.</p>
       </div>
-      <span class="cv-date cv-date--current">In progress</span>
+      <span class="cv-date cv-date--current">Mar. 2026–<br>Expected Feb. 2028</span>
     </article>
     <article class="cv-entry">
       <div class="cv-entry-body">
         <h3>B.S. in Mechatronics Engineering</h3>
         <p class="cv-institution">{{ profile.affiliation | escape }} · {{ profile.location | escape }}</p>
-        <p><strong>Undergraduate mentor:</strong> {{ profile.undergraduate_advisor | escape }}</p>
-        <p><strong>Academic foundation:</strong> Control systems; AI and robotics, including reinforcement learning and sim-to-real; mechanical design; electronics and embedded systems.</p>
+        <p><strong>Laboratory &amp; capstone advisor:</strong> {{ profile.undergraduate_advisor | escape }}</p>
+        <p><strong>Capstone:</strong> SYSID Sim-to-Real Using a Two-Wheeled Legged Robot</p>
+        <p><strong>Academic foundation:</strong> Control systems; reinforcement learning and sim-to-real; mechanical design; electronics and embedded systems.</p>
       </div>
       <span class="cv-date">Completed</span>
     </article>
@@ -72,7 +74,39 @@ page_class: cv-editorial-page paper-sequence-page
             </ul>
           {% endif %}
         </div>
-        <span class="cv-date{% if item.period == 'Current' %} cv-date--current{% endif %}">{% if item.period == 'Current' %}Present{% else %}{{ item.period | replace: " - ", "–" | escape }}{% endif %}</span>
+        <span class="cv-date{% if item.period contains 'Present' %} cv-date--current{% endif %}">{{ item.period | replace: " - ", "–" | escape }}</span>
+      </article>
+    {% endfor %}
+  </div>
+</section>
+
+<section class="cv-block" id="cv-presentations">
+  <h2>Conference Presentations &amp; Demonstrations</h2>
+  <div class="cv-entry-list">
+    {% for item in site.data.presentations %}
+      <article class="cv-entry">
+        <div class="cv-entry-body">
+          <div class="cv-entry-kicker">{{ item.type | escape }}</div>
+          <h3><a href="{{ item.project | relative_url | escape }}">{{ item.title | escape }}</a></h3>
+          <p class="cv-institution">{{ item.event | escape }} · {{ item.location | escape }}</p>
+        </div>
+        <span class="cv-date">{{ item.date | escape }}</span>
+      </article>
+    {% endfor %}
+  </div>
+</section>
+
+<section class="cv-block" id="cv-teaching">
+  <h2>Teaching Experience</h2>
+  <div class="cv-entry-list">
+    {% for item in site.data.teaching %}
+      <article class="cv-entry">
+        <div class="cv-entry-body">
+          <div class="cv-entry-kicker">{{ item.role | escape }}</div>
+          <h3>{{ item.course | escape }}</h3>
+          <p class="cv-institution">{{ item.organization | escape }}</p>
+        </div>
+        <span class="cv-date">{{ item.term | escape }}</span>
       </article>
     {% endfor %}
   </div>
@@ -130,6 +164,18 @@ page_class: cv-editorial-page paper-sequence-page
       <div>
         <dt>{{ group.category | escape }}</dt>
         <dd>{{ group.items | join: " · " | escape }}</dd>
+      </div>
+    {% endfor %}
+  </dl>
+</section>
+
+<section class="cv-block" id="cv-languages">
+  <h2>Languages</h2>
+  <dl class="cv-skills-list">
+    {% for item in profile.languages %}
+      <div>
+        <dt>{{ item.language | escape }}</dt>
+        <dd>{{ item.proficiency | escape }}</dd>
       </div>
     {% endfor %}
   </dl>
