@@ -8,6 +8,7 @@ page_class: cv-editorial-page paper-sequence-page
 
 {% assign profile = site.data.profile %}
 {% assign projects = site.data.projects | sort: "importance" %}
+{% assign cv_projects = projects | where: "cv_featured", true %}
 
 <div class="cv-contact" aria-label="Contact information">
   <span><i class="fa-solid fa-location-dot" aria-hidden="true"></i>{{ profile.location | escape }}</span>
@@ -17,8 +18,8 @@ page_class: cv-editorial-page paper-sequence-page
 </div>
 
 <p class="cv-summary">
-  AI robotics engineer building software systems for dexterous manipulation, robot learning,
-  teleoperation, sim-to-real validation, and deployable physical AI workflows.
+  M.S. student in mechatronics engineering working on dexterous manipulation, robot learning,
+  teleoperation, sim-to-real validation, and deployable physical AI systems.
 </p>
 
 <section class="cv-block" id="cv-education">
@@ -26,18 +27,21 @@ page_class: cv-editorial-page paper-sequence-page
   <div class="cv-entry-list">
     <article class="cv-entry">
       <div class="cv-entry-body">
-        <h3>M.S. Student <span>· AI Robotics Research</span></h3>
+        <h3>M.S. in Mechatronics Engineering <span>· Degree in progress</span></h3>
         <p class="cv-institution">{{ profile.affiliation | escape }} · {{ profile.location | escape }}</p>
-        <p>Advised by {{ profile.advisor | escape }}. Research focus: dexterous manipulation, robot learning, physical AI systems, and sim-to-real robot software.</p>
+        <p><strong>Advisor:</strong> {{ profile.advisor | escape }}</p>
+        <p><strong>Research areas:</strong> Dexterous manipulation, robot learning, physical AI systems, and sim-to-real robot software.</p>
       </div>
-      <span class="cv-date cv-date--current">Present</span>
+      <span class="cv-date cv-date--current">In progress</span>
     </article>
     <article class="cv-entry">
       <div class="cv-entry-body">
-        <h3>B.S. <span>· Mechatronics Engineering</span></h3>
+        <h3>B.S. in Mechatronics Engineering</h3>
         <p class="cv-institution">{{ profile.affiliation | escape }} · {{ profile.location | escape }}</p>
-        <p>Mentored by {{ profile.undergraduate_advisor | escape }}. Interdisciplinary training in control systems, AI and robotics—including reinforcement learning and sim-to-real—mechanical design, electronics, and embedded systems.</p>
+        <p><strong>Undergraduate mentor:</strong> {{ profile.undergraduate_advisor | escape }}</p>
+        <p><strong>Academic foundation:</strong> Control systems; AI and robotics, including reinforcement learning and sim-to-real; mechanical design; electronics and embedded systems.</p>
       </div>
+      <span class="cv-date">Completed</span>
     </article>
   </div>
 </section>
@@ -51,18 +55,6 @@ page_class: cv-editorial-page paper-sequence-page
   </ul>
 </section>
 
-<section class="cv-block" id="cv-skills">
-  <h2>Technical Skills</h2>
-  <dl class="cv-skills-list">
-    {% for group in profile.skills %}
-      <div>
-        <dt>{{ group.category | escape }}</dt>
-        <dd>{{ group.items | join: " · " | escape }}</dd>
-      </div>
-    {% endfor %}
-  </dl>
-</section>
-
 <section class="cv-block" id="cv-experience">
   <h2>Research Experience</h2>
   <div class="cv-entry-list">
@@ -72,32 +64,15 @@ page_class: cv-editorial-page paper-sequence-page
           <h3>{{ item.role | escape }}</h3>
           <p class="cv-institution">{{ item.organization | escape }} · {{ item.location | escape }}</p>
           <p>{{ item.summary | escape }}</p>
-        </div>
-        <span class="cv-date{% if item.period == 'Current' %} cv-date--current{% endif %}">{% if item.period == 'Current' %}Present{% else %}{{ item.period | replace: " - ", "–" | escape }}{% endif %}</span>
-      </article>
-    {% endfor %}
-  </div>
-</section>
-
-<section class="cv-block" id="cv-research-progress">
-  <h2>Research in Progress</h2>
-  <div class="cv-entry-list">
-    {% for paper in site.data.papers %}
-      <article class="cv-entry">
-        <div class="cv-entry-body">
-          <div class="cv-entry-kicker">{{ paper.status | escape }}</div>
-          <h3>{{ paper.title | escape }}</h3>
-          <p class="cv-institution">{{ paper.authors | escape }} · {{ paper.venue | escape }}</p>
-          <p>{{ paper.summary | escape }}</p>
-          {% if paper.links %}
-            <div class="cv-entry-links">
-              {% for link in paper.links %}
-                <a href="{{ link.url | escape }}">{{ link.label | escape }} <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a>
+          {% if item.highlights %}
+            <ul class="cv-detail-list">
+              {% for highlight in item.highlights %}
+                <li>{{ highlight | escape }}</li>
               {% endfor %}
-            </div>
+            </ul>
           {% endif %}
         </div>
-        <span class="cv-date">{{ paper.year | escape }}</span>
+        <span class="cv-date{% if item.period == 'Current' %} cv-date--current{% endif %}">{% if item.period == 'Current' %}Present{% else %}{{ item.period | replace: " - ", "–" | escape }}{% endif %}</span>
       </article>
     {% endfor %}
   </div>
@@ -106,13 +81,20 @@ page_class: cv-editorial-page paper-sequence-page
 <section class="cv-block" id="cv-projects">
   <h2>Selected Research Projects</h2>
   <div class="cv-entry-list">
-    {% for project in projects limit:5 %}
+    {% for project in cv_projects %}
       {% assign project_url = '/projects/' | append: project.id | append: '/' %}
       <article class="cv-entry cv-project-entry">
         <div class="cv-entry-body">
           <div class="cv-entry-kicker">{{ project.role | escape }}</div>
           <h3><a href="{{ project_url | relative_url | escape }}">{{ project.title | escape }}</a></h3>
           <p>{{ project.summary | escape }}</p>
+          {% if project.what_i_did %}
+            <ul class="cv-detail-list">
+              {% for contribution in project.what_i_did limit:2 %}
+                <li>{{ contribution | escape }}</li>
+              {% endfor %}
+            </ul>
+          {% endif %}
           <p class="cv-stack">{{ project.stack | join: " · " | escape }}</p>
         </div>
         <span class="cv-date">{{ project.year_group | escape }}</span>
@@ -122,7 +104,7 @@ page_class: cv-editorial-page paper-sequence-page
 </section>
 
 <section class="cv-block" id="cv-awards">
-  <h2>Awards &amp; Honors</h2>
+  <h2>Fellowships &amp; Awards</h2>
   <div class="cv-entry-list">
     {% for award in site.data.awards %}
       {% unless award.category == "Competition Milestone" %}
@@ -139,4 +121,16 @@ page_class: cv-editorial-page paper-sequence-page
       {% endunless %}
     {% endfor %}
   </div>
+</section>
+
+<section class="cv-block" id="cv-skills">
+  <h2>Technical Skills</h2>
+  <dl class="cv-skills-list">
+    {% for group in profile.skills %}
+      <div>
+        <dt>{{ group.category | escape }}</dt>
+        <dd>{{ group.items | join: " · " | escape }}</dd>
+      </div>
+    {% endfor %}
+  </dl>
 </section>

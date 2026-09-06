@@ -22,6 +22,7 @@
     - "Used the platform as the deployment target for imitation-learning and physical-AI experiments."
 
 - id: allex-act-real-robot
+  cv_featured: true
   detail_style: experiment
   detail_label: Deployment Study
   stage: "Graduate"
@@ -46,6 +47,7 @@
     - "Demonstrated a complete real-robot sequence that collected three objects and placed them in a box."
 
 - id: teleoperation-data-pipeline
+  cv_featured: true
   detail_style: pipeline
   detail_label: Systems Pipeline
   stage: "Graduate"
@@ -90,6 +92,7 @@
     - "Maintained a clear boundary between public research communication and unreleased collaboration material."
 
 - id: redshow-sysid-rma
+  cv_featured: true
   detail_style: experiment
   detail_label: Experiment Log
   stage: "Undergraduate"
@@ -117,6 +120,7 @@
       embed: "https://www.youtube-nocookie.com/embed/UuHs2mRhMNs"
 
 - id: ilrc-logistics-sorting
+  cv_featured: true
   detail_style: integration
   detail_label: Competition System
   stage: "Graduate"

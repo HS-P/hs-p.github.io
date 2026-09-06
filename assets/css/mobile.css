@@ -1665,6 +1665,21 @@ body.sub-page .site-header {
   text-transform: none;
 }
 
+.cv-detail-list {
+  gap: 4px;
+  margin-top: 8px;
+}
+
+.cv-detail-list li {
+  color: var(--mobile-muted);
+  font-size: 0.82rem;
+  line-height: 1.55;
+}
+
+.cv-detail-list li::before {
+  background: var(--mobile-green);
+}
+
 .cv-date {
   min-width: 0;
   color: var(--mobile-muted);
