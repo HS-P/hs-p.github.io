@@ -88,6 +88,7 @@ page_class: cv-editorial-page paper-sequence-page
         <div class="cv-entry-body">
           <div class="cv-entry-kicker">{{ item.type | escape }}</div>
           <h3><a href="{{ item.project | relative_url | escape }}">{{ item.title | escape }}</a></h3>
+          <p><strong>{{ profile.name | escape }}</strong>{% if item.coauthors %}, {{ item.coauthors | escape }}{% endif %}</p>
           <p class="cv-institution">{{ item.event | escape }} · {{ item.location | escape }}</p>
         </div>
         <span class="cv-date">{{ item.date | escape }}</span>
